@@ -6,11 +6,11 @@ import { createBrowserRouter } from "react-router-dom";
 import Layout from "../Layout/Layout";
 
 // Pages
-import Home from "../pages/Home";
-import About from "../pages/About";
-import CommunityWork from "../pages/CommunityWork";
-import LeaderBoard from "../pages/LeaderBoard";
-import Maintenance from "../pages/Maintenance";
+import Home from "../Pages/Home";
+import About from "../Pages/About";
+import CommunityWork from "../Pages/CommunityWork";
+import LeaderBoard from "../Pages/LeaderBoard";
+import Maintenance from "../Pages/Maintenance";
 
 const router = createBrowserRouter([
   {

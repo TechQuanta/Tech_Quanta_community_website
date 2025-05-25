@@ -174,17 +174,31 @@ if (error)
         transition={{ duration: 0.3 }}
       />
     </AnimatePresence>
-    <input
+    {/* <input
       type="text"
       placeholder="Search users..."
       value={search}
       onChange={(e) => setSearch(e.target.value)}
       className="w-full pl-[60px] pr-4 py-2 rounded-full bg-black dark:bg-white text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#2ECC71] transition"
-    />
+    /> */}
+<input
+  type="text"
+  placeholder="Search users..."
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+  className="w-full pl-[60px] pr-4 py-2 rounded-full 
+             bg-black text-white 
+             dark:bg-white dark:text-black 
+             placeholder-gray-400 dark:placeholder-gray-500 
+             focus:outline-none focus:ring-2 focus:ring-[#2ECC71] 
+             caret-white dark:caret-black
+             transition"
+/>
+
   </div>
 
   {/* Filter Controls Section */}
-  <div className="flex items-center gap-3 flex-wrap justify-end">
+  {/* <div className="flex items-center gap-3 flex-wrap justify-end">
     <select
       className=" py-2 rounded-full bg-orange-200 font-semibold text-center dark:bg-beige-200 text-gray-800 dark:text-black focus:outline-none focus:ring-2 focus:ring-[#2ECC71] transition"
       value={sortKey}
@@ -211,7 +225,43 @@ if (error)
     >
       <FaFilter />
     </button>
-  </div>
+  </div> */}
+
+<div className="flex items-center gap-4">
+  <select
+    className="py-2 px-4 rounded-full bg-gradient-to-r from-orange-300 to-orange-200 text-gray-900 font-semibold focus:outline-none focus:ring-2 focus:ring-green-400 transition"
+    value={sortKey}
+    onChange={(e) => setSortKey(e.target.value)}
+  >
+    <option value="scoreDesc">Score: High → Low</option>
+    <option value="scoreAsc">Score: Low → High</option>
+    <option value="alphaAZ">Username: A → Z</option>
+    <option value="alphaZA">Username: Z → A</option>
+  </select>
+
+  <button
+    onClick={showAllMembers}
+    disabled={!filterActive}
+    className={`px-5 py-2 rounded-full font-semibold transition
+      ${filterActive ? "bg-green-500 text-white" : "bg-gray-300 text-gray-700"} 
+      hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed`}
+  >
+    Show All
+  </button>
+
+  <button
+    onClick={showActiveMembers}
+    disabled={loadingFilter}
+    className={`px-5 py-2 rounded-full font-semibold transition flex items-center gap-2
+      ${filterActive ? "bg-green-500 text-white" : "bg-black text-white"} 
+      hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed`}
+  >
+    <FaFilter />
+    Active Filter
+  </button>
+</div>
+
+
 </div>
 
   
