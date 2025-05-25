@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { HoverBorderGradient } from './../components/ui/hover-border-gradient';
+import { HeroHighlight } from "../components/ui/hero-highlight";
 import CoreTeam from "../components/LandingPage/CoreTeam";
 import Volunteers from "../components/LandingPage/Volunteer";
-import { HeroHighlight } from "../components/ui/hero-highlight";
-import { AnimatedTestimonials } from "../components/ui/animated-testimonials";
 
 const words = ['Developers', 'Students', 'Professionals', 'Engineers', 'Creators'];
 
@@ -23,43 +22,7 @@ const Home = () => {
   }, []);
 
 
-   const testimonials = [
-    {
-      quote:
-        "The attention to detail and innovative features have completely transformed our workflow. This is exactly what we've been looking for.",
-      name: "Sarah Chen",
-      designation: "Product Manager at TechFlow",
-      src: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=3560&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    {
-      quote:
-        "Implementation was seamless and the results exceeded our expectations. The platform's flexibility is remarkable.",
-      name: "Michael Rodriguez",
-      designation: "CTO at InnovateSphere",
-      src: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    {
-      quote:
-        "This solution has significantly improved our team's productivity. The intuitive interface makes complex tasks simple.",
-      name: "Emily Watson",
-      designation: "Operations Director at CloudScale",
-      src: "https://images.unsplash.com/photo-1623582854588-d60de57fa33f?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    {
-      quote:
-        "Outstanding support and robust features. It's rare to find a product that delivers on all its promises.",
-      name: "James Kim",
-      designation: "Engineering Lead at DataPro",
-      src: "https://images.unsplash.com/photo-1636041293178-808a6762ab39?q=80&w=3464&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    {
-      quote:
-        "The scalability and performance have been game-changing for our organization. Highly recommend to any growing business.",
-      name: "Lisa Thompson",
-      designation: "VP of Technology at FutureNet",
-      src: "https://images.unsplash.com/photo-1624561172888-ac93c696e10c?q=80&w=2592&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-  ];
+
 
 
   return (
@@ -122,20 +85,14 @@ const Home = () => {
       </HeroHighlight>
 
       {/* Core Team Section */}
-       <section className="h-full dark:bg-[#121212] text-white px-6 flex flex-col items-center justify-center font-[Poppins] text-center pt-36 overflow-hidden">
-         <div className="flex justify-center items-center h-full w-full px-4 py-5 pt-0">
+      <section className="relative h-full dark:bg-[#121212] bg-white px-3 sm:px-4 md:px-6 flex flex-col items-center justify-center font-[Poppins] text-center pt-12 sm:pt-16 md:pt-20 mt-4 sm:mt-8 md:mt-10 overflow-hidden z-0">
         <CoreTeam />
-      </div>
-       <div className="flex justify-center items-center h-full w-screen py-5 pt-0">
+      </section>
+
+      {/* Volunteers Section */}
+      <section className="relative dark:bg-[#121212] bg-white font-[Poppins] py-2 sm:py-4 md:py-6 z-0 -mt-6 sm:-mt-8">
         <Volunteers />
-      </div>
-       <div className="flex justify-center flex-col items-center h-full w-full px-4 py-5 pt-0">
-      <HeroHighlight>
-          <span className="text-black dark:text-white  font-mono text-7xl text-center mb-5">Community Partners</span>
-       <AnimatedTestimonials testimonials={testimonials} />
-      </HeroHighlight>
-      </div>
-    </section>
+      </section>
     </>
   );
 };

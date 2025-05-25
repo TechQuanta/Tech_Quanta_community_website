@@ -24,9 +24,15 @@ export default {
           '0%, 100%': { transform: 'scale(1)', opacity: 0.7 },
           '50%': { transform: 'scale(1.15)', opacity: 1 },
         },
+        gradient: {
+          '0%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+          '100%': { backgroundPosition: '0% 50%' },
+        },
       },
       animation: {
         pulseGlow: 'pulseGlow 1.2s ease-in-out infinite',
+        gradient: 'gradient 3s ease-in-out infinite',
       },
     },
   },

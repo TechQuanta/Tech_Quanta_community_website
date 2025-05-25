@@ -1,227 +1,86 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform, useMotionValue, useAnimationFrame } from 'framer-motion';
 
 const Volunteers = () => {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [containerSize, setContainerSize] = useState({ width: window.innerWidth, height: window.innerHeight });
-  const containerRef = useRef(null);
-  const [theme, setTheme] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleThemeChange = (e) => setTheme(e.matches ? 'dark' : 'light');
-    mediaQuery.addEventListener('change', handleThemeChange);
-    return () => mediaQuery.removeEventListener('change', handleThemeChange);
-  }, []);
-
-  useEffect(() => {
-    const updateSize = () => {
-      setContainerSize({ width: window.innerWidth, height: window.innerHeight });
-    };
-    window.addEventListener('resize', updateSize);
-    return () => window.removeEventListener('resize', updateSize);
-  }, []);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsLoaded(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.3 }
-    );
-    if (containerRef.current) observer.observe(containerRef.current);
-    return () => observer.disconnect();
-  }, []);
-
+  // Sample volunteer data with high-contrast text avatars (same style as CoreTeam)
   const volunteers = [
-    { id: 1, name: "Alice Johnson", role: "Frontend Developer" },
-    { id: 2, name: "Bob Smith", role: "Backend Engineer" },
-    { id: 3, name: "Carol Davis", role: "UI/UX Designer" },
-    { id: 4, name: "David Wilson", role: "Product Manager" },
-    { id: 5, name: "Eva Brown", role: "Data Scientist" },
-    { id: 6, name: "Frank Miller", role: "DevOps Engineer" },
-    { id: 7, name: "Grace Lee", role: "QA Engineer" },
-    { id: 8, name: "Henry Taylor", role: "Marketing Lead" },
-    { id: 9, name: "Iris Chen", role: "Content Writer" },
-    { id: 10, name: "Jack Roberts", role: "Sales Manager" },
-    { id: 11, name: "Karen White", role: "HR Specialist" },
-    { id: 12, name: "Luke Anderson", role: "Finance Lead" },
-    { id: 13, name: "Maya Patel", role: "Operations" },
-    { id: 14, name: "Nick Thompson", role: "Tech Lead" },
-    { id: 15, name: "Olivia Garcia", role: "Designer" },
-    { id: 16, name: "Paul Martinez", role: "Developer" },
-    { id: 17, name: "Quinn Rodriguez", role: "Analyst" },
-    { id: 18, name: "Zoe Lin", role: "Support Engineer" },
+    { id: 1, name: "Alpha", image: "https://ui-avatars.com/api/?name=Alpha&background=7209B7&color=fff&bold=true&size=128" },
+    { id: 2, name: "Beta", image: "https://ui-avatars.com/api/?name=Beta&background=F72585&color=fff&bold=true&size=128" },
+    { id: 3, name: "Gamma", image: "https://ui-avatars.com/api/?name=Gamma&background=4361EE&color=fff&bold=true&size=128" },
+    { id: 4, name: "Delta", image: "https://ui-avatars.com/api/?name=Delta&background=3A0CA3&color=fff&bold=true&size=128" },
+    { id: 5, name: "Epsilon", image: "https://ui-avatars.com/api/?name=Epsilon&background=4CC9F0&color=fff&bold=true&size=128" },
+    { id: 6, name: "Zeta", image: "https://ui-avatars.com/api/?name=Zeta&background=560BAD&color=fff&bold=true&size=128" },
+    { id: 7, name: "Eta", image: "https://ui-avatars.com/api/?name=Eta&background=7209B7&color=fff&bold=true&size=128" },
+    { id: 8, name: "Theta", image: "https://ui-avatars.com/api/?name=Theta&background=F72585&color=fff&bold=true&size=128" },
+    { id: 9, name: "Iota", image: "https://ui-avatars.com/api/?name=Iota&background=4361EE&color=fff&bold=true&size=128" },
+    { id: 10, name: "Kappa", image: "https://ui-avatars.com/api/?name=Kappa&background=3A0CA3&color=fff&bold=true&size=128" },
   ];
-
-  const getRandomGradient = (id) => {
-    const gradients = [
-      'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-      'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-      'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-      'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-      'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
-      'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
-      'linear-gradient(135deg, #ff8a80 0%, #ea4c89 100%)',
-      'linear-gradient(135deg, #8360c3 0%, #2ebf91 100%)',
-      'linear-gradient(135deg, #ffa726 0%, #fb8c00 100%)',
-      'linear-gradient(135deg, #e91e63 0%, #f06292 100%)',
-      'linear-gradient(135deg, #9c27b0 0%, #ba68c8 100%)',
-      'linear-gradient(135deg, #3f51b5 0%, #7986cb 100%)',
-      'linear-gradient(135deg, #00bcd4 0%, #4dd0e1 100%)',
-      'linear-gradient(135deg, #009688 0%, #4db6ac 100%)',
-      'linear-gradient(135deg, #ff5722 0%, #ff8a65 100%)',
-      'linear-gradient(135deg, #795548 0%, #a1887f 100%)',
-    ];
-    return gradients[id % gradients.length];
-  };
-
-  const getBubbleSize = (width) => {
-    if (width <= 480) return 60;
-    if (width <= 768) return 70;
-    if (width <= 1024) return 80;
-    if (width <= 1400) return 90;
-    return 100;
-  };
-
-  const bubbleSize = useMemo(() => getBubbleSize(containerSize.width), [containerSize.width]);
-
-  const adjustedPattern = useMemo(() => {
-    const pattern = [];
-    let total = 0;
-    let rowIndex = 0;
-    while (total < volunteers.length) {
-      const rowSize = containerSize.width <= 600 ? 2 : rowIndex % 2 === 0 ? 4 : 3;
-      const remaining = volunteers.length - total;
-      pattern.push(Math.min(rowSize, remaining));
-      total += Math.min(rowSize, remaining);
-      rowIndex++;
+  
+  // Duplicate the volunteers to create a seamless loop effect
+  const allVolunteers = [...volunteers, ...volunteers, ...volunteers];
+  
+  // Animation controls for smooth scrolling
+  const containerRef = useRef(null);
+  const x = useMotionValue(0);
+  
+  // Use animation frame for smooth scrolling
+  useAnimationFrame(() => {
+    const baseVelocity = -0.5; // Reduced speed (negative for right-to-left movement)
+    const wrappingPoint = -120 * volunteers.length; // Width of one complete volunteer set
+    
+    // Update position continuously with constant movement to avoid lag
+    let xValue = x.get();
+    xValue += baseVelocity; // Constant movement per frame regardless of delta
+    
+    // Reset position when one complete set has scrolled off screen
+    if (xValue <= wrappingPoint) {
+      xValue = 0;
     }
-    return pattern;
-  }, [volunteers.length, containerSize.width]);
-
-  const verticalSpacing = bubbleSize * 2;
-  const totalHeight = (adjustedPattern.length - 1) * verticalSpacing + bubbleSize;
-  const requiredHeight = totalHeight + bubbleSize * 2 + 100;
-
-  const positions = useMemo(() => {
-    const horizontalSpacing = Math.min(180, containerSize.width * 0.18);
-    const firstRowY = 160;
-    const positions = [];
-    let index = 0;
-
-    for (let row = 0; row < adjustedPattern.length; row++) {
-      const count = adjustedPattern[row];
-      const rowWidth = (count - 1) * horizontalSpacing;
-      const leftMargin = (containerSize.width - rowWidth) / 2;
-      const y = firstRowY + row * verticalSpacing;
-
-      for (let col = 0; col < count && index < volunteers.length; col++) {
-        const x = leftMargin + col * horizontalSpacing - bubbleSize / 2;
-        positions.push({ x, y });
-        index++;
-      }
-    }
-    return positions;
-  }, [containerSize.width, bubbleSize, adjustedPattern]);
-
-  const styles = {
-    container: {
-      position: 'relative',
-      width: '100%',
-      height: `${requiredHeight}px`,
-      backgroundColor: 'transparent',
-      overflow: 'hidden',
-      padding: '40px 10px',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'flex-start',
-      fontFamily: 'system-ui, sans-serif',
-    },
-    headingContainer: {
-      textAlign: 'center',
-      marginBottom: '40px',
-    },
-    heading: {
-      color: theme == 'light' ? "black":"white",
-      fontSize: '42px',
-      fontWeight: 'bold',
-      marginBottom: '12px',
-    },
-    separator: {
-      width: '90px',
-      height: '2px',
-      backgroundColor: 'rgba(255,255,255,0.2)',
-      border: 'none',
-      margin: '0 auto',
-    },
-    volunteerItem: {
-      position: 'absolute',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      textAlign: 'center',
-      transition: 'all 1.8s ease',
-      cursor: 'pointer',
-    },
-    volunteerAvatar: {
-      width: `${bubbleSize}px`,
-      height: `${bubbleSize}px`,
-      borderRadius: '50%',
-      overflow: 'hidden',
-      marginBottom: '10px',
-      boxShadow: '0 6px 20px rgba(0,0,0,0.3)',
-      border: '2px solid rgba(255,255,255,0.2)',
-      position: 'relative',
-    },
-    avatarShine: {
-      position: 'absolute',
-      inset: 0,
-      background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent 70%)',
-      borderRadius: '50%',
-    },
-    volunteerName: {
-      color: 'white',
-      fontSize: '15px',
-      fontWeight: 600,
-      maxWidth: '130px',
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      textShadow: '0 1px 4px rgba(0,0,0,0.6)',
-    },
-    volunteerRole: {
-      color: '#ccc',
-      fontSize: '13px',
-      maxWidth: '130px',
-      textShadow: '0 1px 4px rgba(0,0,0,0.5)',
-    }
-  };
-
+    
+    x.set(xValue);
+  });
+  
   return (
-    <div style={styles.container} ref={containerRef}>
-      <div style={styles.headingContainer}>
-        <h2 style={styles.heading} className="font-mono ">Our Volunteers</h2>
-        <hr style={styles.separator} />
+    <div className="py-6 sm:py-8 md:py-10 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4">
+        <div className="flex justify-center w-full mb-3 sm:mb-4">
+          <h2 className="text-2xl sm:text-3xl font-bold text-black dark:text-white inline-block relative">
+            Our Volunteers
+            <div className="absolute -bottom-2 left-[20%] w-[60%] h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 rounded-full animate-gradient" style={{ backgroundSize: '200% 200%' }}></div>
+          </h2>
+        </div>
+        
+        {/* Container for scrolling volunteers */}
+        <div className="relative overflow-hidden" ref={containerRef}>
+          <motion.div 
+            className="flex items-center py-4" 
+            style={{ x }}
+            transition={{ type: "linear" }}
+          >
+            {allVolunteers.map((volunteer, index) => (
+              <motion.div 
+                key={`${volunteer.id}-${index}`} 
+                className="flex-shrink-0 mx-2 sm:mx-4"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.15 }}
+              >
+                <div className="flex flex-col items-center" style={{ width: '70px', maxWidth: '100%' }}>
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-blue-500 mb-1 sm:mb-2 shadow-md hover:shadow-blue-300 transition-shadow duration-300">
+                    <img 
+                      src={volunteer.image} 
+                      alt={volunteer.name} 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <p className="text-sm font-medium text-center text-gray-800 dark:text-gray-200">
+                    {volunteer.name}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
       </div>
-
-      {isLoaded &&
-        volunteers.map((volunteer, index) => {
-          const pos = positions[index];
-          return (
-            <div key={volunteer.id} style={{ ...styles.volunteerItem, left: pos.x, top: pos.y }}>
-              <div style={{ ...styles.volunteerAvatar, background: getRandomGradient(index) }}>
-                <div style={styles.avatarShine} />
-              </div>
-              <div style={styles.volunteerName}>{volunteer.name}</div>
-              <div style={styles.volunteerRole}>{volunteer.role}</div>
-            </div>
-          );
-        })}
     </div>
   );
 };
