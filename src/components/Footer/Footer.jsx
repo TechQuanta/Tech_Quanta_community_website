@@ -59,7 +59,7 @@ const Footer = () => {
 
   return (
     <footer
-      className={`font-space-grotesk px-6 sm:px-10 md:px-16 pt-6 pb-8 ${
+      className={`font-space-grotesk px-6 sm:px-10 md:px-16 pt-6 pb-8 justify-center items-center ${
         isDark ? "bg-transparent text-white" : "bg-gray-100 text-black"
       }`}
     >
@@ -99,10 +99,7 @@ const Footer = () => {
             </span>
           </div>
 
-          <div className="flex-1 text-center text-xs text-gray-500 md:text-sm md:text-left">
-            &copy; {new Date().getFullYear()} TechQuanta.{" "}
-            <span>Join the Revolution for Making Contribution..</span>
-          </div>
+          
 
           <div className="flex gap-4 text-xl justify-center md:justify-end flex-wrap">
             {socialIcons.map(({ icon, href }, idx) => (
@@ -119,6 +116,11 @@ const Footer = () => {
           </div>
         </div>
       </div>
+      <br/>
+       <div className=" text-xs text-gray-500 md:text-sm text-center">
+            &copy; {new Date().getFullYear()} TechQuanta.{" "}
+            <span>Join the Revolution for Making Contribution..</span>
+        </div>
     </footer>
   );
 };

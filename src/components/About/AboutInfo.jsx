@@ -27,7 +27,7 @@ const AboutInfo = () => {
 
   return (
     <section
-      className={`py-20 px-6 md:px-12 lg:px-24 font-space-grotesk transition-colors duration-300 ${
+      className={`py-6 max-w-full justify-center items-center  px-6 md:px-12 lg:px-24 font-space-grotesk transition-colors duration-300 ${
         isDark ? "bg-[#121212] text-white" : "bg-white text-black"
       }`}
     >

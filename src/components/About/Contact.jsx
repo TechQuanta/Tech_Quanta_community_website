@@ -111,7 +111,7 @@ const ContactForm = () => {
   }
 
   return (
-    <div className="min-h-[500px] flex items-center justify-center px-4">
+    <div className="h-screen  flex items-center justify-center px-4">
       <form
         onSubmit={handleFinalSubmit}
         className="group bg-transparent backdrop-blur w-full max-w-md p-8 space-y-8 rounded-xl border-none  transition-colors duration-300 "

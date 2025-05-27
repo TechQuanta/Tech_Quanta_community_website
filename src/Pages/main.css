@@ -5,7 +5,7 @@
 
 /* About Page Container */
 .about-container {
-  @apply min-h-screen bg-white text-black dark:bg-transparent dark:text-white pt-[100px];
+  @apply min-h-screen max-w-full bg-white text-black dark:bg-transparent dark:text-white ;
 }
 
 /* Loader Container for About Page */
