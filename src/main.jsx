@@ -39,27 +39,23 @@ function Main() {
   if (isLoading) {
     return (
       <div
-        className={`fixed inset-0 flex flex-col items-center justify-center overflow-hidden z-[9999] font-rajdhani text-center p-4
-          ${
-            theme === "dark"
-              ? "bg-[#121212] text-[#d1d5db]"
-              : "bg-white text-[#111827]"
-          }`}
+        className={`loader-container ${
+          theme === "dark" ? "loader-dark" : "loader-light"
+        }`}
       >
-        <div className="absolute inset-0 bg-[#00bfff0f] blur-[80px] -z-10" aria-hidden="true" />
-        <div className="absolute w-40 h-40 rounded-full bg-[#00bfff30] -z-20" aria-hidden="true" />
+        <div className="loader-blur-bg" aria-hidden="true" />
+        <div className="loader-glow-circle" aria-hidden="true" />
         <img
           src={memojiList[currentMemojiIndex]}
           alt="Loading Memoji"
-          className="w-24 h-24 object-contain rounded-full"
+          className="loader-image"
         />
-        <h1 className="mt-4 text-2xl font-semibold z-10 text-inherit">Tech Quanta</h1>
-        <p className="mt-1 text-base text-inherit z-10 leading-relaxed">
+        <h1 className="loader-title">Tech Quanta</h1>
+        <p className="loader-subtext">
           Empowering Open Source Minds
           <br />
           Code the Future. Sustain the Planet.
         </p>
-        <div className="w-2.5 h-2.5 bg-[#2ECC71] rounded-full mt-4 animate-pulseGlow z-10" />
       </div>
     );
   }
@@ -68,7 +64,7 @@ function Main() {
     <React.StrictMode>
       <RecoilRoot>
         <ThemeProvider>
-            <App />
+          <App />
         </ThemeProvider>
       </RecoilRoot>
     </React.StrictMode>

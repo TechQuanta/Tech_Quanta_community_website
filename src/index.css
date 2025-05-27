@@ -2,67 +2,55 @@
 @tailwind components;
 @tailwind utilities;
 
-/* src/index.css */
-
-
+/* Root Theme Variables */
 :root {
-  --background-color: #ffffff;
-  --background-color-dark: #121212;
-  --color-text-light: #111827;
-  --color-text-dark: #d1d5db;
-  --color-accent: #2ecc71;
+  --bg-light: #fff;
+  --bg-dark: #121212;
+  --text-light: #111827;
+  --text-dark: #d1d5db;
+  --accent: #2ecc71;
   scroll-behavior: smooth;
-   user-select: none;         /* Prevents accidental text selection */
-  -webkit-user-select: none; /* Safari */
-  caret-color: transparent;  /* Hides the blinking cursor */
-  outline: none !important;  /* Removes any focus border */
-  /* ... other variables */
+  user-select: none;
+  -webkit-user-select: none;
+  caret-color: transparent;
 }
 
-/* Use .dark class for manual dark mode override */
-.dark {
-  --background-color: var(--background-color-dark);
-  color: var(--color-text-dark);
-  background-color: var(--background-color-dark);
-}
-
+/* Body & Theme */
 body {
-  background-color: var(--background-color);
-  color: var(--color-text-light);
+  background: var(--bg-light);
+  color: var(--text-light);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+body.dark {
+  background: var(--bg-dark);
+  color: var(--text-dark);
 }
 
-/* When dark mode class is present, override */
-.dark body {
-  color: var(--color-text-dark);
-}
-
-@media (prefers-color-scheme: dark) {
-  body {
-    color: var(--color-text-dark);
-    background-color: var(--background-color-dark, #111827);
-  }
-}
-
+/* Links */
 a {
   font-weight: 500;
   color: #646cff;
-  text-decoration: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
 }
 a:hover {
   color: #535bf2;
 }
 
+/* Headings */
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
 
+/* Buttons */
 button {
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
-  background-color: #1a1a1a;
+  background: #1a1a1a;
+  color: #fff;
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -74,154 +62,164 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* Prefers-color-scheme */
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
-    background-color: #ffffff;
+    background-color: #fff;
   }
   a:hover {
     color: #747bff;
   }
   button {
-    background-color: #f9f9f9;
+    background: #f9f9f9;
   }
 }
-@keyframes diamondFloat {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-15px);
+@media (prefers-color-scheme: dark) {
+  body {
+    color: var(--text-dark);
+    background: var(--bg-dark);
   }
 }
-@keyframes pulse {
-  0%,
-  100% {
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  }
-  50% {
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
-  }
-}
+
+/* Volunteer Card */
 .volunteer-item {
   animation: diamondFloat 10s ease-in-out infinite;
-  transition: opacity 2s cubic-bezier(0.33, 0, 0, 1),
-    transform 2s cubic-bezier(0.33, 0, 0, 1), filter 0.3s ease;
+  transition: opacity 2s cubic-bezier(0.33,0,0,1), transform 2s cubic-bezier(0.33,0,0,1), filter 0.3s ease;
 }
 .volunteer-avatar {
-  background-repeat:no-repeat;
-  background-position:center;
-  background-size:cover;
+  background: center/cover no-repeat;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .volunteer-item:hover {
-  z-index: 100 !important;
+  z-index: 10;
   filter: brightness(1.1) saturate(1.1);
-  transition: transform 0.3s ease;
 }
 .volunteer-item:hover .volunteer-avatar {
-  transform: scale(1.1) !important;
-  transform: rotate(5deg);
-  box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8) !important;
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 20px 80px rgba(0,0,0,0.8);
 }
 .volunteer-item:hover .volunteer-name {
-  color: #fff !important;
-  font-size: 17px !important;
-  font-weight: 600 !important;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 600;
 }
 .volunteer-item:hover .volunteer-role {
-  color: #eee !important;
-  font-size: 15px !important;
-}
-@media (max-width: 1400px) {
-  .volunteer-avatar {
-    width: 100px !important;
-    height: 100px !important;
-  }
-  .volunteer-name {
-    font-size: 14px !important;
-  }
-  .volunteer-role {
-    font-size: 12px !important;
-  }
-}
-@media (max-width: 1024px) {
-  .volunteer-avatar {
-    width: 90px !important;
-    height: 90px !important;
-  }
-  .volunteer-name {
-    font-size: 13px !important;
-    max-width: 110px !important;
-  }
-  .volunteer-role {
-    font-size: 11px !important;
-    max-width: 110px !important;
-  }
-}
-@media (max-width: 768px) {
-  .volunteer-avatar {
-    width: 70px !important;
-    height: 70px !important;
-  }
-  .volunteer-name {
-    font-size: 12px !important;
-    max-width: 90px !important;
-  }
-  .volunteer-role {
-    font-size: 10px !important;
-    max-width: 90px !important;
-  }
-  .linkedin-icon {
-    width: 16px !important;
-    height: 16px !important;
-    font-size: 10px !important;
-  }
-}
-@media (max-width: 480px) {
-  .volunteer-avatar {
-    width: 60px !important;
-    height: 60px !important;
-  }
-  .volunteer-name {
-    font-size: 10px !important;
-    max-width: 70px !important;
-  }
-  .volunteer-role {
-    font-size: 9px !important;
-    max-width: 70px !important;
-  }
-  .linkedin-icon {
-    width: 14px !important;
-    height: 14px !important;
-    font-size: 8px !important;
-  }
-}
-.underline-slide {
-  position: relative;
-  color: #7c3aed; /* purple-600 */
-  cursor: pointer;
+  color: #eee;
+  font-size: 15px;
 }
 
+/* Responsive Scaling */
+@media (max-width: 1400px) {
+  .volunteer-avatar { width: 100px; height: 100px; }
+  .volunteer-name { font-size: 14px; }
+  .volunteer-role { font-size: 12px; }
+}
+@media (max-width: 1024px) {
+  .volunteer-avatar { width: 90px; height: 90px; }
+  .volunteer-name, .volunteer-role { max-width: 110px; }
+  .volunteer-name { font-size: 13px; }
+  .volunteer-role { font-size: 11px; }
+}
+@media (max-width: 768px) {
+  .volunteer-avatar { width: 70px; height: 70px; }
+  .volunteer-name, .volunteer-role { max-width: 90px; }
+  .volunteer-name { font-size: 12px; }
+  .volunteer-role { font-size: 10px; }
+  .linkedin-icon { width: 16px; height: 16px; font-size: 10px; }
+}
+@media (max-width: 480px) {
+  .volunteer-avatar { width: 60px; height: 60px; }
+  .volunteer-name, .volunteer-role { max-width: 70px; }
+  .volunteer-name { font-size: 10px; }
+  .volunteer-role { font-size: 9px; }
+  .linkedin-icon { width: 14px; height: 14px; font-size: 8px; }
+}
+
+/* Fancy Underline Link */
+.underline-slide {
+  position: relative;
+  color: #7c3aed;
+  cursor: pointer;
+}
 .underline-slide::after {
   content: "";
   position: absolute;
   bottom: 0;
-  left: 0;
+  left: 100%;
   height: 2px;
   width: 0;
-  background-color: currentColor;
+  background: currentColor;
   transition: width 0.3s ease, left 0.3s ease;
 }
-
 .underline-slide:hover::after {
   width: 100%;
   left: 0;
 }
 
-.underline-slide:not(:hover)::after {
-  width: 0;
-  left: 100%;
+/* Animations */
+@keyframes diamondFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+  50% { box-shadow: 0 12px 30px rgba(0,0,0,0.5); }
 }
 
+/* Loader */
+.loader-container {
+  @apply fixed inset-0 flex flex-col items-center justify-center overflow-hidden z-[9999] font-rajdhani text-center p-4;
+}
+.loader-dark {
+  @apply bg-[#121212] text-[#d1d5db];
+}
+.loader-light {
+  @apply bg-white text-[#111827];
+}
+.loader-blur-bg {
+  @apply absolute inset-0 -z-10 bg-[rgba(0,191,255,0.06)] ;
+}
+.loader-glow-circle {
+  @apply absolute w-40 h-40 rounded-full -z-20 bg-[rgba(0,191,255,0.188)];
+}
+.loader-image {
+  @apply w-24 h-24 object-contain rounded-full;
+}
+.loader-title {
+  @apply mt-4 text-xl font-semibold z-10 text-inherit;
+}
+.loader-subtext {
+  @apply mt-1 text-base z-10 leading-relaxed text-inherit;
+}
+
+/* About Section */
+.about-container {
+  @apply min-h-screen bg-white text-black dark:bg-transparent dark:text-white pt-[100px];
+}
+.about-loader {
+  @apply flex items-center justify-center min-h-screen bg-white text-black dark:bg-[#121212] dark:text-[#d1d5db];
+}
+
+/* Leaderboard Responsive */
+@media (max-width: 768px) {
+  .leaderboard-container {
+    padding: 3rem 1.5rem;
+  }
+  .leaderboard-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .leaderboard-title {
+    text-align: center;
+    min-width: unset;
+    font-size: 1.75rem;
+  }
+  .search-bar-wrapper {
+    width: 100%;
+  }
+  .filter-controls {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

@@ -1,0 +1,90 @@
+/* CoreTeam.tailwind.css */
+
+.coreteam-container {
+  @apply relative w-screen py-[120px] bg-transparent rounded-[25px] text-white overflow-hidden;
+  
+}
+
+/* Heading container */
+.coreteam-heading-container {
+  @apply absolute top-5 left-1/2 -translate-x-1/2 text-center z-20;
+}
+
+.coreteam-heading {
+  @apply font-bold text-[50px] font-space-grotesk;
+  
+  /* default light theme color */
+  color: black;
+}
+
+.coreteam-heading.dark {
+  @apply text-white;
+}
+
+.coreteam-heading.light {
+  @apply text-black;
+}
+
+.coreteam-separator {
+  @apply border-0 h-[2px] w-[100px] mx-auto my-3;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Bubble volunteer layout for desktop */
+.volunteer-item {
+  @apply absolute flex flex-col items-center text-center transition-all duration-[2000ms] ease-[cubic-bezier(0.33,0,0,1)] cursor-pointer z-10 select-none;
+}
+
+.volunteer-avatar {
+  @apply rounded-[30%] overflow-hidden w-full h-full;
+}
+
+.volunteer-image {
+  @apply w-full h-full object-cover  duration-300 ease-in-out ;
+}
+
+/* Volunteer name and role */
+.volunteer-name {
+  @apply  font-extrabold mt-2  leading-[1.3] ;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  
+}
+
+.volunteer-role {
+  @apply text-[10px]  opacity-80 ;
+}
+
+/* Grid layout for mobile */
+.coreteam-mobile-grid {
+  @apply grid grid-cols-[repeat(auto-fill,minmax(100px,1fr))] gap-4 justify-center  py-[100px]  ;
+}
+
+/* Mobile card styling */
+.coreteam-mobile-card {
+  @apply flex flex-col items-center text-center rounded-[25px] transition-transform duration-300 ease-in-out ;
+}
+.coreteam-mobile-card .volunteer-name{
+    font-size:small;
+}
+.coreteam-mobile-card:hover {
+  @apply -translate-y-1;
+}
+
+/* Theme adjustments */
+.light-theme .volunteer-name,
+.light-theme .volunteer-role {
+  @apply text-black;
+}
+
+.dark-theme .volunteer-name,
+.dark-theme .volunteer-role {
+  @apply text-white;
+}
+
+.light-theme .volunteer-image {
+  filter: drop-shadow(0 0 3px #007fff);
+}
+
+.dark-theme .volunteer-image {
+  filter: drop-shadow(0 0 3px #0af);
+}

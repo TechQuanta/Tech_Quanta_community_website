@@ -1,11 +1,7 @@
 // src/AppRoutes.jsx
 import React from "react";
 import { createBrowserRouter } from "react-router-dom";
-
-// Layout wrapper to include Header/Footer
 import Layout from "../Layout/Layout";
-
-// Pages
 import Home from "../pages/Home";
 import About from "../pages/About";
 import CommunityWork from "../pages/CommunityWork";

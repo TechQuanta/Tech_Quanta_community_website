@@ -2,32 +2,30 @@
 import React, { useEffect, useState } from "react";
 import AboutInfo from "../components/About/AboutInfo";
 import Contact from "../components/About/Contact";
-import Loading from "../components/ui/loader"; // Adjust path if different
+import Loading from "../components/ui/loader";
+import "./main.css"; // Ensure you have the correct path to your main.css
 
 const About = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const handleContentReady = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
-
-    return () => clearTimeout(handleContentReady);
+    const timeout = setTimeout(() => setIsLoading(false), 1500);
+    return () => clearTimeout(timeout);
   }, []);
 
+  if (isLoading) {
+    return (
+      <div className="about-loader">
+        <Loading />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen transition-colors duration-300 mt-[100px] bg-white text-black dark:bg-transparent dark:text-white">
-      {isLoading ? (
-        <div className="flex items-center justify-center min-h-[calc(100vh-100px)]">
-          <Loading message="Running Quantum Scripts..." />
-        </div>
-      ) : (
-        <>
-          <AboutInfo />
-          <Contact />
-        </>
-      )}
-    </div>
+    <main className="about-container">
+      <AboutInfo />
+      <Contact />
+    </main>
   );
 };
 

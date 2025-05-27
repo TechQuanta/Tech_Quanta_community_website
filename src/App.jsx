@@ -3,7 +3,6 @@ import React from "react";
 import { RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 import { ThemeProvider } from "./context/ThemeContext";
 import router from "./routes/AppRoutes"; // Import router created with createBrowserRouter
 

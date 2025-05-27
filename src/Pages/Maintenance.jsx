@@ -1,6 +1,5 @@
 import React from "react";
 import Maintenance from "../components/ui/error";
-// import maintenanceImg from "../assets/maintenance.png"; // Your image here
 
 const MaintenancePage = () => {
     const maintenanceimage='/Maintenance.gif'

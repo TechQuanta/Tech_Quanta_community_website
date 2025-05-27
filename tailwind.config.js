@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   darkMode: "class",
   content: ['./src/**/*.{html,js,jsx,ts,tsx}'],
   theme: {
@@ -7,13 +7,13 @@ export default {
         rajdhani: ['Rajdhani', 'sans-serif'],
         exo2: ['"Exo 2"', 'sans-serif'],
         mono: ['"Fira Mono"', 'monospace'],
-        'space-grotesk': ['"Space Grotesk"', 'sans-serif'], // added for loader
+        'space-grotesk': ['"Space Grotesk"', 'sans-serif'],
       },
       colors: {
         primary: '#1DA1F2',
         secondary: '#14171A',
-        'tech-green': '#2ECC71',           // for glow-pulse
-        'tech-blue-light': '#00bfff30',    // for shine-ring
+        'tech-green': '#2ECC71',
+        'tech-blue-light': '#00bfff30',
       },
       keyframes: {
         floatY: {
@@ -38,4 +38,3 @@ export default {
   },
   plugins: [],
 };
-

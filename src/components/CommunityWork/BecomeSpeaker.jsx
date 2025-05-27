@@ -28,7 +28,14 @@ const BecomeSpeakerSection = () => {
         </h2>
 
         {/* Description */}
-        <p className="text-lg sm:text-xl text-gray-700 dark:text-gray-300 leading-relaxed  font-space-grotesk">
+        <p
+          className="
+            text-lg sm:text-xl 
+            text-gray-700 dark:text-gray-300 
+            leading-relaxed  
+            font-space-grotesk
+          "
+        >
           Share your expertise and passion with a vibrant community by hosting
           workshops, sessions, or talks. Whether you're an industry professional,
           educator, or enthusiast, this is your opportunity to inspire others,
@@ -51,21 +58,30 @@ const BecomeSpeakerSection = () => {
           <img
             src="/BecomeSpeakerBanner.png"
             alt="Become a Speaker Banner"
-            className="w-full h-auto object-cover max-h-auto"
+            className="w-full h-auto object-cover"
           />
 
-          {/* Desktop Overlay CTA */}
-          <div className="hidden md:flex absolute inset-0 justify-end items-center  sp-6 md:p-10 bg-gradient-to-b from-black/0 to-black/0 backdrop-blur-[1px]">
+          {/* Desktop CTA Overlay */}
+          <div
+            className="
+              hidden md:flex 
+              absolute inset-0 
+              justify-end items-center 
+              md:p-10 
+              bg-gradient-to-b from-black/0 to-black/0 
+              backdrop-blur-[1px]
+            "
+          >
             <button
               className="
-                px-6 py-3
+                px-4 py-3
                 bg-gradient-to-r from-primary to-tech-green
                 hover:from-tech-black hover:to-primary
                 text-white font-semibold tracking-wide
                 rounded-md
-                border-none
                 transition-all duration-300 ease-in-out
-                transform hover:scale-105 animate-pulseGlow
+                transform hover:scale-105 
+                animate-pulseGlow
                 focus:outline-none focus:ring-4 focus:ring-primary focus:ring-opacity-60
               "
               aria-label="Host a Workshop or Session"
@@ -81,35 +97,33 @@ const BecomeSpeakerSection = () => {
           </div>
         </div>
 
-        {/* Mobile CTA (appears below image) */}
+        {/* Mobile CTA Button */}
         <div className="flex md:hidden justify-center mt-6">
           <button
-  className="
-    w-full max-w-md
-    px-6 py-4
-
-    bg-gradient-to-r from-primary to-tech-green
-    hover:from-tech-green hover:to-primary
-    text-white font-semibold text-lg tracking-wide
-    rounded-full
-    shadow-[0_0_20px_#2ECC71]
-    dark:shadow-[0_0_25px_#00bfff]
-    transition-all duration-300 ease-in-out
-    transform hover:scale-105
-    animate-pulseGlow
-    focus:outline-none focus:ring-4 focus:ring-primary focus:ring-opacity-60
-  "
-  aria-label="Host a Workshop or Session"
-  onClick={() =>
-    window.open(
-      "https://docs.google.com/forms/d/e/1FAIpQLSevjGT1Nh8mNyc8MBovZn3EX1X_9P85OmozpJTe6edUkRpPDw/viewform?usp=header",
-      "_blank"
-    )
-  }
->
-  🎤 Host a Workshop or Session
-</button>
-
+            className="
+              w-[220px]
+              px-3 py-2
+              bg-gradient-to-r from-primary to-tech-green
+              hover:from-tech-green hover:to-primary
+              text-white font-medium text-sm tracking-wide
+              rounded-full
+              shadow-[0_0_12px_#2ECC71]
+              dark:shadow-[0_0_15px_#00bfff]
+              transition-all duration-300 ease-in-out
+              transform hover:scale-105
+              animate-pulseGlow
+              focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50
+            "
+            aria-label="Host a Workshop or Session"
+            onClick={() =>
+              window.open(
+                "https://docs.google.com/forms/d/e/1FAIpQLSevjGT1Nh8mNyc8MBovZn3EX1X_9P85OmozpJTe6edUkRpPDw/viewform?usp=header",
+                "_blank"
+              )
+            }
+          >
+            🎤 Host Workshop
+          </button>
         </div>
       </div>
     </section>
