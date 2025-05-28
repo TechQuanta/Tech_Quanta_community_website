@@ -1,23 +1,17 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import teamdetails from './teamdetails';  // default import (your array of volunteers)
+import teamdetails from './teamdetails';  // your array of volunteers
 import './landing.css';
 
 const CoreTeam = () => {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [containerSize, setContainerSize] = useState({ width: window.innerWidth, height: window.innerHeight });
   const containerRef = useRef(null);
-  const [theme, setTheme] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const [containerSize, setContainerSize] = useState({ width: window.innerWidth, height: window.innerHeight });
+  const [theme, setTheme] = useState(() => (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
   const isMobile = containerSize.width <= 768;
-  const [teamData, setTeamData] = useState([]);
 
-  // Load team data on mount (simulate async import if you want)
-  useEffect(() => {
-    // Since teamdetails is an array, just set it directly.
-    // If teamdetails was a Promise, you can await or .then()
-    setTeamData(teamdetails);
-  }, []);
+  // Load team data once
+  const teamData = useMemo(() => teamdetails, []);
 
-  // Listen to dark mode changes
+  // Listen to dark mode changes once
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleThemeChange = (e) => setTheme(e.matches ? 'dark' : 'light');
@@ -25,31 +19,23 @@ const CoreTeam = () => {
     return () => mediaQuery.removeEventListener('change', handleThemeChange);
   }, []);
 
-  // Track window resize
+  // Throttled window resize handler (updates max once every 150ms)
   useEffect(() => {
+    let timeoutId = null;
     const updateSize = () => {
-      setContainerSize({ width: window.innerWidth, height: window.innerHeight });
+      if (timeoutId) return;
+      timeoutId = setTimeout(() => {
+        setContainerSize({ width: window.innerWidth, height: window.innerHeight });
+        timeoutId = null;
+      }, 150);
     };
     window.addEventListener('resize', updateSize);
-    return () => window.removeEventListener('resize', updateSize);
+    return () => {
+      window.removeEventListener('resize', updateSize);
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, []);
 
-  // Intersection observer to trigger animation or load effects
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsLoaded(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.3 }
-    );
-    if (containerRef.current) observer.observe(containerRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  // Bubble size logic
   const getBubbleSize = (width) => {
     if (width <= 480) return 80;
     if (width <= 768) return 90;
@@ -60,16 +46,14 @@ const CoreTeam = () => {
 
   const bubbleSize = useMemo(() => getBubbleSize(containerSize.width), [containerSize.width]);
 
-  // Adjust pattern for rows based on number of team members
   const adjustedPattern = useMemo(() => {
     const pattern = [3, 2, 5, 2, 3];
     let adjusted = [];
     let total = 0;
     for (let i = 0; i < pattern.length && total < teamData.length; i++) {
       const remaining = teamData.length - total;
-      const current = Math.min(pattern[i], remaining);
-      adjusted.push(current);
-      total += current;
+      adjusted.push(Math.min(pattern[i], remaining));
+      total += pattern[i];
     }
     return adjusted;
   }, [teamData.length]);
@@ -79,7 +63,7 @@ const CoreTeam = () => {
   const totalHeight = (rows - 1) * verticalSpacing + 70;
   const requiredHeight = totalHeight + bubbleSize * 2 + 100;
 
-  // Calculate positions for each volunteer
+  // Calculate fixed offsets to avoid layout jitter from random numbers
   const positions = useMemo(() => {
     const horizontalSpacing = Math.min(160, containerSize.width * 0.12);
     const startY = (requiredHeight - totalHeight) / 2 + 80;
@@ -90,6 +74,7 @@ const CoreTeam = () => {
       const rowWidth = (rowCount - 1) * horizontalSpacing;
       const startX = (containerSize.width - rowWidth) / 2;
 
+      // Determine direction for animation or class usage
       let direction;
       if (rowIndex === 0) direction = 'from-top';
       else if (rowIndex === adjustedPattern.length - 1) direction = 'from-bottom';
@@ -97,13 +82,16 @@ const CoreTeam = () => {
       else direction = rowIndex % 2 === 1 ? 'from-right' : 'from-left';
 
       for (let colIndex = 0; colIndex < rowCount && volunteerIndex < teamData.length; colIndex++) {
-        const x = startX + colIndex * horizontalSpacing - 46;
-        const y = startY + rowIndex * verticalSpacing - 60;
-        const randomX = x + (Math.random() - 0.5) * 10;
-        const randomY = y + (Math.random() - 0.5) * 15;
+        const baseX = startX + colIndex * horizontalSpacing - 46;
+        const baseY = startY + rowIndex * verticalSpacing - 60;
+
+        // Stable offset based on index to avoid layout jitter on re-render
+        const offsetX = ((volunteerIndex * 13) % 11) - 5; // -5 to +5 px
+        const offsetY = ((volunteerIndex * 17) % 13) - 6; // -6 to +6 px
+
         positions.push({
-          x: Math.max(bubbleSize / 2, Math.min(randomX, containerSize.width - bubbleSize / 2)),
-          y: Math.max(bubbleSize / 2, Math.min(randomY, requiredHeight - bubbleSize / 2)),
+          x: Math.max(bubbleSize / 2, Math.min(baseX + offsetX, containerSize.width - bubbleSize / 2)),
+          y: Math.max(bubbleSize / 2, Math.min(baseY + offsetY, requiredHeight - bubbleSize / 2)),
           direction,
           row: rowIndex,
           col: colIndex,
@@ -132,7 +120,7 @@ const CoreTeam = () => {
           {teamData.map((v) => (
             <div key={v.id} className="coreteam-mobile-card">
               <div className="volunteer-avatar" style={{ width: bubbleSize, height: bubbleSize }}>
-                <img src={v.image} className="volunteer-image" alt={v.name} />
+                <img src={v.image} alt={v.name} className="volunteer-image" loading="lazy" />
               </div>
               <div className="volunteer-name">{v.name}</div>
               <div className="volunteer-role">{v.role}</div>
@@ -151,9 +139,10 @@ const CoreTeam = () => {
                 left: p?.x,
                 position: 'absolute',
               }}
+              data-direction={p?.direction}
             >
               <div className="volunteer-avatar" style={{ width: bubbleSize, height: bubbleSize }}>
-                <img src={v.image} className="volunteer-image" alt={v.name} />
+                <img src={v.image} alt={v.name} className="volunteer-image" loading="lazy" />
               </div>
               <div className="volunteer-name">{v.name}</div>
               <div className="volunteer-role">{v.role}</div>

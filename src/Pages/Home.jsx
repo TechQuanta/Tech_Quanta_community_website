@@ -1,10 +1,10 @@
-// src/pages/Home.jsx
-import React, { useEffect, useState } from "react";
-import { HoverBorderGradient } from './../components/ui/hover-border-gradient';
-import CoreTeam from "../components/LandingPage/CoreTeam";
+import React, { useEffect, useState, useMemo, lazy, Suspense } from "react";
+import { HoverBorderGradient } from "../components/ui/hover-border-gradient";
 import { HeroHighlight } from "../components/ui/hero-highlight";
-import Partners from "../components/LandingPage/Partners";
 import "./main.css";
+
+const CoreTeam = lazy(() => import("../components/LandingPage/CoreTeam"));
+const Partners = lazy(() => import("../components/LandingPage/Partners"));
 
 const words = [
   'Developers', 'Students', 'Professionals', 'Engineers', 'Researchers',
@@ -18,13 +18,24 @@ const Home = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setIsAnimating(true);
-      setTimeout(() => {
-        setCurrentWord((prev) => (prev + 1) % words.length);
-        setIsAnimating(false);
-      }, 500);
+      setCurrentWord((prev) => (prev + 1) % words.length);
     }, 2000);
-    return () => clearInterval(interval);
+
+    const resetAnim = setInterval(() => {
+      setIsAnimating(false);
+    }, 2500);
+
+    return () => {
+      clearInterval(interval);
+      clearInterval(resetAnim);
+    };
   }, []);
+
+  const animatedWord = useMemo(() => words[currentWord], [currentWord]);
+
+  const handleExplore = () => {
+    window.location.href = "/community-work";
+  };
 
   return (
     <div className="home-page">
@@ -36,21 +47,19 @@ const Home = () => {
                 Online Sessions & Workshops <span className="inline-block">For</span>
                 <div className="home-hero-animated-word-container">
                   <span
-                    className={`home-hero-animated-word ${
-                      isAnimating
+                    className={`home-hero-animated-word ${isAnimating
                         ? "home-hero-animated-word-exit"
                         : "home-hero-animated-word-enter"
-                    }`}
+                      }`}
                   >
-                    {words[currentWord]}
+                    {animatedWord}
                   </span>
                   <span
-                    className={`home-hero-animated-bg ${
-                      isAnimating
+                    className={`home-hero-animated-bg ${isAnimating
                         ? "home-hero-animated-bg-exit"
                         : "home-hero-animated-bg-enter"
-                    }`}
-                    style={{ borderRadius: '8px', transformOrigin: 'center' }}
+                      }`}
+                    style={{ borderRadius: '8px' }}
                   />
                 </div>
               </h1>
@@ -63,7 +72,7 @@ const Home = () => {
                   containerClassName="rounded-full w-full sm:w-auto font-exo2"
                   as="button"
                   className="dark:bg-black bg-transparent flex items-center justify-center space-x-2 px-6 py-3 text-sm cursor-pointer w-full"
-                  onClick={() => window.open("/community-work")}
+                  onClick={handleExplore}
                 >
                   <span>Upcoming Events !</span>
                 </HoverBorderGradient>
@@ -71,7 +80,7 @@ const Home = () => {
                   containerClassName="rounded-full w-full sm:w-auto"
                   as="button"
                   className="bg-gradient-to-r from-blue-600 font-exo2 to-blue-500 text-white flex items-center justify-center space-x-2 px-6 py-3 text-sm backdrop-blur-md cursor-pointer w-full"
-                  onClick={() => (window.location.href = "/community-work")}
+                  onClick={handleExplore}
                 >
                   <span>Explore</span>
                 </HoverBorderGradient>
@@ -83,10 +92,14 @@ const Home = () => {
 
       <section className="home-core-team-section">
         <div className="home-core-team-wrapper">
-          <CoreTeam />
+          <Suspense fallback={<div>Loading Team...</div>}>
+            <CoreTeam />
+          </Suspense>
         </div>
         <div className="home-partners-wrapper">
-          <Partners />
+          <Suspense fallback={<div>Loading Partners...</div>}>
+            <Partners />
+          </Suspense>
         </div>
       </section>
     </div>
