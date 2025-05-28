@@ -4,15 +4,22 @@ import { RecoilRoot } from "recoil";
 import App from "./App";
 import { ThemeProvider } from "./context/ThemeContext";
 import "./index.css";
+import memoji1 from "./assets/memoji1.webp";
+import memoji2 from "./assets/memoji2.webp";
+import memoji3 from "./assets/memoji3.webp";
+import memoji4 from "./assets/memoji4.webp";
+import memoji5 from "./assets/memoji5.webp";
+import memoji6 from "./assets/memoji6.webp";
+import memoji7 from "./assets/memoji7.webp";
 
 const memojiList = [
-  "/memoji1.webp",
-  "/memoji2.webp",
-  "/memoji3.webp",
-  "/memoji4.webp",
-  "/memoji5.webp",
-  "/memoji6.webp",
-  "/memoji7.webp",
+  memoji1,
+  memoji2,
+  memoji3,
+  memoji4,
+  memoji5,
+  memoji6,
+  memoji7,
 ];
 
 function Main() {
@@ -39,9 +46,8 @@ function Main() {
   if (isLoading) {
     return (
       <div
-        className={`loader-container ${
-          theme === "dark" ? "loader-dark" : "loader-light"
-        }`}
+        className={`loader-container ${theme === "dark" ? "loader-dark" : "loader-light"
+          }`}
       >
         <div className="loader-blur-bg" aria-hidden="true" />
         <div className="loader-glow-circle" aria-hidden="true" />
