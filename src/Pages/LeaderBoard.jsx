@@ -1,10 +1,11 @@
-import { useGitHubLeaderboardData } from "../hooks/GraphQlQuery";
 import React, { useState, useMemo, useEffect, useRef } from "react";
-import { FaFilter } from "react-icons/fa";
-import Loading from "../components/ui/loader";
-import "./leaderboard.css";
+// import { FaFilter } from "react-icons/fa"; // No longer needed as it's replaced by inline SVG
+import Loading from "../components/ui/loader"; // Assuming this path is correct
+import { useGitHubLeaderboardData } from "../hooks/GraphQlQuery"; // Explicit .js extension for the main hook
+import "./leaderboard.css"; // Ensure you have the correct path to your leaderboard.css
 import "./main.css"; // Ensure you have the correct path to your main.css
 
+// Assets (adjust paths if your assets are not directly under the root of your project)
 import SearchImg1 from "../assets/SearchIMg1.gif";
 import SearchImg2 from "../assets/SearchIMG2.gif";
 import SearchImg3 from "../assets/SearchIMG3.gif";
@@ -48,7 +49,7 @@ function getBadgeIndexByScore(score) {
   return 5;
 }
 
-export default function Leaderboard() {
+export default function App() {
   const {
     userStats,
     loading,
@@ -57,6 +58,7 @@ export default function Leaderboard() {
     loadingFilter,
     showActiveMembers,
     showAllMembers,
+    allDataNull,
   } = useGitHubLeaderboardData();
 
   const [search, setSearch] = useState("");
@@ -88,6 +90,7 @@ export default function Leaderboard() {
       if (!searchRef.current) return;
       if (!ticking) {
         window.requestAnimationFrame(() => {
+          // Check if search bar's top is at or above 10px from viewport top
           setIsSticky(searchRef.current.getBoundingClientRect().top <= 10);
           ticking = false;
         });
@@ -114,11 +117,16 @@ export default function Leaderboard() {
 
   if (loading)
     return (
-      <div className="leaderboard-loading-screen">
-        <Loading />
+      <div className="leaderboard-loading-screen h-screen flex justify-center items-center">
+        <Loading message="Compiling....." />
       </div>
     );
-  if (error) return <div className="leaderboard-error-screen">{error}</div>;
+  if (error)
+    return (
+      <div className="leaderboard-error-screen text-red-500 text-center py-8">
+        {error}
+      </div>
+    );
 
   const searchedUser = filteredSortedUsers[0] || null;
 
@@ -126,7 +134,9 @@ export default function Leaderboard() {
     <div className="leaderboard-container">
       <div
         ref={searchRef}
-        className={`leaderboard-header ${isSticky ? "leaderboard-header-sticky" : ""}`}
+        className={`leaderboard-header ${
+          isSticky ? "leaderboard-header-sticky" : ""
+        }`}
       >
         <div className="leaderboard-feature-buttons">
           {featureButtons.map(({ label, color, border }, i) => {
@@ -135,7 +145,10 @@ export default function Leaderboard() {
               <div
                 key={label}
                 className={`feature-button ${color} ${border}`}
-                style={{ transform: `rotate(${rotation}deg)`, perspective: "1000px" }}
+                style={{
+                  transform: `rotate(${rotation}deg)`,
+                  perspective: "1000px",
+                }}
               >
                 <div className="feature-button-inner">{label}</div>
               </div>
@@ -152,6 +165,10 @@ export default function Leaderboard() {
               alt="Rotating search"
               className="search-rotating-image"
               loading="lazy"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = "https://placehold.co/40x40/cccccc/333333?text=IMG";
+              }}
             />
             <input
               type="text"
@@ -177,7 +194,7 @@ export default function Leaderboard() {
             </select>
 
             <button
-              disabled={!filterActive}
+              disabled={!filterActive || loadingFilter}
               onClick={showAllMembers}
               className="filter-button show-all-button"
               type="button"
@@ -186,13 +203,24 @@ export default function Leaderboard() {
             </button>
 
             <button
-              disabled={loadingFilter}
+              disabled={filterActive || loadingFilter}
               onClick={showActiveMembers}
               className="filter-button active-filter-button"
               aria-label="Filter active members"
               type="button"
             >
-              <FaFilter />
+              {loadingFilter ? (
+                <div className="spinner"></div>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512"
+                  fill="currentColor"
+                  className="w-4 h-4 inline-block"
+                >
+                  <path d="M3.9 54.9C10.5 45.4 22.3 40 34.5 40H477.5c12.2 0 24 5.4 30.6 14.9s6.6 22.1 0 31.6l-139.7 201.2c-3.1 4.4-4.8 9.6-4.8 15.1V448h-80V302.7c0-5.5-1.7-10.7-4.8-15.1L3.9 86.5c-6.6-9.6-6.6-22.1 0-31.6z" />
+                </svg>
+              )}
             </button>
           </div>
         </div>
@@ -210,7 +238,9 @@ export default function Leaderboard() {
           backgroundColor: isSticky ? "rgba(255,255,255,0.8)" : "transparent",
           backdropFilter: isSticky ? "blur(6px)" : "none",
         }}
-        className={`search-result-card-container ${isSticky ? "sticky-active" : ""}`}
+        className={`search-result-card-container ${
+          isSticky ? "sticky-active" : ""
+        }`}
       >
         {debouncedSearch && searchedUser ? (
           <div className="search-result-card">
@@ -219,48 +249,81 @@ export default function Leaderboard() {
               alt={`${searchedUser.username} avatar`}
               className="search-result-avatar"
               loading="lazy"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = "https://placehold.co/80x80/cccccc/333333?text=N/A";
+              }}
             />
             <div className="search-result-info">
               <h2>{searchedUser.username}</h2>
               <p>
-                Score: {searchedUser.score} | Repos: {searchedUser.repositories} | Commits:{" "}
+                Score: {searchedUser.score} | Repos:{" "}
+                {searchedUser.reposContributed} | Commits:{" "}
                 {searchedUser.commits} | PRs: {searchedUser.pullRequests}
               </p>
+              {searchedUser.techquantaCommits > 0 && (
+                <p className="techquanta-contributions">
+                  TechQuanta Commits: {searchedUser.techquantaCommits}
+                </p>
+              )}
             </div>
           </div>
         ) : debouncedSearch ? (
           <div className="no-user-found">No user found...</div>
         ) : null}
       </div>
-      <div class="users-scroll-container mb-20">
-      <div className="users-list-grid">
-        {filteredSortedUsers.map((user, index) => {
-          const badgeIndex = getBadgeIndexByScore(user.score);
-          const badge = badges[badgeIndex];
-          return (
-            <div key={user.username} className="user-card">
-              <img
-                src={user.avatar}
-                alt={`${user.username} avatar`}
-                className="user-card-avatar"
-                loading="lazy"
-              />
-              <div className="user-card-details">
-                <h3 className="user-card-username">{user.username}</h3>
-                <p className="user-card-score">Score: {user.score}</p>
-                <div className="user-card-badges">
+      <div className="users-scroll-container mb-20">
+        <div className="users-list-grid">
+          {filteredSortedUsers.length > 0 ? (
+            filteredSortedUsers.map((user, index) => {
+              const badgeIndex = getBadgeIndexByScore(user.score);
+              const badge = badges[badgeIndex];
+              return (
+                <div key={user.username} className="user-card">
                   <img
-                    src={badge.src}
-                    alt={badge.name}
-                    className="badge-icon"
+                    src={user.avatar}
+                    alt={`${user.username} avatar`}
+                    className="user-card-avatar"
                     loading="lazy"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "https://placehold.co/100x100/cccccc/333333?text=N/A";
+                    }}
                   />
+                  <div className="user-card-details">
+                    <h3 className="user-card-username">{user.username}</h3>
+                    <p className="user-card-score">Score: {user.score}</p>
+                    {filterActive && user.techquantaCommits > 0 && (
+                      <p className="user-card-techquanta-commits">
+                        TQ Commits: {user.techquantaCommits}
+                      </p>
+                    )}
+                    <div className="user-card-badges">
+                      <img
+                        src={badge.src}
+                        alt={badge.name}
+                        className="badge-icon"
+                        loading="lazy"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "https://placehold.co/40x40/cccccc/333333?text=Badge";
+                        }}
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
+              );
+            })
+          ) : (
+            <div className="no-users-display">
+              {allDataNull
+                ? "No data available."
+                : filterActive
+                ? "No active TechQuanta contributors found."
+                : "No users found based on your search/filters."}
             </div>
-          );
-        })}
-      </div>
+          )}
+        </div>
       </div>
     </div>
   );

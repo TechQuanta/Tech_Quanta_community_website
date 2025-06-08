@@ -1,21 +1,38 @@
-// volunteers.js
+// src/data/volunteers.js
 
-const Teamdetails = [
-  { id: 1, name: "Dipesh Sahu", role: "Graphics Designer", image: "/profiles/sahudipesh.png" },
-  { id: 2, name: "Karan Kose", role: "MERN/React Native Developer", image: "/profiles/karankose.webp" },
-  { id: 3, name: "Vishal Chourdhary", role: "Java Developer", image: "/profiles/choudharyvishal.png" },
-  { id: 4, name: "Agrim Jain", role: "Data Scientist", image: "/profiles/jainagrim.webp" },
-  { id: 5, name: "Arsh Choudhary", role: "Full Stack Engineer", image: "/profiles/choudharyarsh.webp" },
-  { id: 6, name: "Jayesh Tapadiya", role: "Full Stack Developer", image: "/profiles/tapadiyajayesh.webp" },
-  { id: 7, name: "Himanshu Sahu", role: "Data Scientist", image: "/profiles/sahuhimanshu.webp" },
-  { id: 8, name: "Ashmeet Singh", role: "Data Engineer", image: "/profiles/singashmeet.webp" },
-  { id: 9, name: "Balram Dhakad", role: "Full Stack Developer", image: "/profiles/dhakadbalram.webp" },
-  { id: 10, name: "Kishan Rathore", role: ".Net Developer", image: "/profiles/rathorekishan.jpg" },
-  { id: 11, name: "Shailendra Singh Panwar", role: "Full stack developer", image: "/profiles/panwarshailendra.png" },
-  { id: 12, name: "Deepak Rathore", role: "Java Developer", image: "/profiles/deepak.png" },
-  { id: 13, name: "Maya Patel", role: "Operations", image: "memoji.webp" },
-  { id: 14, name: "Nick Thompson", role: "Tech Lead", image: "memoji.webp" },
-  { id: 15, name: "Olivia Garcia", role: "Designer", image: "memoji.webp" },
+import sahuDipesh from '../../assets/profiles/sahudipesh.png';
+import karanKose from '../../assets/profiles/karankose.webp';
+import vishalChourdhary from '../../assets/profiles/choudharyvishal.png';
+import agrimJain from '../../assets/profiles/jainagrim.webp';
+import arshChoudhary from '../../assets/profiles/choudharyarsh.webp';
+import jayeshTapadiya from '../../assets/profiles/tapadiyajayesh.webp';
+import himanshuSahu from '../../assets/profiles/sahuhimanshu.webp';
+import ashmeetSingh from '../../assets/profiles/singashmeet.webp';
+import balramDhakad from '../../assets/profiles/dhakadbalram.webp';
+import kishanRathore from '../../assets/profiles/rathorekishan.jpg';
+import shailendraSinghPanwar from '../../assets/profiles/panwarshailendra.png';
+import ajbepratik from '../../assets/profiles/ajbepratik.png';
+import deepakRathore from '../../assets/profiles/deepak.png';
+import anirudhagune from '../../assets/profiles/ani.webp';
+// import memoji from '../../assets/memoji.webp';
+
+const TeamDetails = [
+  { id: 1, name: "Dipesh Sahu", image: sahuDipesh },
+  { id: 2, name: "Karan Kose", image: karanKose },
+  { id: 3, name: "Vishal Chourdhary",image: vishalChourdhary },
+  { id: 4, name: "Pratik Ajbe",  image: ajbepratik },
+  { id: 5, name: "Arsh Choudhary", image: arshChoudhary },
+  { id: 6, name: "Jayesh Tapadiya", image: jayeshTapadiya },
+  { id: 7, name: "Himanshu Sahu", image: himanshuSahu },
+  { id: 8, name: "Ashmeet Singh", image: ashmeetSingh },
+  { id: 9, name: "Balram Dhakad",  image: balramDhakad },
+  { id: 10, name: "Kishan Rathore",  image: kishanRathore },
+  { id: 11, name: "Shailendra Singh Panwar", image: shailendraSinghPanwar },
+  { id: 12, name: "Agrim Jain",  image: agrimJain },
+  { id: 13, name: "Deepak Rathore", image: deepakRathore },
+  { id: 14, name: "Anirudha Gune",image: anirudhagune },
+  // { id: 15, name: "Nick Thompson", role: "Tech Lead", image: memoji },
+
 ];
 
-export default Teamdetails;
+export default TeamDetails;

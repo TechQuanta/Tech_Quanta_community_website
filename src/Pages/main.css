@@ -27,6 +27,15 @@
 
 
 /* Home */
+/* Tailwind scrollbar hide utility */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 .home-page {
   padding-top: 50px;
 }
@@ -109,7 +118,6 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #222;
   background:transparent;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -197,10 +205,11 @@
 
 /* Title */
 .leaderboard-title {
+    font-family:'rajdhani';
   flex-grow: 1;
   font-size: 2.4rem;
-  font-weight: 900;
-  text-align: center;
+  font-weight:800;
+  text-align: right;
   color: #1f2937;
   white-space: nowrap;
   min-width: 160px;
@@ -208,7 +217,6 @@
   text-transform: uppercase;
   text-shadow: 0 2px 6px rgba(31, 41, 55, 0.2);
   user-select: none;
-  font-family: 'Poppins', sans-serif;
 }
 
 /* Search & Filter Section */

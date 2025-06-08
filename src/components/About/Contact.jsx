@@ -7,7 +7,7 @@ const Loading = () => (
   <motion.div
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
-    className="flex flex-col items-center justify-center h-64 w-full font-sans"
+    className="flex flex-col items-center justify-center h-64 w-full font-space-grotesk" // Applied font-space-grotesk
   >
     <svg
       className="animate-spin h-12 w-12 text-[#00BFFF] dark:text-[#2ECC71]"
@@ -82,7 +82,7 @@ const ContactForm = () => {
 
   if (isSubmitted) {
     return (
-      <div className="text-center font-sans text-transparent bg-clip-text bg-transparent font-semibold text-xl min-h-screen flex items-center justify-center bg-transparent">
+      <div className="text-center font-space-grotesk text-transparent bg-clip-text bg-transparent font-semibold text-xl min-h-screen flex items-center justify-center bg-transparent"> {/* Applied font-space-grotesk */}
         Thank you! We'll be in touch soon.
       </div>
     );
@@ -91,7 +91,7 @@ const ContactForm = () => {
   if (hasError) {
     return (
       <div className="min-h-[500px] flex items-center justify-center bg-transparent px-4">
-        <div className="text-center font-sans text-red-400">
+        <div className="text-center font-space-grotesk text-red-400"> {/* Applied font-space-grotesk */}
           <p className="text-xl font-semibold mb-4">
             Email couldn't be sent — server issue.
           </p>
@@ -111,16 +111,18 @@ const ContactForm = () => {
   }
 
   return (
-    <div className="h-screen  flex items-center justify-center px-4">
+    <div className="h-screen flex items-center justify-center px-4">
       <form
         onSubmit={handleFinalSubmit}
-        className="group bg-transparent backdrop-blur w-full max-w-md p-8 space-y-8 rounded-xl border-none  transition-colors duration-300 "
+        className="group bg-transparent backdrop-blur w-full max-w-md p-8 space-y-8 rounded-xl border-none transition-colors duration-300 "
       >
-        <h2 className="text-center text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#00BFFF] to-[#8E44AD] from-[#2ECC71 font-sans transition-colors duration-300">
+        {/* Applied font-exo2 to the heading */}
+        <h2 className="text-center text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#00BFFF] to-[#8E44AD] font-exo2 transition-colors duration-300">
           Contact Us
         </h2>
 
-        <p className="text-center text-sm font-sans text-gray-400">
+        {/* Applied font-space-grotesk to the paragraph */}
+        <p className="text-center text-sm font-space-grotesk text-gray-400">
           Need a faster response?{" "}
           <a
             href="https://discord.com/invite/WK3aftq5vg"
@@ -141,13 +143,13 @@ const ContactForm = () => {
               value={formData.name}
               onChange={handleChange}
               placeholder=" "
-              className="peer w-full h-full text-white px-4 pt-5 bg-transparent focus:outline-none font-sans placeholder-transparent"
+              className="peer w-full h-full text-white px-4 pt-5 bg-transparent focus:outline-none font-rajdhani placeholder-transparent" // Applied font-rajdhani
             />
             <label
               className={`absolute left-4 text-sm text-[#00BFFF] transition-all 
                 duration-200 pointer-events-none 
                 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 
-                peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#00BFFF] group-hover:text-[#2ECC71] ${
+                peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#00BFFF] group-hover:text-[#2ECC71] font-space-grotesk ${ // Applied font-space-grotesk
                   formData.name ? "top-1 text-sm" : ""
                 }`}
             >
@@ -156,7 +158,7 @@ const ContactForm = () => {
             <button
               type="button"
               onClick={handleNext}
-              className="absolute right-0 h-full bg-[#00BFFF] text-black font-bold px-6 text-2xl hover:bg-[#8E44AD] hover:text-white transition-colors duration-300 group-hover:bg-[#2ECC71] group-hover:text-black"
+              className="absolute right-0 h-full bg-[#00BFFF] text-black font-bold px-6 text-2xl hover:bg-[#8E44AD] hover:text-white transition-colors duration-300 group-hover:bg-[#2ECC71] group-hover:text-black font-rajdhani" // Applied font-rajdhani
             >
               &gt;
             </button>
@@ -172,13 +174,13 @@ const ContactForm = () => {
               value={formData.email}
               onChange={handleChange}
               placeholder=" "
-              className="peer w-full h-full text-white px-4 pt-5 bg-transparent focus:outline-none font-sans placeholder-transparent"
+              className="peer w-full h-full text-white px-4 pt-5 bg-transparent focus:outline-none font-rajdhani placeholder-transparent" // Applied font-rajdhani
             />
             <label
               className={`absolute left-4 text-sm text-[#00BFFF] transition-all 
                 duration-200 pointer-events-none 
                 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 
-                peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#00BFFF] group-hover:text-[#2ECC71] ${
+                peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#00BFFF] group-hover:text-[#2ECC71] font-space-grotesk ${ // Applied font-space-grotesk
                   formData.email ? "top-1 text-sm" : ""
                 }`}
             >
@@ -187,7 +189,7 @@ const ContactForm = () => {
             <button
               type="button"
               onClick={handleNext}
-              className="absolute right-0 h-full bg-[#00BFFF] text-black font-bold px-6 text-2xl hover:bg-[#8E44AD] hover:text-white transition-colors duration-300 group-hover:bg-[#2ECC71] group-hover:text-black"
+              className="absolute right-0 h-full bg-[#00BFFF] text-black font-bold px-6 text-2xl hover:bg-[#8E44AD] hover:text-white transition-colors duration-300 group-hover:bg-[#2ECC71] group-hover:text-black font-rajdhani" // Applied font-rajdhani
             >
               &gt;
             </button>
@@ -203,13 +205,13 @@ const ContactForm = () => {
                 value={formData.message}
                 onChange={handleChange}
                 placeholder=" "
-                className="peer w-full h-full text-white p-4 pt-6 bg-transparent resize-none focus:outline-none font-sans placeholder-transparent"
+                className="peer w-full h-full text-white p-4 pt-6 bg-transparent resize-none focus:outline-none font-rajdhani placeholder-transparent" // Applied font-rajdhani
               ></textarea>
               <label
                 className={`absolute left-4 text-sm text-[#00BFFF] transition-all 
                   duration-200 pointer-events-none 
                   peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 
-                  peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#00BFFF] group-hover:text-[#2ECC71] ${
+                  peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#00BFFF] group-hover:text-[#2ECC71] font-space-grotesk ${ // Applied font-space-grotesk
                     formData.message ? "top-1 text-sm" : ""
                   }`}
               >
@@ -218,7 +220,7 @@ const ContactForm = () => {
             </div>
             <button
               type="submit"
-              className="w-full bg-[#00BFFF] hover:bg-[#8E44AD] text-black font-bold py-4 rounded-md text-lg transition-colors duration-300 shadow-lg group-hover:bg-[#2ECC71] group-hover:text-black"
+              className="w-full bg-[#00BFFF] hover:bg-[#8E44AD] text-black font-bold py-4 rounded-md text-lg transition-colors duration-300 shadow-lg group-hover:bg-[#2ECC71] group-hover:text-black font-rajdhani" // Applied font-rajdhani
             >
               Submit
             </button>

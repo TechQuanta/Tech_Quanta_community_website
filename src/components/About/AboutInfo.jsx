@@ -27,7 +27,7 @@ const AboutInfo = () => {
 
   return (
     <section
-      className={`py-6 max-w-full justify-center items-center  px-6 md:px-12 lg:px-24 font-space-grotesk transition-colors duration-300 ${
+      className={`py-6 max-w-full justify-center items-center px-6 md:px-12 lg:px-24 font-space-grotesk transition-colors duration-300 ${
         isDark ? "bg-[#121212] text-white" : "bg-white text-black"
       }`}
     >
@@ -42,7 +42,7 @@ const AboutInfo = () => {
         >
           <img
             src="/About.jpg"
-            alt="Online Onword Logo"
+            alt="Tech Quanta Logo"
             className="w-[300px] h-auto rounded-xl shadow-2xl border border-[#00BFFF]"
           />
         </motion.div>
@@ -55,26 +55,31 @@ const AboutInfo = () => {
           viewport={{ once: true }}
           className="text-left"
         >
-          <h2 className="text-4xl font-bold text-[#00BFFF] mb-4">About</h2>
+          {/* Applied font-exo2 for the main heading */}
+          <h2 className="text-4xl font-bold text-[#00BFFF] mb-4 font-exo2">About</h2>
           <div className="w-20 h-1 bg-gradient-to-r from-[#00BFFF] to-[#0034FF] rounded-full mb-6"></div>
 
-          <h3 className={`text-lg mb-6 ${isDark ? "text-gray-400" : "text-gray-700"}`}>
+          {/* Applied font-space-grotesk for the sub-heading */}
+          <h3 className={`text-lg mb-6 font-space-grotesk ${isDark ? "text-gray-400" : "text-gray-700"}`}>
             A community initiative empowering people to explore open source, stay motivated, and grow together.
           </h3>
 
-          <p className={`leading-relaxed mb-4 ${isDark ? "text-gray-200" : "text-gray-800"}`}>
-            Online Onword is a passionate online community that inspires and connects individuals to dive into the
+          {/* Applied font-space-grotesk for the main paragraphs */}
+          <p className={`leading-relaxed mb-4 font-space-grotesk ${isDark ? "text-gray-200" : "text-gray-800"}`}>
+            Tech Quanta is a passionate online community that inspires and connects individuals to dive into the
             world of open source. Whether you're just starting out or already building, we provide the support and
             motivation to keep you moving forward.
           </p>
 
-          <p className={`leading-relaxed text-sm mb-4 ${isDark ? "text-gray-300" : "text-gray-700"}`}>
+          {/* Applied font-space-grotesk for the smaller paragraphs */}
+          <p className={`leading-relaxed text-sm mb-4 font-space-grotesk ${isDark ? "text-gray-300" : "text-gray-700"}`}>
             Alongside open-source awareness, we offer valuable services including graphic designing, website
             development, online courses, events, and seminars—all delivered remotely to ensure accessibility for
             everyone.
           </p>
 
-          <p className={`leading-relaxed text-sm ${isDark ? "text-gray-300" : "text-gray-700"}`}>
+          {/* Applied font-space-grotesk for the last paragraph */}
+          <p className={`leading-relaxed text-sm font-space-grotesk ${isDark ? "text-gray-300" : "text-gray-700"}`}>
             Join us to learn, build, and thrive in a space where innovation meets opportunity—completely online.
           </p>
         </motion.div>
@@ -96,8 +101,10 @@ const AboutInfo = () => {
             viewport={{ once: true }}
           >
             {icon}
-            <h4 className="text-xl font-bold mb-2">{title}</h4>
-            <p className={`text-sm px-4 ${isDark ? "text-gray-400" : "text-gray-700"}`}>
+            {/* Applied font-exo2 for the value titles */}
+            <h4 className="text-xl font-bold mb-2 font-exo2">{title}</h4>
+            {/* Applied font-space-grotesk for the value descriptions */}
+            <p className={`text-sm px-4 font-space-grotesk ${isDark ? "text-gray-400" : "text-gray-700"}`}>
               {description}
             </p>
           </motion.div>
@@ -108,6 +115,3 @@ const AboutInfo = () => {
 };
 
 export default AboutInfo;
-
-
-

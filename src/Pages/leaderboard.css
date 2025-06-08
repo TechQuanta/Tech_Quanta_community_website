@@ -24,7 +24,7 @@
 
 /* === USER CARD WRAPPER === */
 .user-card {
-  @apply relative flex items-center justify-between p-3 rounded-[16px] cursor-pointer select-none overflow-hidden transition-transform transition-shadow;
+  @apply relative flex items-center justify-between p-3 rounded-[16px] cursor-pointer select-none overflow-hidden transition-transform transition-shadow font-space-grotesk; /* Applied font-space-grotesk here as a general fallback for the card */
   clip-path: polygon(0 0, 100% 0, 100% 90%, 90% 100%, 80% 90%, 70% 100%, 60% 90%, 50% 100%, 40% 90%, 30% 100%, 20% 90%, 10% 100%, 0 90%);
   background: linear-gradient(135deg, #f9fafb, #e2e8f0);
   
@@ -64,7 +64,7 @@
 
 /* RANK */
 .user-card-rank {
-  @apply font-black mb-1;
+  @apply font-black mb-1 font-rajdhani; /* Applied font-rajdhani for rank */
   font-size: 1.4rem;
   background: linear-gradient(90deg, #3b82f6, #9333ea);
   -webkit-background-clip: text;
@@ -74,7 +74,7 @@
 
 /* USERNAME */
 .user-card-username {
-  @apply font-bold mb-1 text-slate-900;
+  @apply font-bold mb-1 text-slate-900 font-exo2; /* Applied font-exo2 for username */
   font-size: 1.2rem;
   letter-spacing: 0.02em;
   transition: color 0.3s ease;
@@ -85,7 +85,7 @@
 
 /* SCORE */
 .user-card-score {
-  @apply italic text-slate-500;
+  @apply italic text-slate-500 font-space-grotesk; /* Applied font-space-grotesk for score */
   font-size: 0.95rem;
 }
 
@@ -95,7 +95,7 @@
 }
 
 .badge-icon {
-  @apply object-contain transition-transform ;
+  @apply object-contain transition-transform;
   width: 30px;
   height: 30px;
   filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
@@ -116,7 +116,7 @@
     @apply justify-center gap-3;
   }
   .leaderboard-title {
-    @apply  text-center;
+    @apply text-center;
     font-size: 1.7rem;
   }
   .leaderboard-feature-buttons {

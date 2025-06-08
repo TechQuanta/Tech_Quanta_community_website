@@ -4,7 +4,7 @@ import { request, gql } from "graphql-request";
 import { setWithExpiry, getWithExpiry } from "../utils/storageWithExpiry";
 
 // Config
-const SHEET_URL =import.meta.env.VITE_GOOGLE_MACRO_API_USERNAME;
+const SHEET_URL = import.meta.env.VITE_GOOGLE_MACRO_API_USERNAME;
 
 const TOKEN_MAP = JSON.parse(import.meta.env.VITE_GITHUB_TOKENS || "{}");
 const TOKEN_KEYS = Object.keys(TOKEN_MAP);
@@ -200,19 +200,18 @@ export function useGitHubLeaderboardData() {
               const techquantaCommits = Object.values(repoCommits).reduce((a, b) => a + b, 0);
 
               statsArray.push({
-  username,
-  avatar: avatarUrl,
-  commits: contributionsCollection.totalCommitContributions,
-  pullRequests: contributionsCollection.totalPullRequestContributions,
-  issues: contributionsCollection.totalIssueContributions,
-  reposContributed: repositoriesContributedTo.totalCount,   // <-- total repos contributed (GitHub data)
-  stars: starredRepositories.totalCount,
-  followers: followers.totalCount,
-  score: Math.round(score + techquantaCommits * 4),
-  techquantaCommits,                  // total commits to TechQuanta repos summed across repos
-  techquantaContributions: repoCommits,  // per-repo commit counts for TechQuanta repos
-});
-
+                username,
+                avatar: avatarUrl,
+                commits: contributionsCollection.totalCommitContributions,
+                pullRequests: contributionsCollection.totalPullRequestContributions,
+                issues: contributionsCollection.totalIssueContributions,
+                reposContributed: repositoriesContributedTo.totalCount,
+                stars: starredRepositories.totalCount,
+                followers: followers.totalCount,
+                score: Math.round(score + techquantaCommits * 4),
+                techquantaCommits,
+                techquantaContributions: repoCommits,
+              });
 
               success = true;
               retryCount = 0;
@@ -286,15 +285,16 @@ export function useGitHubLeaderboardData() {
     setLoadingFilter(true);
     setError(null);
     try {
+      // Re-fetch Techquanta contributors data to ensure it's up-to-date
       const repoMap = await fetchTechquantaContributors();
       const active = allUserStats
-        .filter((u) => repoMap[u.username])
+        .filter((u) => repoMap[u.username] && Object.keys(repoMap[u.username]).length > 0) // Ensure there's at least one contribution
         .map((u) => {
           const repos = repoMap[u.username];
           const commits = Object.values(repos).reduce((a, b) => a + b, 0);
           return {
             ...u,
-            commits,
+            commits, // This 'commits' will now represent total commits (not just TQ)
             techquantaContributions: repos,
             techquantaCommits: commits,
           };
@@ -319,15 +319,14 @@ export function useGitHubLeaderboardData() {
     setAllDataNull(allUserStats.length === 0);
   };
 
-return {
-  userStats: displayedUserStats || [],
-  error: error || null,
-  loading: loading || false,
-  loadingFilter: loadingFilter || false,
-  filterActive: filterActive || false,
-  allDataNull,
-  showActiveMembers,
-  showAllMembers,
-};
-
+  return {
+    userStats: displayedUserStats || [],
+    error: error || null,
+    loading: loading || false,
+    loadingFilter: loadingFilter || false,
+    filterActive: filterActive || false,
+    allDataNull,
+    showActiveMembers,
+    showAllMembers,
+  };
 }
