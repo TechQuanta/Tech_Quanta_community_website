@@ -15,13 +15,14 @@ const Footer = () => {
   // Memoize static data
   const linkUrls = useMemo(() => ({
     About: "/about",
-    FAQs: "/faqs",
-    Join: "/join",
+    FAQs: "/",
+    Join: "https://docs.google.com/forms/d/e/1FAIpQLSddiwCoTtyjxuvKq6nPvgE6FXDjlMAz-35X2w8XFqscTDcYuw/viewform?usp=header",
     Hackathons: "/hackathons",
-    Meetups: "/meetups",
+    Meetups: "/community-work",
     Linkedin: "https://www.linkedin.com/in/techquanta-community",
-    Contact: "/contact", // changed to a valid internal route or leave as "#"
-    Discord: "https://discord.gg/your-server",
+    Contact: "/about", // changed to a valid internal route or leave as "#"
+    Discord: "https://discord.com/invite/WK3aftq5vg",
+    Research: "https://scholar.google.com/citations?user=Vu7GkHwAAAAJ&hl=en&authuser=4",
   }), []);
 
   const sections = useMemo(() => [
@@ -31,7 +32,7 @@ const Footer = () => {
     },
     {
       title: "Community",
-      links: ["Discord"],
+      links: ["Discord","Research"],
     },
     {
       title: "Events",

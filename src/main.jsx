@@ -12,6 +12,9 @@ import memoji4 from "./assets/memoji/memoji4-1.webp";
 import memoji5 from "./assets/memoji/memoji5-1.webp";
 import memoji6 from "./assets/memoji/memoji6-1.webp";
 
+// Import HelmetProvider
+import { HelmetProvider } from 'react-helmet-async';
+
 // 🧠 List of memojis
 const memojiList = [
   memoji1,
@@ -105,11 +108,14 @@ ReactDOM.createRoot(document.getElementById("loader-root")).render(<Loader />);
 function Main() {
   return (
     <React.StrictMode>
-      <RecoilRoot>
-        <ThemeProvider>
-          <App /> {/* Your main application, which uses react-router-dom and lazy loading */}
-        </ThemeProvider>
-      </RecoilRoot>
+      {/* Wrap your entire application with HelmetProvider */}
+      <HelmetProvider>
+        <RecoilRoot>
+          <ThemeProvider>
+            <App /> {/* Your main application, which uses react-router-dom and lazy loading */}
+          </ThemeProvider>
+        </RecoilRoot>
+      </HelmetProvider>
     </React.StrictMode>
   );
 }

@@ -306,9 +306,13 @@ const FeaturingReposOnly = ({ theme = 'dark' }) => { // Accept theme prop
   // it implies either success or loading.
 
   return (
-    <div className="bg-transparent px-6 py-10 flex justify-center font-space-grotesk"> {/* Apply Space Grotesk font to container */}
+    <div className="bg-transparent px-6 py-10 flex justify-center font-space-grotesk mt-12"> {/* Apply Space Grotesk font to container */}
       <div className="w-full max-w-6xl">
-        <h2 className={`text-4xl font-bold mb-8 text-center sm:text-left ${headingColorClass} font-exo2`}>Our Stellar Featuring Repositories</h2> {/* Apply Exo 2 font */}
+        <h2 className={`text-left 
+            text-4xl sm:text-5xl md:text-6xl 
+            font-space-grotesk font-bold tracking-tight leading-tight
+            bg-clip-text text-transparent 
+            bg-gradient-to-r from-primary to-tech-green pb-12 ${headingColorClass} font-exo2`}>Our Stellar Featuring Repositories</h2> {/* Apply Exo 2 font */}
         {featuringRepos.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
             {featuringRepos.map((repo) => (
