@@ -1,13 +1,13 @@
 /* CoreTeam.tailwind.css */
 
 .coreteam-container {
-  @apply relative w-screen py-[120px] bg-transparent rounded-[25px] text-white overflow-hidden;
+  @apply relative w-screen py-[120px]  rounded-[25px] text-white;
   
 }
 
 /* Heading container */
 .coreteam-heading-container {
-  @apply absolute top-5 left-1/2 -translate-x-1/2 text-center z-20;
+  @apply absolute top-5 left-1/2 -translate-x-1/2  z-20;
 }
 
 .coreteam-heading {
@@ -27,7 +27,6 @@
 
 .coreteam-separator {
   @apply border-0 h-[2px] w-[100px] mx-auto my-3;
-  background-color: rgba(255, 255, 255, 0.2);
 }
 
 /* Bubble volunteer layout for desktop */

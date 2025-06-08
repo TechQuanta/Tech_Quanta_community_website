@@ -109,7 +109,7 @@ const CoreTeam = () => {
       style={{ height: isMobile ? 'auto' : `${requiredHeight}px` }}
     >
       <div className="coreteam-heading-container">
-        <h2 className={`coreteam-heading ${theme === 'dark' ? 'dark' : 'light'}`}>
+        <h2 className={`coreteam-heading text-center w-screen ${theme === 'dark' ? 'dark' : 'light'} `}>
           Community Techies
         </h2>
         <hr className="coreteam-separator" />
