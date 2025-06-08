@@ -15,7 +15,6 @@
   width: 8px;
 }
 .users-list-grid::-webkit-scrollbar-thumb {
-  background-color: #94a3b8;
   border-radius: 4px;
 }
 .users-list-grid::-webkit-scrollbar-track {

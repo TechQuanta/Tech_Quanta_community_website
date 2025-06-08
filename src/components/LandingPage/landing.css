@@ -36,7 +36,7 @@
 }
 
 .volunteer-avatar {
-  @apply rounded-[30%] overflow-hidden w-full h-full;
+  @apply rounded-[30%] overflow-hidden w-full h-full ;
 }
 
 .volunteer-image {

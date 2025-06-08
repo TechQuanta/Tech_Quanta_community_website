@@ -34,25 +34,53 @@ const faqs = [
   {
     question: "Are there opportunities for me to build my profile and gain recognition?",
     answer:
-    "Definitely! We believe in recognizing our contributors. You can gain visibility through our **community leaderboard**, earn **Discord badges**, get featured in our **LinkedIn spotlights**, and receive **certificates of contribution** for your efforts.",
+      "Definitely! We believe in recognizing our contributors. You can gain visibility through our **community leaderboard**, earn **Discord badges**, get featured in our **LinkedIn spotlights**, and receive **certificates of contribution** for your efforts.",
   },
 ];
 
-// Animation variants for the staggered appearance of FAQ items
+// ---
+// Animation variants for the staggered appearance of FAQ items on initial render
+// ---
 const containerVariants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1 // Each child animates with a 0.1s delay
-    }
-  }
+      staggerChildren: 0.08, // Slightly reduced stagger for faster initial reveal
+    },
+  },
 };
 
-// Animation variants for each individual FAQ item
-const itemVariants = {
+// ---
+// Animation variants for each individual FAQ item's entry (on initial render)
+// ---
+const itemEntryVariants = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
+};
+
+// ---
+// Animation variants for the answer content (smooth collapse/expand)
+// Using `initial` and `exit` for `AnimatePresence`
+// ---
+const answerVariants = {
+  initial: { height: 0, opacity: 0 },
+  animate: {
+    height: "auto", // Let Framer Motion calculate height dynamically
+    opacity: 1,
+    transition: {
+      duration: 0.35, // Slightly faster transition
+      ease: "easeInOut",
+    },
+  },
+  exit: {
+    height: 0,
+    opacity: 0,
+    transition: {
+      duration: 0.3, // Slightly faster on exit
+      ease: "easeInOut",
+    },
+  },
 };
 
 // ---
@@ -72,7 +100,7 @@ export default function FAQComponent() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
+    <div className="max-w-2xl mx-auto p-4 sm:p-6 lg:p-8">
       <h2 className="text-3xl font-bold text-center mb-6 sm:mb-8 text-gray-900 dark:text-white">
         Frequently Asked Questions
       </h2>
@@ -85,10 +113,8 @@ export default function FAQComponent() {
         {faqs.map((faq, index) => (
           <motion.div
             key={index}
-            variants={itemVariants} // Apply item animation variant
-            className="bg-white dark:bg-gray-800 border border-purple-200 dark:border-purple-700 rounded-2xl shadow-lg overflow-hidden transition-all duration-300 ease-in-out"
-            whileHover={{ scale: 1.01, boxShadow: "0 10px 20px rgba(0,0,0,0.1)" }} // Subtle hover effect
-            whileTap={{ scale: 0.99 }} // Subtle press effect
+            variants={itemEntryVariants} // Apply entry animation variant for each item
+            className="bg-white dark:bg-gray-800 border border-purple-200 dark:border-purple-700 rounded-2xl shadow-lg overflow-hidden transition-all duration-200 ease-in-out" // Reduced duration for overall container transition
           >
             <button
               onClick={() => toggleFAQ(index)}
@@ -110,10 +136,10 @@ export default function FAQComponent() {
                 <motion.div
                   id={`faq-panel-${index}`}
                   role="region"
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.4, ease: "easeInOut" }}
+                  variants={answerVariants} // Use the new answerVariants
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
                   className="px-5 py-3 sm:px-6 sm:py-4 text-gray-700 dark:text-gray-300 bg-purple-50 dark:bg-gray-700 border-t border-purple-100 dark:border-gray-600"
                 >
                   <p className="leading-relaxed">{faq.answer}</p>

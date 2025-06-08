@@ -1,9 +1,8 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
-// import { FaFilter } from "react-icons/fa"; // No longer needed as it's replaced by inline SVG
-import Loading from "../components/ui/loader"; // Assuming this path is correct
-import { useGitHubLeaderboardData } from "../hooks/GraphQlQuery"; // Explicit .js extension for the main hook
-import "./leaderboard.css"; // Ensure you have the correct path to your leaderboard.css
-import "./main.css"; // Ensure you have the correct path to your main.css
+import Loading from "../components/ui/loader";
+import { useGitHubLeaderboardData } from "../hooks/GraphQlQuery";
+import "./leaderboard.css";
+import "./main.css";
 
 // Assets (adjust paths if your assets are not directly under the root of your project)
 import SearchImg1 from "../assets/SearchIMg1.gif";
@@ -51,13 +50,13 @@ function getBadgeIndexByScore(score) {
 
 export default function App() {
   const {
-    userStats,
+    userStats, // This now defaults to all members initially
     loading,
     error,
     filterActive,
     loadingFilter,
     showActiveMembers,
-    showAllMembers,
+    showAllMembers, // Still available to reset filter
     allDataNull,
   } = useGitHubLeaderboardData();
 
@@ -113,7 +112,7 @@ export default function App() {
 
     const sortFn = sortFunctions[sortKey] || sortFunctions.scoreDesc;
     return [...filtered].sort(sortFn);
-  }, [userStats, debouncedSearch, sortKey]);
+  }, [userStats, debouncedSearch, sortKey]); // userStats now reflects the current active/all view
 
   if (loading)
     return (
@@ -193,14 +192,17 @@ export default function App() {
               <option value="alphaZA">Z → A</option>
             </select>
 
-            <button
-              disabled={!filterActive || loadingFilter}
-              onClick={showAllMembers}
-              className="filter-button show-all-button"
-              type="button"
-            >
-              Show All
-            </button>
+            {/* The "Show All" button is only visible if a filter is active */}
+            {filterActive && (
+              <button
+                disabled={loadingFilter} // Only disable if actively loading a filter
+                onClick={showAllMembers}
+                className="filter-button show-all-button"
+                type="button"
+              >
+                Show All
+              </button>
+            )}
 
             <button
               disabled={filterActive || loadingFilter}
@@ -292,10 +294,10 @@ export default function App() {
                   />
                   <div className="user-card-details">
                     <h3 className="user-card-username">{user.username}</h3>
-                    <p className="user-card-score">Score: {user.score}</p>
+                    <p className="user-card-score">TQ Points: {user.score}</p>
                     {filterActive && user.techquantaCommits > 0 && (
                       <p className="user-card-techquanta-commits">
-                        TQ Commits: {user.techquantaCommits}
+                        Commits: {user.techquantaCommits}
                       </p>
                     )}
                     <div className="user-card-badges">

@@ -43,11 +43,11 @@ const testimonials = [
 
 const Partners = () => {
   return (
-    <div className="flex justify-center flex-col items-center h-full w-full px-4 py-5 pt-0">
+    <div className="hidden flex justify-center flex-col items-center h-full w-full px-4 py-5 pt-[200px]">
       <div className="pb-[100px]">
         <HeroHighlight>
           <span className="text-black dark:text-white font-mono text-5xl text-center mb-5">
-            Community Partners
+            Partners
           </span>
           <AnimatedTestimonials testimonials={testimonials} />
         </HeroHighlight>

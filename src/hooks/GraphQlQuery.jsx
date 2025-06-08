@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+// src/hooks/GraphQlQuery.js
+import { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
 import { request, gql } from "graphql-request";
 import { setWithExpiry, getWithExpiry } from "../utils/storageWithExpiry";
@@ -106,6 +107,8 @@ export function useGitHubLeaderboardData() {
 
   // Use ref to keep tokenIndex stable across renders
   const tokenIndexRef = useRef(0);
+  // Ref to track if fetching is already in progress to prevent multiple calls
+  const isFetchingRef = useRef(false);
 
   // Get current token header
   const getCurrentHeader = () => {
@@ -144,115 +147,7 @@ export function useGitHubLeaderboardData() {
     }
   }
 
-  useEffect(() => {
-    async function fetchAll() {
-      setLoading(true);
-      setError(null);
-
-      const cached = getWithExpiry(SESSION_KEY);
-      if (cached) {
-        setAllUserStats(cached);
-        setDisplayedUserStats(cached);
-        setAllDataNull(cached.length === 0);
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const res = await axios.get(SHEET_URL);
-        const usernames = res.data?.data?.map((u) => u.GitHub_Username).filter(Boolean) || [];
-
-        const userRepoCommitsMap = await fetchTechquantaContributors();
-
-        const statsArray = [];
-
-        for (let i = 0; i < usernames.length; i++) {
-          const username = usernames[i];
-          let success = false;
-          let retryCount = 0;
-
-          while (!success) {
-            try {
-              const data = await tryGraphQLRequest(GET_USER_STATS, { username });
-              const user = data.user;
-              if (!user) {
-                success = true;
-                break;
-              }
-
-              const {
-                contributionsCollection,
-                repositoriesContributedTo,
-                followers,
-                starredRepositories,
-                avatarUrl,
-              } = user;
-
-              const score =
-                contributionsCollection.totalCommitContributions * 1 +
-                contributionsCollection.totalPullRequestContributions * 5 +
-                contributionsCollection.totalIssueContributions * 2 +
-                repositoriesContributedTo.totalCount * 3 +
-                starredRepositories.totalCount * 0.5 +
-                followers.totalCount * 0.2;
-
-              const repoCommits = userRepoCommitsMap[username] || {};
-              const techquantaCommits = Object.values(repoCommits).reduce((a, b) => a + b, 0);
-
-              statsArray.push({
-                username,
-                avatar: avatarUrl,
-                commits: contributionsCollection.totalCommitContributions,
-                pullRequests: contributionsCollection.totalPullRequestContributions,
-                issues: contributionsCollection.totalIssueContributions,
-                reposContributed: repositoriesContributedTo.totalCount,
-                stars: starredRepositories.totalCount,
-                followers: followers.totalCount,
-                score: Math.round(score + techquantaCommits * 4),
-                techquantaCommits,
-                techquantaContributions: repoCommits,
-              });
-
-              success = true;
-              retryCount = 0;
-
-              await sleep(1500); // avoid hammering GitHub API
-            } catch (err) {
-              if (isRateLimitError(err)) {
-                console.warn(`Rate limit hit on token ${TOKEN_KEYS[tokenIndexRef.current]} for user ${username}. Rotating token...`);
-                rotateToken();
-                retryCount++;
-
-                if (retryCount >= TOKEN_KEYS.length) {
-                  throw new Error(`All tokens exhausted due to rate limits at user index ${i}: ${username}`);
-                }
-
-                await sleep(1000 * retryCount * retryCount);
-              } else {
-                console.error(`Error fetching data for user ${username}:`, err);
-                success = true; // skip user on non-rate-limit errors
-              }
-            }
-          }
-        }
-
-        setWithExpiry(SESSION_KEY, statsArray, SESSION_TTL);
-        setAllUserStats(statsArray);
-        setDisplayedUserStats(statsArray);
-        setAllDataNull(statsArray.length === 0);
-      } catch (err) {
-        console.error("Error loading leaderboard data:", err);
-        setError("Failed to fetch leaderboard data.");
-        setAllDataNull(true);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchAll();
-  }, []);
-
-  async function fetchTechquantaContributors() {
+  const fetchTechquantaContributors = useCallback(async () => {
     try {
       const repoData = await tryGraphQLRequest(GET_TECHQUANTA_REPOS);
       const repos = repoData.organization.repositories.nodes;
@@ -273,28 +168,161 @@ export function useGitHubLeaderboardData() {
           userRepoCommitsMap[login][repo.name] = (userRepoCommitsMap[login][repo.name] || 0) + 1;
         }
       }
-
       return userRepoCommitsMap;
     } catch (err) {
       console.error("Error fetching Techquanta contributors:", err);
       return {};
     }
-  }
+  }, []);
 
-  const showActiveMembers = async () => {
+  const fetchAllLeaderboardData = useCallback(async () => {
+    if (isFetchingRef.current) {
+      console.log("Leaderboard data fetching already in progress.");
+      return;
+    }
+
+    const cached = getWithExpiry(SESSION_KEY);
+    if (cached) {
+      setAllUserStats(cached);
+      // Initialize displayedUserStats with cached data
+      setDisplayedUserStats(cached);
+      setAllDataNull(cached.length === 0);
+      setLoading(false);
+      return;
+    }
+
+    isFetchingRef.current = true;
+    setLoading(true);
+    setError(null);
+    console.log("Starting full leaderboard data fetch...");
+
+    try {
+      const res = await axios.get(SHEET_URL);
+      const usernames = res.data?.data?.map((u) => u.GitHub_Username).filter(Boolean) || [];
+
+      const userRepoCommitsMap = await fetchTechquantaContributors();
+
+      const statsArray = [];
+
+      for (let i = 0; i < usernames.length; i++) {
+        const username = usernames[i];
+        let success = false;
+        let retryCount = 0;
+
+        while (!success) {
+          try {
+            const data = await tryGraphQLRequest(GET_USER_STATS, { username });
+            const user = data.user;
+            if (!user) {
+              success = true;
+              break;
+            }
+
+            const {
+              contributionsCollection,
+              repositoriesContributedTo,
+              followers,
+              starredRepositories,
+              avatarUrl,
+            } = user;
+
+            const score =
+              contributionsCollection.totalCommitContributions * 1 +
+              contributionsCollection.totalPullRequestContributions * 5 +
+              contributionsCollection.totalIssueContributions * 2 +
+              repositoriesContributedTo.totalCount * 3 +
+              starredRepositories.totalCount * 0.5 +
+              followers.totalCount * 0.2;
+
+            const repoCommits = userRepoCommitsMap[username] || {};
+            const techquantaCommits = Object.values(repoCommits).reduce((a, b) => a + b, 0);
+
+            statsArray.push({
+              username,
+              avatar: avatarUrl,
+              commits: contributionsCollection.totalCommitContributions,
+              pullRequests: contributionsCollection.totalPullRequestContributions,
+              issues: contributionsCollection.totalIssueContributions,
+              reposContributed: repositoriesContributedTo.totalCount,
+              stars: starredRepositories.totalCount,
+              followers: followers.totalCount,
+              score: Math.round(score + techquantaCommits * 4),
+              techquantaCommits,
+              techquantaContributions: repoCommits,
+            });
+
+            success = true;
+            retryCount = 0;
+
+            await sleep(1500); // avoid hammering GitHub API
+          } catch (err) {
+            if (isRateLimitError(err)) {
+              console.warn(`Rate limit hit on token ${TOKEN_KEYS[tokenIndexRef.current]} for user ${username}. Rotating token...`);
+              rotateToken();
+              retryCount++;
+
+              if (retryCount >= TOKEN_KEYS.length) {
+                throw new Error(`All tokens exhausted due to rate limits at user index ${i}: ${username}`);
+              }
+
+              await sleep(1000 * retryCount * retryCount);
+            } else {
+              console.error(`Error fetching data for user ${username}:`, err);
+              success = true; // skip user on non-rate-limit errors
+            }
+          }
+        }
+      }
+
+      setWithExpiry(SESSION_KEY, statsArray, SESSION_TTL);
+      setAllUserStats(statsArray);
+      setDisplayedUserStats(statsArray); // Initialize displayed stats here
+      setAllDataNull(statsArray.length === 0);
+      console.log("Leaderboard data fetch completed and cached.");
+    } catch (err) {
+      console.error("Error loading leaderboard data:", err);
+      setError("Failed to fetch leaderboard data.");
+      setAllDataNull(true);
+    } finally {
+      setLoading(false);
+      isFetchingRef.current = false;
+    }
+  }, [fetchTechquantaContributors]);
+
+  // Initial load effect: Try to load from cache
+  useEffect(() => {
+    const cached = getWithExpiry(SESSION_KEY);
+    if (cached) {
+      setAllUserStats(cached);
+      setDisplayedUserStats(cached); // Ensure displayed stats also get cached data
+      setAllDataNull(cached.length === 0);
+      setLoading(false);
+    } else {
+      setLoading(true); // Still loading if no cache and fetchAllLeaderboardData hasn't completed
+    }
+  }, []);
+
+  const showActiveMembers = useCallback(async () => {
     setLoadingFilter(true);
     setError(null);
     try {
-      // Re-fetch Techquanta contributors data to ensure it's up-to-date
+      // If allUserStats is empty (meaning no data or cache), try to fetch it first
+      // This ensures filtering works even if `fetchAllLeaderboardData` hasn't completed
+      // or if it was called and failed previously for some reason.
+      if (allUserStats.length === 0 && !isFetchingRef.current) {
+         await fetchAllLeaderboardData(); // Ensure base data is available
+      }
+
+      // We need to re-fetch techquanta contributor data to ensure it's fresh for filtering
+      // especially since the main data might be from cache.
       const repoMap = await fetchTechquantaContributors();
-      const active = allUserStats
-        .filter((u) => repoMap[u.username] && Object.keys(repoMap[u.username]).length > 0) // Ensure there's at least one contribution
+      const active = allUserStats // Use allUserStats as the base for filtering
+        .filter((u) => repoMap[u.username] && Object.keys(repoMap[u.username]).length > 0)
         .map((u) => {
           const repos = repoMap[u.username];
           const commits = Object.values(repos).reduce((a, b) => a + b, 0);
           return {
             ...u,
-            commits, // This 'commits' will now represent total commits (not just TQ)
             techquantaContributions: repos,
             techquantaCommits: commits,
           };
@@ -310,14 +338,16 @@ export function useGitHubLeaderboardData() {
     } finally {
       setLoadingFilter(false);
     }
-  };
+  }, [allUserStats, fetchTechquantaContributors, fetchAllLeaderboardData]);
 
-  const showAllMembers = () => {
+  // The showAllMembers function now just resets to the complete `allUserStats`
+  // which will have been populated either from cache or the initial fetch.
+  const showAllMembers = useCallback(() => {
     setDisplayedUserStats(allUserStats);
     setFilterActive(false);
     setError(null);
     setAllDataNull(allUserStats.length === 0);
-  };
+  }, [allUserStats]);
 
   return {
     userStats: displayedUserStats || [],
@@ -328,5 +358,6 @@ export function useGitHubLeaderboardData() {
     allDataNull,
     showActiveMembers,
     showAllMembers,
+    fetchAllLeaderboardData, // Still expose for the background fetch
   };
 }

@@ -58,15 +58,15 @@ const CoreTeam = () => {
     return adjusted;
   }, [teamData.length]);
 
-  const verticalSpacing = bubbleSize * 2.3;
+  const verticalSpacing = bubbleSize * 1.3;
   const rows = adjustedPattern.length;
-  const totalHeight = (rows - 1) * verticalSpacing + 70;
+  const totalHeight = (rows - 1) * verticalSpacing + 90;
   const requiredHeight = totalHeight + bubbleSize * 2 + 100;
 
   // Calculate fixed offsets to avoid layout jitter from random numbers
   const positions = useMemo(() => {
-    const horizontalSpacing = Math.min(160, containerSize.width * 0.12);
-    const startY = (requiredHeight - totalHeight) / 2 + 80;
+    const horizontalSpacing = Math.min(200, containerSize.width * 1.12);
+    const startY = (requiredHeight - totalHeight) / 3 + 80;
     const positions = [];
     let volunteerIndex = 0;
 
@@ -110,7 +110,7 @@ const CoreTeam = () => {
     >
       <div className="coreteam-heading-container">
         <h2 className={`coreteam-heading ${theme === 'dark' ? 'dark' : 'light'}`}>
-          Community Team
+          Community Techies
         </h2>
         <hr className="coreteam-separator" />
       </div>
