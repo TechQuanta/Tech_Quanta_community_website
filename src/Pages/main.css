@@ -112,7 +112,7 @@
 
 /* Reset & container */
 .leaderboard-container {
-  max-width: 1200px;
+  width:100%;
   margin: 0 auto;
   padding: 5rem 2rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -122,11 +122,10 @@
   flex-direction: column;
   gap: 1.5rem;
   border-radius: 16px;
-  box-shadow: 0 10px 30px rgb(0 0 0 / 0.08);
 }
 /* Sticky Header */
 .leaderboard-header {
-  background: linear-gradient(135deg, #4a90e2cc, #50e3c2cc);
+  background: linear-gradient(135deg, #4a91e278, #50e3c36f);
   padding: 1rem 2rem;
   border-radius: 16px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
@@ -146,7 +145,7 @@
 .leaderboard-header-sticky {
   position: sticky;
   top: 0;
-  background: #ffffffdd;
+  background: #000000dd;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
   /* border: 1px solid #a0aec0; */
   z-index: 100;
@@ -210,7 +209,7 @@
   font-size: 2.4rem;
   font-weight:800;
   text-align: right;
-  color: #1f2937;
+  color: #ffffff;
   white-space: nowrap;
   min-width: 160px;
   letter-spacing: 0.08em;
@@ -243,11 +242,6 @@
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.search-bar-wrapper:hover,
-.search-input:focus-visible {
-  border-color: #3b82f6;
-  box-shadow: 0 0 16px #3b82f6cc;
-}
 
 .search-input {
   flex-grow: 1;
@@ -262,13 +256,11 @@
 }
 
 .search-rotating-image {
-  width: 42px;
-  height: 42px;
-  object-fit: contain;
-  margin-left: 0.5rem;
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
   user-select: none;
   pointer-events: none;
-  animation: rotate360 5s linear infinite;
 }
 
 /* Keyframes for rotating search icon */
@@ -308,10 +300,12 @@
 
 /* Filter Controls */
 .filter-controls {
-  display: flex;
+  display: flex;  
   gap: 0.7rem;
   align-items: center;
   flex-wrap: nowrap;
+  outline:none;
+  border:none;
 }
 
 .filter-select {

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { request, gql } from "graphql-request";
-import { setWithExpiry, getWithExpiry } from "../../utils/storageWithExpiry"; // Your caching utility
 
 // --- Configuration ---
 // Fetches GitHub Personal Access Tokens (PATs) from environment variables.
@@ -9,31 +8,26 @@ import { setWithExpiry, getWithExpiry } from "../../utils/storageWithExpiry"; //
 const TOKEN_MAP = JSON.parse(import.meta.env.VITE_GITHUB_TOKENS || "{}");
 const TOKEN_KEYS = Object.keys(TOKEN_MAP);
 
-// Cache key and Time-To-Live (TTL) for session storage, preventing excessive API calls.
-const FEATURING_REPOS_SESSION_KEY = "techquanta_featuring_repos_cache";
-const FEATURING_REPOS_SESSION_TTL = 30 * 60 * 1000; // Cache data for 30 minutes
-
-// --- GraphQL Query ---
-// This concise query fetches the top 10 most-starred, non-forked repositories
-// from the 'techquanta' organization, along with essential details.
-const GET_FEATURING_REPOS_ONLY = gql`
-  query GetFeaturingRepositories {
+// --- GraphQL Query for Pinned/Featured Repositories ---
+// This query specifically fetches the repositories pinned to the 'techquanta' organization's profile.
+// You can adjust the 'first' argument to control how many pinned repositories are displayed.
+// For typical GitHub profiles, 6 is a common number of displayed pinned repos.
+const GET_PINNED_REPOS = gql`
+  query GetPinnedRepositories {
     organization(login: "techquanta") {
-      featuringRepositories: repositories(
-        first: 10
-        orderBy: { field: STARGAZERS, direction: DESC }
-        isFork: false
-      ) {
+      pinnedItems(first: 6, types: REPOSITORY) { # Fetch up to 6 pinned repositories
         nodes {
-          name
-          description
-          stargazerCount
-          forkCount
-          url
-          updatedAt
-          primaryLanguage {
+          ... on Repository { # Ensure we're only selecting repository data
             name
-            color
+            description
+            stargazerCount
+            forkCount
+            url
+            updatedAt
+            primaryLanguage {
+              name
+              color
+            }
           }
         }
       }
@@ -74,17 +68,17 @@ function isRateLimitError(error) {
 
 // --- Custom Hook for Data Fetching ---
 /**
- * A custom React hook to fetch and manage the state of featured GitHub repositories.
+ * A custom React hook to fetch and manage the state of GitHub's pinned repositories.
  * It includes logic for token rotation and retries to handle GitHub API rate limits.
  * @returns {object} - An object containing:
- * - `featuringRepos`: An array of featured repository data.
+ * - `pinnedRepos`: An array of pinned repository data.
  * - `loading`: A boolean indicating if data is currently being fetched.
  * - `fetchError`: A boolean indicating if a critical error occurred that prevents rendering.
  */
-const useFeaturingReposFetcher = () => {
-  const [featuringRepos, setFeaturingRepos] = useState([]);
+const usePinnedReposFetcher = () => { // Renamed hook to reflect its purpose
+  const [pinnedRepos, setPinnedRepos] = useState([]); // Renamed state variable
   const [loading, setLoading] = useState(true);
-  const [fetchError, setFetchError] = useState(false); // Changed 'error' to 'fetchError' for clarity
+  const [fetchError, setFetchError] = useState(false);
 
   // useRef to keep track of the current token index across renders without causing re-renders
   const tokenIndexRef = useRef(0);
@@ -152,33 +146,22 @@ const useFeaturingReposFetcher = () => {
   }, [getCurrentHeader, rotateToken, TOKEN_KEYS]); // Dependencies for useCallback
 
   // --- Main Data Fetching Effect ---
-  // This effect runs once on component mount to fetch the featured repositories.
+  // This effect runs once on component mount to fetch the pinned repositories.
   useEffect(() => {
     async function fetchRepos() {
       setLoading(true); // Indicate loading has started
       setFetchError(false); // Clear any previous errors
 
-      // First, try to load data from session storage to avoid unnecessary API calls
-      const cached = getWithExpiry(FEATURING_REPOS_SESSION_KEY);
-      if (cached) {
-        setFeaturingRepos(cached);
-        setLoading(false); // Data loaded from cache
-        return; // Exit as data is available
-      }
-
       try {
-        // Execute the GraphQL query for featuring repositories
-        const data = await tryGraphQLRequest(GET_FEATURING_REPOS_ONLY);
-        // Extract the relevant data, defaulting to an empty array if not found
-        const fetchedRepos = data.organization?.featuringRepositories?.nodes || [];
-        setFeaturingRepos(fetchedRepos);
-        // Cache the newly fetched data for future use
-        setWithExpiry(FEATURING_REPOS_SESSION_KEY, fetchedRepos, FEATURING_REPOS_SESSION_TTL);
+        // Execute the GraphQL query for Pinned Repositories
+        const data = await tryGraphQLRequest(GET_PINNED_REPOS); // *** CORRECTED: Use GET_PINNED_REPOS ***
+        // Extract the relevant data from 'pinnedItems', defaulting to an empty array if not found
+        const fetchedRepos = data.organization?.pinnedItems?.nodes || []; // *** CORRECTED: Data path for pinnedItems ***
+        setPinnedRepos(fetchedRepos); // Update pinnedRepos state
       } catch (err) {
-        console.error("Critical error fetching featuring repositories:", err);
-        // On error, if no cache was found, set fetchError to true to render nothing
+        console.error("Critical error fetching pinned repositories:", err);
         setFetchError(true);
-        setFeaturingRepos([]); // Ensure the array is empty
+        setPinnedRepos([]); // Ensure the array is empty on error
       } finally {
         setLoading(false); // Always set loading to false after fetch attempt
       }
@@ -187,25 +170,25 @@ const useFeaturingReposFetcher = () => {
     fetchRepos(); // Initiate the fetch process
   }, [tryGraphQLRequest]); // tryGraphQLRequest is a dependency because it's memoized
 
-  return { featuringRepos, loading, fetchError }; // Return fetchError instead of error
+  return { pinnedRepos, loading, fetchError }; // Return pinnedRepos instead of featuringRepos
 };
 
 // --- RepoCard Component ---
 // This is a presentational component responsible for rendering a single repository card.
 const RepoCard = ({ name, description, language, stars, url, theme = 'dark' }) => {
   // Determine card colors based on the theme for optimal visibility
-  const cardBgClass = theme === 'dark' ? 'bg-white' : 'bg-gray-800'; // White card on dark page, dark gray on light page
-  const mainTextColorClass = theme === 'dark' ? 'text-gray-800' : 'text-white'; // Dark text on white card, white text on dark card
-  const descriptionColorClass = theme === 'dark' ? 'text-gray-700' : 'text-gray-300'; // Slightly softer description color
-  const metaColorClass = theme === 'dark' ? 'text-gray-600' : 'text-gray-400'; // Metadata text (file icon, language)
-  const publicBadgeBgClass = theme === 'dark' ? 'bg-gray-200' : 'bg-gray-700'; // Public badge background
-  const publicBadgeTextColorClass = theme === 'dark' ? 'text-gray-800' : 'text-gray-200'; // Public badge text color
+  const cardBgClass = theme === 'dark' ? 'bg-white' : 'bg-gray-800';
+  const mainTextColorClass = theme === 'dark' ? 'text-gray-800' : 'text-white';
+  const descriptionColorClass = theme === 'dark' ? 'text-gray-700' : 'text-gray-300';
+  const metaColorClass = theme === 'dark' ? 'text-gray-600' : 'text-gray-400';
+  const publicBadgeBgClass = theme === 'dark' ? 'bg-gray-200' : 'bg-gray-700';
+  const publicBadgeTextColorClass = theme === 'dark' ? 'text-gray-800' : 'text-gray-200';
 
   // File Icon (always inherits `metaColorClass` to match other metadata)
   const FileIcon = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="20" // Slightly smaller for better visual balance with text
+      width="20"
       height="20"
       viewBox="0 0 24 24"
       fill="none"
@@ -213,7 +196,7 @@ const RepoCard = ({ name, description, language, stars, url, theme = 'dark' }) =
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className={`${metaColorClass}`} // Ensures icon color adapts with theme
+      className={`${metaColorClass}`}
     >
       <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />
     </svg>
@@ -223,7 +206,7 @@ const RepoCard = ({ name, description, language, stars, url, theme = 'dark' }) =
   const StarIcon = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="20" // Consistent size with file icon
+      width="20"
       height="20"
       viewBox="0 0 24 24"
       fill="currentColor"
@@ -231,7 +214,7 @@ const RepoCard = ({ name, description, language, stars, url, theme = 'dark' }) =
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="text-yellow-500" // Explicitly yellow for always visible star
+      className="text-yellow-500"
     >
       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
     </svg>
@@ -243,31 +226,31 @@ const RepoCard = ({ name, description, language, stars, url, theme = 'dark' }) =
       target="_blank"
       rel="noopener noreferrer"
       className={`${cardBgClass} shadow-lg rounded-md p-4 w-full flex flex-col justify-between
-                  hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 ease-in-out`}
+                   hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 ease-in-out`}
     >
       <div>
         {/* Repository Name and File Icon */}
         <div className="flex items-center gap-2 mb-2">
           {FileIcon}
-          <span className={`font-semibold text-lg ${mainTextColorClass} font-exo2`}>{name}</span> {/* Apply Exo 2 font */}
+          <span className={`font-semibold text-lg ${mainTextColorClass} font-exo2`}>{name}</span>
         </div>
 
         {/* Repository Description */}
-        <p className={`text-sm mt-1 line-clamp-3 ${descriptionColorClass} font-space-grotesk`}>{description || 'No description provided.'}</p> {/* Apply Space Grotesk font */}
+        <p className={`text-sm mt-1 line-clamp-3 ${descriptionColorClass} font-space-grotesk`}>{description || 'No description provided.'}</p>
 
         {/* Language and Star Count */}
         <div className="flex justify-between items-center mt-3 text-sm">
           {language && ( // Only show language if available
-            <span className={`flex items-center gap-1 ${metaColorClass} font-mono`}> {/* Apply Fira Mono font */}
+            <span className={`flex items-center gap-1 ${metaColorClass} font-mono`}>
               <span style={{ backgroundColor: language.color }} className="inline-block w-3 h-3 rounded-full"></span> {language.name}
             </span>
           )}
-          <span className={`flex items-center gap-1 ${metaColorClass} font-mono`}> {/* Apply Fira Mono font */}
+          <span className={`flex items-center gap-1 ${metaColorClass} font-mono`}>
             {StarIcon}
             {stars}
           </span>
           <div className="flex items-center mt-2 text-right">
-            <span className={`${publicBadgeBgClass} ${publicBadgeTextColorClass} px-2 py-0.5 rounded text-xs ml-auto font-mono`}> {/* Apply Fira Mono font */}
+            <span className={`${publicBadgeBgClass} ${publicBadgeTextColorClass} px-2 py-0.5 rounded text-xs ml-auto font-mono`}>
               Public
             </span>
           </div>
@@ -278,58 +261,55 @@ const RepoCard = ({ name, description, language, stars, url, theme = 'dark' }) =
 };
 
 // --- Main Featuring Repositories Component ---
-// This component orchestrates the fetching and display of featured repositories.
-const FeaturingReposOnly = ({ theme = 'dark' }) => { // Accept theme prop
+// This component orchestrates the fetching and display of pinned repositories.
+const FeaturingReposOnly = ({ theme = 'dark' }) => {
   // Use the custom hook to get the data and its status
-  const { featuringRepos, loading, fetchError } = useFeaturingReposFetcher(); // Destructure fetchError
+  const { pinnedRepos, loading, fetchError } = usePinnedReposFetcher(); // *** CORRECTED: Destructure pinnedRepos ***
 
   // Determine the main heading color based on the theme
-  const headingColorClass = theme === 'dark' ? 'text-green-400' : 'text-green-600'; // Green on dark, darker green on light
+  const headingColorClass = theme === 'dark' ? 'text-green-400' : 'text-green-600';
 
   // --- Conditional Rendering Logic ---
-  // If a critical error occurred and no cached data is available, return null.
   if (fetchError) {
+    // If a critical error occurred, you might want to render an error message or nothing.
+    // For now, we'll return null as per your original logic.
     return null;
   }
 
-  // If slides are still loading (or no slides fetched yet and no critical error), show loading message.
-  if (loading || featuringRepos.length === 0) { // Check loading and also if repos are empty (could mean no data yet)
+  // If data is still loading or no pinned repos are found, show a loading message.
+  if (loading || pinnedRepos.length === 0) {
     return (
       <div className="bg-transparent text-white px-6 py-10 flex justify-center items-center h-48">
-        <p className={`text-xl ${headingColorClass} animate-pulse font-space-grotesk`}>Loading amazing featured repositories...</p> {/* Apply Space Grotesk font */}
+        <p className={`text-xl ${headingColorClass} animate-pulse font-space-grotesk`}>Loading amazing featured repositories...</p>
       </div>
     );
   }
 
-  // This `if (error)` block (from your original code) is now removed,
-  // as `fetchError` directly controls rendering nothing, and if `fetchError` is false,
-  // it implies either success or loading.
-
   return (
-    <div className="bg-transparent px-6 py-10 flex justify-center font-space-grotesk mt-12"> {/* Apply Space Grotesk font to container */}
+    <div className="bg-transparent px-6 py-10 flex justify-center font-space-grotesk mt-12">
       <div className="w-full max-w-6xl">
-        <h2 className={`text-left 
-            text-4xl sm:text-5xl md:text-6xl 
+        <h2 className={`text-left
+            text-4xl sm:text-5xl md:text-6xl
             font-space-grotesk font-bold tracking-tight leading-tight
-            bg-clip-text text-transparent 
-            bg-gradient-to-r from-primary to-tech-green pb-12 ${headingColorClass} font-exo2`}>Our Stellar Featuring Repositories</h2> {/* Apply Exo 2 font */}
-        {featuringRepos.length > 0 ? (
+            bg-clip-text text-transparent
+            bg-gradient-to-r from-primary to-tech-green pb-12 ${headingColorClass} font-exo2`}>Our Stellar Pinned Repositories</h2> {/* Updated heading */}
+        {pinnedRepos.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
-            {featuringRepos.map((repo) => (
+            {pinnedRepos.map((repo) => ( // Iterate over pinnedRepos
               <RepoCard
-                key={repo.name} // Using repo name as a unique key for list rendering
+                key={repo.name}
                 name={repo.name}
                 description={repo.description}
                 language={repo.primaryLanguage}
                 stars={repo.stargazerCount}
                 url={repo.url}
-                theme={theme} // Pass the theme prop down to RepoCard
+                theme={theme}
               />
             ))}
           </div>
         ) : (
-          <div className="text-center text-gray-400 text-lg font-space-grotesk"> {/* Apply Space Grotesk font */}
-            No featured repositories to display at this moment. Stay tuned for exciting projects!
+          <div className="text-center text-gray-400 text-lg font-space-grotesk">
+            No pinned repositories to display at this moment. Stay tuned for exciting projects!
           </div>
         )}
       </div>

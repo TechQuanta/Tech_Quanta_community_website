@@ -14,6 +14,7 @@ import shailendraSinghPanwar from '../../assets/profiles/panwarshailendra.png';
 import ajbepratik from '../../assets/profiles/ajbepratik.png';
 import deepakRathore from '../../assets/profiles/deepak.png';
 import anirudhagune from '../../assets/profiles/ani.webp';
+import harpreet from '../../assets/profiles/harpreet.png';
 // import memoji from '../../assets/memoji.webp';
 
 const TeamDetails = [
@@ -31,7 +32,7 @@ const TeamDetails = [
   { id: 12, name: "Agrim Jain",  image: agrimJain },
   { id: 13, name: "Deepak Rathore", image: deepakRathore },
   { id: 14, name: "Anirudha Gune",image: anirudhagune },
-  { id: 14, name: "Harpreet Singh",image: anirudhagune },
+  { id: 14, name: "Harpreet Singh",image: harpreet },
   // { id: 15, name: "Nick Thompson", role: "Tech Lead", image: memoji },
 
 ];

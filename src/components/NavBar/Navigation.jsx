@@ -75,7 +75,7 @@ function Header() {
           <div className="flex items-center gap-4">
             <NavbarButton
               variant="primary"
-              className="bg-[#00BFFF] hover:bg-[#8E44AD] text-white font-['Exo 2'] px-4 py-1 rounded-full transition-all"
+              className="bg-[#00BFFF] hover:bg-[#8E44AD]  hover:text-white text-white font-['Exo 2'] px-4 py-1 rounded-full transition-all"
               onClick={() =>
                 window.open(
                   "https://docs.google.com/forms/d/e/1FAIpQLSddiwCoTtyjxuvKq6nPvgE6FXDjlMAz-35X2w8XFqscTDcYuw/viewform?usp=header",
