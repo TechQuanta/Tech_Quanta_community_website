@@ -10,65 +10,70 @@ const communityLinks = [
     title: 'Engage on Discord',
     description: 'Join real-time discussions, get support, and connect with peers.',
     icon: <FaDiscord />,
-    url: 'https://discord.gg/your-techquanta-discord',
+    url: 'https://discord.com/invite/WK3aftq5vg',
     iconColor: 'text-indigo-600',
     cardBgLight: '#e0e7ff', // bg-indigo-100
-    cardBgDark: 'transparent', // dark:bg-indigo-900
+    cardBgDark: 'transparent', // dark:bg-indigo-900 - now transparent
     iconBoxBgLight: '#e5e7eb', // bg-gray-200
-    iconBoxBgDark: '#ffffff', // dark:bg-white
+    iconBoxBgDark: 'transparent', // dark:bg-white
     hoverSliceColor: '#6366f1', // A shade of indigo for the animated slice
+    glowColor: 'rgba(99, 102, 241, 0.2)', // Indigo glow
   },
   {
     id: 'github',
     title: 'Contribute on GitHub',
     description: 'Collaborate on open-source projects and enhance our codebases.',
     icon: <FaGithub />,
-    url: 'https://github.com/your-techquanta-repo',
+    url: 'https://github.com/TechQuanta',
     iconColor: 'text-gray-900',
     cardBgLight: '#f3f4f6', // bg-gray-100
-    cardBgDark: 'transparent', // dark:bg-gray-900
-    iconBoxBgLight: '#e5e7eb',
+    cardBgDark: 'transparent', // dark:bg-gray-900 - now transparent
+    iconBoxBgLight: 'transparent',
     iconBoxBgDark: '#ffffff',
-    hoverSliceColor: '#920dd4ff', // A shade of gray/black for the slice
+    hoverSliceColor: '#1f2937', // A shade of gray/black for the slice
+    glowColor: 'rgba(31, 41, 55, 0.2)', // Dark gray glow
   },
   {
     id: 'whatsapp',
     title: 'Receive WhatsApp Updates',
     description: 'Stay informed with important announcements and quick insights.',
     icon: <FaWhatsapp />,
-    url: 'https://chat.whatsapp.com/your-techquanta-group',
+    url: 'https://chat.whatsapp.com/CjMw4xiTuNTFBaDzMKpuIC',
     iconColor: 'text-green-500',
     cardBgLight: '#dcfce7', // bg-green-100
-    cardBgDark: 'transparent', // dark:bg-green-900
-    iconBoxBgLight: '#e5e7eb',
-    iconBoxBgDark: '#ffffff',
-    hoverSliceColor: '#22c55e', // A shade of green for the slice
+    cardBgDark: 'transparent', // dark:bg-green-900 - now transparent
+    iconBoxBgLight: 'transparent',
+    iconBoxBgDark: 'transparent',
+    hoverSliceColor: '#29da6dff', // A shade of green for the slice
+    glowColor: 'rgba(34, 197, 94, 0.2)', // Green glow
   },
   {
     id: 'docker',
     title: 'Explore Container Projects',
     description: 'Access our latest containerized applications and demos.',
     icon: <FaDocker />,
-    url: 'https://hub.docker.com/u/your-techquanta-profile',
+    url: 'https://hub.docker.com/u/techquanta',
     iconColor: 'text-blue-600',
     cardBgLight: '#dbeafe', // bg-blue-100
-    cardBgDark: 'transparent', // dark:bg-blue-900
-    iconBoxBgLight: '#e5e7eb',
-    iconBoxBgDark: '#ffffff',
-    hoverSliceColor: '#3b82f6', // A shade of blue for the slice
+    cardBgDark: 'transparent', // dark:bg-blue-900 - now transparent
+    iconBoxBgLight: 'transparent',
+    iconBoxBgDark: 'transparent',
+    hoverSliceColor: '#4e88e4ff', // A shade of blue for the slice
+    glowColor: 'rgba(59, 130, 246, 0.2)', // Blue glow
   },
   {
     id: 'linkedin',
     title: 'Connect on LinkedIn',
     description: 'Network with professionals and find career opportunities.',
     icon: <FaLinkedinIn />,
-    url: 'https://www.linkedin.com/company/your-techquanta-page',
+    url: 'https://www.linkedin.com/in/techquanta-community',
     iconColor: 'text-blue-700',
     cardBgLight: '#dbeafe', // bg-blue-100
-    cardBgDark: 'transparent', // dark:bg-blue-900
-    iconBoxBgLight: '#e5e7eb',
-    iconBoxBgDark: '#ffffff',
+    cardBgDark: 'transparent', // dark:bg-blue-900 - now transparent
+    iconBoxBgLight: 'transparent',
+    iconBoxBgDark: 'transparent',
     hoverSliceColor: '#1d4ed8', // A shade of darker blue for the slice
+    glowColor: 'rgba(29, 78, 216, 0.2)', // Darker blue glow
   },
 ];
 
@@ -151,7 +156,7 @@ const CommunityJoinSection = () => {
 
   return (
     <div className="w-full max-w-7xl mx-auto font-space-grotesk transition-colors duration-300">
-      {/* Embedded CSS for the unique button animation */}
+      {/* Embedded CSS for the unique button animation and new strip glow */}
       <style>
         {`
         .animated-button {
@@ -162,8 +167,8 @@ const CommunityJoinSection = () => {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          /* Trapezoid shape: not rectangular, not square */
-          clip-path: polygon(15% 0%, 100% 0%, 85% 100%, 0% 100%);
+          /* Trapezoid shape */
+          clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
           border-radius: 8px; /* Rounded corners for the outer container */
           background-color: var(--card-bg-light);
           transition: transform 0.3s ease-out, background-color 0.3s ease-out, clip-path 0.3s ease-out;
@@ -171,13 +176,14 @@ const CommunityJoinSection = () => {
           box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* subtle shadow */
         }
         html.dark .animated-button {
-          background-color: var(--card-bg-dark);
+          background-color: var(--card-bg-dark); /* Now transparent from data */
+          box-shadow: none; /* Remove shadow in dark mode if transparent */
         }
 
         .animated-button:hover {
           transform: scale(1.05); /* Scale up slightly on hover */
-          /* Optional: slight change to clip-path on hover for more dynamism */
-          clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%); /* Slightly more pronounced skew on hover */
+          /* Slight change to clip-path on hover for more dynamism */
+          clip-path: polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%); /* More pronounced skew on hover */
         }
 
         .animated-button::before {
@@ -185,11 +191,11 @@ const CommunityJoinSection = () => {
           position: absolute;
           top: 0;
           left: 0;
-          width: 100%;
-          height: 100%;
+          width: 35%;
+          height: 120%;
           background-color: var(--hover-slice-color);
-          /* Triangular slice from top-left to bottom-left */
-          clip-path: polygon(0 0, 30% 0, 0 100%); /* A larger triangle slice */
+          /* Triangular slice from top-left, pointing right */
+          clip-path: polygon(0 0, 100% 50%, 0 100%);
           transform: translateX(-100%); /* Start off-screen to the left */
           transition: transform 0.4s ease-out;
           z-index: 0;
@@ -203,16 +209,38 @@ const CommunityJoinSection = () => {
           position: relative;
           z-index: 1; /* Above the slice */
           transition: transform 0.3s ease-out;
-          background-color: var(--icon-box-bg-light);
+          background-color: var(--icon-box-bg-light); /* Will be transparent from data */
           border-radius: 6px; /* Match outer button's rounded corners, but slightly smaller */
           padding: 6px; /* p-1.5 is approx 6px */
         }
         html.dark .icon-content {
-          background-color: var(--icon-box-bg-dark);
+          background-color: var(--icon-box-bg-dark); /* Will be transparent from data */
         }
 
         .animated-button:hover .icon-content {
           transform: scale(1.1); /* Scale icon on hover, no skew */
+        }
+
+        /* New: Strip Hover Glow Effect */
+        .strip-hover-glow::before {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 100%; /* Adjust size as needed */
+          height: 100%; /* Adjust size as needed */
+          background: radial-gradient(circle, var(--glow-color) 0%, transparent 70%); /* Dynamic glow color */
+          border-radius: 50%;
+          transform: translate(-50%, -50%) scale(0);
+          opacity: 0;
+          transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+          pointer-events: none;
+          z-index: 0; /* Behind content */
+        }
+
+        .group:hover .strip-hover-glow::before {
+          transform: translate(-50%, -50%) scale(1.5); /* Expand on hover */
+          opacity: 1;
         }
         `}
       </style>
@@ -227,8 +255,10 @@ const CommunityJoinSection = () => {
                 bg-transparent dark:bg-transparent
                 transition-all duration-200 ease-in-out
                 border-t border-b border-gray-200 dark:border-gray-700
-                hover:shadow-md hover:scale-[1.005] /* Subtle hover effects on the strip */
-                transform origin-center" /* Ensure scale transforms from center */
+                hover:shadow-md /* Removed hover:scale-[1.005] to let the glow be the primary effect */
+                transform origin-center
+                relative strip-hover-glow" /* Added relative and strip-hover-glow class */
+              style={{ '--glow-color': link.glowColor }} /* Pass glow color as CSS variable */
             >
               {/* Left Side: Title and Description */}
               <div className="flex flex-col items-start mb-2 md:mb-0">
@@ -263,9 +293,6 @@ const CommunityJoinSection = () => {
                 }}
                 aria-label={`Go to ${link.title}`}
               >
-                {/* This div acts as the animated slice (now a pseudo-element via CSS) */}
-                {/* <div className="animated-button-slice"></div>  -- REMOVED, now a ::before */}
-
                 {/* Inner Icon Box: Adapts background color based on theme and counter-skews */}
                 <div className="icon-content"> {/* Tailwind padding removed, now in custom CSS */}
                   {React.cloneElement(link.icon, { className: `h-5 w-5 ${link.iconColor}` })}
