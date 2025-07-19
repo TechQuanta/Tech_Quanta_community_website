@@ -1,100 +1,117 @@
 // src/hooks/GraphQlQuery.js
 import { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
-import { request, gql } from "graphql-request";
+// Removed: { request, gql } from "graphql-request"; // No direct GraphQL calls from client
 import { setWithExpiry, getWithExpiry } from "../utils/storageWithExpiry";
 
-// Config
-const SHEET_URL = import.meta.env.VITE_GOOGLE_MACRO_API_USERNAME;
+// Config: Your deployed Google Apps Script Web App URLs
+// IMPORTANT: Replace these with your actual deployed URLs
+const FETCH_API_URL ="https://script.google.com/macros/s/AKfycbywFJBXkX2mnNYteOV7_qP9E86UrIN76egL3vy2fQqC6Zd4S_Pe0GPO45dx17d-UllOaw/exec"; // Your "Get Leaderboard Data from Sheet" URL
+const UPDATE_API_URL = "https://script.google.com/macros/s/AKfycbzQDiYohZyqO7oNQbYzRW1DNsY1ra1x5ByyaYnYtOteHpsubTecMmROabEfAFmgGVactw/exec"; // Your "GitHub Data Updater & Cache Manager" URL
 
-const TOKEN_MAP = JSON.parse(import.meta.env.VITE_GITHUB_TOKENS || "{}");
-const TOKEN_KEYS = Object.keys(TOKEN_MAP);
-const SESSION_KEY = "github_leaderboard_data";
-const SESSION_TTL = 10 * 60 * 2000; // 10 minutes
+const CLIENT_SESSION_KEY = "github_leaderboard_data_client_cache"; // Client-side cache for fetched data
+const CLIENT_SESSION_TTL = 10 * 60 * 1000; // 10 minutes for client-side data cache
 
-// GraphQL Queries (keep as-is)
-const GET_USER_STATS = gql`
-  query ($username: String!) {
-    user(login: $username) {
-      contributionsCollection {
-        totalCommitContributions
-        totalPullRequestContributions
-        totalIssueContributions
-        totalRepositoriesWithContributedCommits
-      }
-      repositoriesContributedTo(contributionTypes: [COMMIT, PULL_REQUEST, ISSUE]) {
-        totalCount
-      }
-      followers {
-        totalCount
-      }
-      starredRepositories {
-        totalCount
-      }
-      avatarUrl
-    }
-  }
-`;
+const UPDATE_TRIGGER_KEY = "github_update_trigger"; // Client-side cache for update API call
+const UPDATE_TRIGGER_TTL = 24 * 60 * 60 * 1000; // 1 day for update API call
 
-const GET_TECHQUANTA_REPOS = gql`
-  query {
-    organization(login: "techquanta") {
-      repositories(first: 30) {
-        nodes {
-          name
-        }
-      }
-    }
-  }
-`;
-
-const GET_REPO_CONTRIBUTORS = gql`
-  query ($owner: String!, $repoName: String!) {
-    repository(owner: $owner, name: $repoName) {
-      defaultBranchRef {
-        target {
-          ... on Commit {
-            history(first: 100) {
-              edges {
-                node {
-                  author {
-                    user {
-                      login
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
-// Helper to sleep
+// Helper to sleep (still useful for client-side delays if needed)
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-// Check if error is rate limit related
-function isRateLimitError(error) {
-  if (!error) return false;
-
-  const errors = error.response?.errors;
-  if (errors && errors.some((e) => e.message?.toLowerCase().includes("rate limit"))) {
-    return true;
+// *** NEW: More Distinct and "Awesome" SVG Generation Function (moved here) ***
+function generateSvgAvatar(username) {
+  // Simple hash for pseudo-randomness based on username
+  let hash = 0;
+  for (let i = 0; i < username.length; i++) {
+    hash = username.charCodeAt(i) + ((hash << 5) - hash);
   }
 
-  if (
-    error.response?.status === 403 &&
-    error.response?.statusText?.toLowerCase().includes("rate limit")
-  ) {
-    return true;
+  // A more diverse set of colors
+  const colors = [
+    `hsl(${hash % 360}, 65%, 55%)`,
+    `hsl(${(hash + 90) % 360}, 70%, 60%)`,
+    `hsl(${(hash + 180) % 360}, 75%, 50%)`,
+    `hsl(${(hash + 270) % 360}, 60%, 65%)`,
+    `#${(hash * 12345).toString(16).slice(0, 6).padEnd(6, '0')}`, // Hex color from hash
+    `#${(hash * 67890).toString(16).slice(0, 6).padEnd(6, '0')}` // Another hex color
+  ];
+
+  const size = 64; // Avatar size
+  const rand = (min, max, seed) => {
+    // Basic PRNG for consistent randomness based on hash
+    const x = Math.sin(seed || hash) * 10000;
+    const r = x - Math.floor(x);
+    return Math.floor(r * (max - min + 1)) + min;
+  };
+
+  const svgElements = [];
+  const clipPaths = [];
+  let currentClipId = 0;
+
+  // Background pattern with abstract shapes
+  for (let i = 0; i < 5; i++) { // Generate 5 overlapping shapes
+    const numPoints = rand(3, 7, hash + i * 10); // 3 to 7 points for polygon
+    let points = "";
+    for (let j = 0; j < numPoints; j++) {
+      const x = rand(0, size, hash + i * 10 + j * 2) * (1 + (rand(0,1,hash+i+j) % 2 === 0 ? 0.2 : -0.2)); // Slight variation
+      const y = rand(0, size, hash + i * 10 + j * 2 + 1) * (1 + (rand(0,1,hash+i+j) % 2 === 0 ? 0.2 : -0.2)); // Slight variation
+      points += `${x},${y} `;
+    }
+    const fillColor = colors[rand(0, colors.length - 1, hash + i)];
+    const opacity = (rand(5, 10, hash + i * 100) / 10).toFixed(1); // Varying opacity
+
+    svgElements.push(`<polygon points="${points.trim()}" fill="${fillColor}" opacity="${opacity}" />`);
   }
 
-  return false;
+  // Create a unique abstract clipping path
+  currentClipId++;
+  const clipId = `clip-${username}-${currentClipId}`;
+  let clipPathPoints = "";
+  const numClipPoints = rand(4, 8, hash + 99); // 4 to 8 points for clip path
+  for (let j = 0; j < numClipPoints; j++) {
+    const x = rand(size * 0.1, size * 0.9, hash + j * 50);
+    const y = rand(size * 0.1, size * 0.9, hash + j * 50 + 1);
+    clipPathPoints += `${x},${y} `;
+  }
+  clipPaths.push(`
+    <clipPath id="${clipId}">
+      <polygon points="${clipPathPoints.trim()}" />
+    </clipPath>
+  `);
+
+  // Apply the clipping path to a main background layer for a "cutout" feel
+  const mainBackgroundColor = colors[rand(0, colors.length - 1, hash + 200)];
+  svgElements.push(`<rect width="100%" height="100%" fill="${mainBackgroundColor}" clip-path="url(#${clipId})" />`);
+
+
+  // Add the initial of the username, potentially with a dynamic color or shadow
+  const initial = username.substring(0, 1).toUpperCase();
+  const textColor = colors[rand(0, colors.length - 1, hash + 300)]; // Dynamic text color
+  const shadowColor = colors[rand(0, colors.length - 1, hash + 400)]; // Dynamic shadow color
+  const shadowOffsetX = rand(-2, 2, hash + 500);
+  const shadowOffsetY = rand(-2, 2, hash + 501);
+
+  svgElements.push(`
+    <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+          font-size="32" fill="${textColor}" font-family="monospace" font-weight="bold"
+          filter="drop-shadow(${shadowOffsetX}px ${shadowOffsetY}px 2px ${shadowColor})">
+      ${initial}
+    </text>
+  `);
+
+
+  return `
+    <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        ${clipPaths.join('')}
+      </defs>
+      <rect width="100%" height="100%" fill="#F0F0F0"/> ${svgElements.join('')}
+    </svg>
+  `;
 }
+
 
 export function useGitHubLeaderboardData() {
   const [allUserStats, setAllUserStats] = useState([]);
@@ -105,243 +122,121 @@ export function useGitHubLeaderboardData() {
   const [filterActive, setFilterActive] = useState(false);
   const [allDataNull, setAllDataNull] = useState(false);
 
-  // Use ref to keep tokenIndex stable across renders
-  const tokenIndexRef = useRef(0);
-  // Ref to track if fetching is already in progress to prevent multiple calls
-  const isFetchingRef = useRef(false);
+  const isFetchingRef = useRef(false); // Still useful to prevent concurrent fetches
 
-  // Get current token header
-  const getCurrentHeader = () => {
-    const tokenKey = TOKEN_KEYS[tokenIndexRef.current];
-    return { Authorization: `Bearer ${TOKEN_MAP[tokenKey]}` };
-  };
+  // Function to trigger the Apps Script update endpoint
+  const triggerAppsScriptUpdate = useCallback(async () => {
+    const cachedUpdateTrigger = getWithExpiry(UPDATE_TRIGGER_KEY);
 
-  // Rotate token safely
-  const rotateToken = () => {
-    tokenIndexRef.current = (tokenIndexRef.current + 1) % TOKEN_KEYS.length;
-    console.info(`Switched to token ${TOKEN_KEYS[tokenIndexRef.current]}`);
-  };
-
-  // Robust GraphQL request with token rotation & retries
-  async function tryGraphQLRequest(query, variables = {}) {
-    let retries = 0;
-
-    while (true) {
-      try {
-        const headers = getCurrentHeader();
-        const data = await request("https://api.github.com/graphql", query, variables, headers);
-        return data;
-      } catch (error) {
-        if (isRateLimitError(error)) {
-          rotateToken();
-          retries++;
-          if (retries >= TOKEN_KEYS.length) {
-            throw new Error("All tokens exhausted due to rate limits.");
-          }
-          await sleep(1000 * retries * retries); // exponential backoff squared
-          continue;
-        } else {
-          throw error;
-        }
-      }
+    if (cachedUpdateTrigger) {
+      console.log("Skipping Apps Script update: client-side cache is fresh.");
+      return; // Skip if client-side update cache is fresh
     }
-  }
 
-  const fetchTechquantaContributors = useCallback(async () => {
+    console.log("Triggering Apps Script update (client-side cache expired/missing)...");
     try {
-      const repoData = await tryGraphQLRequest(GET_TECHQUANTA_REPOS);
-      const repos = repoData.organization.repositories.nodes;
-      const userRepoCommitsMap = {};
-
-      for (const repo of repos) {
-        const contributorsData = await tryGraphQLRequest(GET_REPO_CONTRIBUTORS, {
-          owner: "techquanta",
-          repoName: repo.name,
-        });
-
-        const commits = contributorsData.repository?.defaultBranchRef?.target?.history?.edges || [];
-
-        for (const { node } of commits) {
-          const login = node.author?.user?.login;
-          if (!login) continue;
-          if (!userRepoCommitsMap[login]) userRepoCommitsMap[login] = {};
-          userRepoCommitsMap[login][repo.name] = (userRepoCommitsMap[login][repo.name] || 0) + 1;
-        }
+      const response = await axios.get(UPDATE_API_URL); // No params needed for this endpoint
+      if (response.data && response.data.success) {
+        console.log("Apps Script update triggered successfully:", response.data.message);
+        setWithExpiry(UPDATE_TRIGGER_KEY, true, UPDATE_TRIGGER_TTL); // Set client-side cache for 1 day
+      } else {
+        console.error("Apps Script update failed:", response.data.error || "Unknown error");
+        setError("Failed to trigger data update. Please try again later.");
       }
-      return userRepoCommitsMap;
     } catch (err) {
-      console.error("Error fetching Techquanta contributors:", err);
-      return {};
+      console.error("Error calling Apps Script update URL:", err);
+      setError("Failed to connect to update service. " + err.message);
     }
   }, []);
 
-  const fetchAllLeaderboardData = useCallback(async () => {
-    if (isFetchingRef.current) {
+  // Function to fetch all leaderboard data from the Apps Script fetch endpoint
+  const fetchAllLeaderboardData = useCallback(async (forceRefetch = false) => {
+    if (isFetchingRef.current && !forceRefetch) {
       console.log("Leaderboard data fetching already in progress.");
       return;
     }
 
-    const cached = getWithExpiry(SESSION_KEY);
-    if (cached) {
+    const cached = getWithExpiry(CLIENT_SESSION_KEY);
+    if (cached && !forceRefetch) {
       setAllUserStats(cached);
-      // Initialize displayedUserStats with cached data
       setDisplayedUserStats(cached);
       setAllDataNull(cached.length === 0);
       setLoading(false);
+      console.log("Leaderboard data loaded from client-side cache.");
       return;
     }
 
     isFetchingRef.current = true;
     setLoading(true);
     setError(null);
-    console.log("Starting full leaderboard data fetch...");
+    console.log("Starting full leaderboard data fetch from Apps Script...");
 
     try {
-      const res = await axios.get(SHEET_URL);
-      const usernames = res.data?.data?.map((u) => u.GitHub_Username).filter(Boolean) || [];
+      const response = await axios.get(FETCH_API_URL); // Fetch all data from the dedicated API
+      if (response.data && Array.isArray(response.data.data)) {
+        const rawStats = response.data.data;
+        const processedStats = rawStats.map(userData => ({
+          username: userData.GitHub_Username || userData.username,
+          commits: userData.totalCommitContributions,
+          pullRequests: userData.totalPullRequestContributions,
+          issues: userData.totalIssueContributions,
+          reposContributed: userData.totalCount_reposContributedTo,
+          stars: userData.totalCount_starredRepositories,
+          followers: userData.totalCount_followers,
+          score: userData.score,
+          techquantaCommits: userData.techquantaCommits,
+          techquantaContributions: userData.techquantaContributions, // This should be an object now
+          avatarSvg: generateSvgAvatar(userData.GitHub_Username || userData.username) // Generate SVG here
+        }));
 
-      const userRepoCommitsMap = await fetchTechquantaContributors();
-
-      const statsArray = [];
-
-      for (let i = 0; i < usernames.length; i++) {
-        const username = usernames[i];
-        let success = false;
-        let retryCount = 0;
-
-        while (!success) {
-          try {
-            const data = await tryGraphQLRequest(GET_USER_STATS, { username });
-            const user = data.user;
-            if (!user) {
-              success = true;
-              break;
-            }
-
-            const {
-              contributionsCollection,
-              repositoriesContributedTo,
-              followers,
-              starredRepositories,
-              avatarUrl,
-            } = user;
-
-            const score =
-              contributionsCollection.totalCommitContributions * 1 +
-              contributionsCollection.totalPullRequestContributions * 5 +
-              contributionsCollection.totalIssueContributions * 2 +
-              repositoriesContributedTo.totalCount * 3 +
-              starredRepositories.totalCount * 0.5 +
-              followers.totalCount * 0.2;
-
-            const repoCommits = userRepoCommitsMap[username] || {};
-            const techquantaCommits = Object.values(repoCommits).reduce((a, b) => a + b, 0);
-
-            statsArray.push({
-              username,
-              avatar: avatarUrl,
-              commits: contributionsCollection.totalCommitContributions,
-              pullRequests: contributionsCollection.totalPullRequestContributions,
-              issues: contributionsCollection.totalIssueContributions,
-              reposContributed: repositoriesContributedTo.totalCount,
-              stars: starredRepositories.totalCount,
-              followers: followers.totalCount,
-              score: Math.round(score + techquantaCommits * 4),
-              techquantaCommits,
-              techquantaContributions: repoCommits,
-            });
-
-            success = true;
-            retryCount = 0;
-
-            await sleep(1500); // avoid hammering GitHub API
-          } catch (err) {
-            if (isRateLimitError(err)) {
-              console.warn(`Rate limit hit on token ${TOKEN_KEYS[tokenIndexRef.current]} for user ${username}. Rotating token...`);
-              rotateToken();
-              retryCount++;
-
-              if (retryCount >= TOKEN_KEYS.length) {
-                throw new Error(`All tokens exhausted due to rate limits at user index ${i}: ${username}`);
-              }
-
-              await sleep(1000 * retryCount * retryCount);
-            } else {
-              console.error(`Error fetching data for user ${username}:`, err);
-              success = true; // skip user on non-rate-limit errors
-            }
-          }
-        }
+        const sortedStats = processedStats.sort((a, b) => b.score - a.score);
+        setWithExpiry(CLIENT_SESSION_KEY, sortedStats, CLIENT_SESSION_TTL); // Cache for 10 minutes
+        setAllUserStats(sortedStats);
+        setDisplayedUserStats(sortedStats);
+        setAllDataNull(sortedStats.length === 0);
+        console.log("Leaderboard data fetch completed and cached client-side.");
+      } else {
+        console.error("Apps Script fetch endpoint returned unexpected data:", response.data);
+        setError("Failed to fetch leaderboard data. Unexpected response.");
+        setAllDataNull(true);
       }
-
-      setWithExpiry(SESSION_KEY, statsArray, SESSION_TTL);
-      setAllUserStats(statsArray);
-      setDisplayedUserStats(statsArray); // Initialize displayed stats here
-      setAllDataNull(statsArray.length === 0);
-      console.log("Leaderboard data fetch completed and cached.");
     } catch (err) {
-      console.error("Error loading leaderboard data:", err);
-      setError("Failed to fetch leaderboard data.");
+      console.error("Critical error loading leaderboard data from Apps Script fetch endpoint:", err);
+      setError("Failed to fetch leaderboard data. " + err.message);
       setAllDataNull(true);
     } finally {
       setLoading(false);
       isFetchingRef.current = false;
     }
-  }, [fetchTechquantaContributors]);
-
-  // Initial load effect: Try to load from cache
-  useEffect(() => {
-    const cached = getWithExpiry(SESSION_KEY);
-    if (cached) {
-      setAllUserStats(cached);
-      setDisplayedUserStats(cached); // Ensure displayed stats also get cached data
-      setAllDataNull(cached.length === 0);
-      setLoading(false);
-    } else {
-      setLoading(true); // Still loading if no cache and fetchAllLeaderboardData hasn't completed
-    }
   }, []);
 
-  const showActiveMembers = useCallback(async () => {
+  // Initial load effect: Trigger update (conditionally) then fetch data
+  useEffect(() => {
+    const initializeData = async () => {
+      await triggerAppsScriptUpdate(); // This will only run if client-side cache for update is expired
+      await fetchAllLeaderboardData(); // This will always fetch fresh data or from its own client-side cache
+    };
+    initializeData();
+  }, [triggerAppsScriptUpdate, fetchAllLeaderboardData]);
+
+  const showActiveMembers = useCallback(() => {
     setLoadingFilter(true);
     setError(null);
+    setFilterActive(true);
+
     try {
-      // If allUserStats is empty (meaning no data or cache), try to fetch it first
-      // This ensures filtering works even if `fetchAllLeaderboardData` hasn't completed
-      // or if it was called and failed previously for some reason.
-      if (allUserStats.length === 0 && !isFetchingRef.current) {
-         await fetchAllLeaderboardData(); // Ensure base data is available
-      }
-
-      // We need to re-fetch techquanta contributor data to ensure it's fresh for filtering
-      // especially since the main data might be from cache.
-      const repoMap = await fetchTechquantaContributors();
-      const active = allUserStats // Use allUserStats as the base for filtering
-        .filter((u) => repoMap[u.username] && Object.keys(repoMap[u.username]).length > 0)
-        .map((u) => {
-          const repos = repoMap[u.username];
-          const commits = Object.values(repos).reduce((a, b) => a + b, 0);
-          return {
-            ...u,
-            techquantaContributions: repos,
-            techquantaCommits: commits,
-          };
-        });
-
+      const active = allUserStats.filter((u) => u.techquantaCommits > 0);
       setDisplayedUserStats(active);
-      setFilterActive(true);
       setAllDataNull(active.length === 0);
     } catch (err) {
       console.error("Error filtering active members:", err);
-      setError("Failed to fetch active members.");
+      setError("Failed to filter active members. Please try again.");
       setAllDataNull(true);
     } finally {
       setLoadingFilter(false);
     }
-  }, [allUserStats, fetchTechquantaContributors, fetchAllLeaderboardData]);
+  }, [allUserStats]);
 
-  // The showAllMembers function now just resets to the complete `allUserStats`
-  // which will have been populated either from cache or the initial fetch.
   const showAllMembers = useCallback(() => {
     setDisplayedUserStats(allUserStats);
     setFilterActive(false);
@@ -358,6 +253,6 @@ export function useGitHubLeaderboardData() {
     allDataNull,
     showActiveMembers,
     showAllMembers,
-    fetchAllLeaderboardData, // Still expose for the background fetch
+    fetchAllLeaderboardData, // Expose for manual refresh if needed
   };
 }

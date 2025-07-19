@@ -104,9 +104,108 @@
 .home-partners-wrapper {
   @apply flex justify-center flex-col items-center h-full w-full px-4 py-5 pt-0;
 }
+/* --- Video Card Specific Styles: Distinct and Modern --- */
 
+/* The main container for the video card, which also receives the 3D parallax transform */
+.video-card-container {
+  position: relative; /* Needed for absolute positioning of child shadows */
+  border-radius: 0.25rem; /* More pronounced rounded corners for a softer, modern look */
+  transform-style: preserve-3d; /* Essential for the 3D tilt effect */
+  /* REMOVED: transform: scale(3); */ /* This was causing the large initial size */
+  /* Add transition for the box-shadow here to smooth the glow effect */
+  transition: transform 0.3s ease-out, box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  /* Start with no glow on the container */
+  box-shadow: none;
+}
 
+/* Add a slight scale-up effect on hover to mimic a "pop" AND the glow */
+.video-card-container:hover {
+  transform: scale(1.01); /* Slightly enlarge on hover */
+  /* New "toastify" glow effect directly on the container */
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.6); /* A blue glow for the "toastify" effect */
+}
 
+/* Dark mode specific glow */
+.dark .video-card-container:hover {
+  box-shadow: 0 0 35px rgba(255, 255, 255, 0.7); /* A brighter blue glow for dark mode */
+}
+
+/* The outer shadow layer: creates a floating, ethereal effect with multiple layers */
+.video-card-shadow-outer {
+  position: absolute;
+  inset: 0; /* Makes it cover the entire parent container */
+  border-radius: inherit; /* Inherit the rounded corners from the parent */
+  /* Initial subtle, layered shadow for a sense of depth */
+  box-shadow:
+    0 5px 15px rgba(0, 0, 0, 0.1),    /* Soft, wide base shadow */
+    0 1px 3px rgba(0, 0, 0, 0.08),    /* Closer, sharper shadow */
+    0 0 0 1px rgba(0, 0, 0, 0.03);    /* Very subtle outline for definition */
+  transition: box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smooth, elegant transition */
+}
+
+/* Enhanced outer shadow on hover: makes the card appear to "lift" and gain more depth */
+.video-card-container:hover .video-card-shadow-outer {
+  box-shadow:
+    0 15px 30px rgba(0, 0, 0, 0.2),  /* Deeper, more spread out base shadow */
+    0 5px 10px rgba(0, 0, 0, 0.15),  /* More pronounced closer shadow */
+    0 0 0 2px rgba(0, 0, 0, 0.05);    /* Slightly stronger outline */
+}
+
+/* Dark mode specific outer shadows for better contrast and aesthetic */
+.dark .video-card-shadow-outer {
+  box-shadow:
+    0 5px 15px rgba(0, 0, 0, 0.3),
+    0 1px 3px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.dark .video-card-container:hover .video-card-shadow-outer {
+  box-shadow:
+    0 15px 30px rgba(0, 0, 0, 0.4),
+    0 5px 10px rgba(0, 0, 0, 0.3),
+    0 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Aspect ratio box for responsive video sizing (16:9) */
+.video-aspect-ratio {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 aspect ratio (height / width * 100%) */
+  overflow: hidden; /* Ensures the iframe's content respects the border-radius */
+  border-radius: inherit; /* Inherit the rounded corners from the container */
+}
+
+/* Inner shadows and borders for the video area: creates a recessed, framed look */
+.video-shadow-inset {
+  border-radius: inherit; /* Inherit the rounded corners */
+  /* Multi-layered inner shadow for a deep, subtle recess effect */
+  box-shadow:
+    inset 0 0 15px rgba(0, 0, 0, 0.5), /* Stronger, deeper dark inner shadow */
+    inset 0 0 5px rgba(255, 255, 255, 0.1); /* Subtle inner light highlight */
+  /* A refined, subtle border that adds a touch of premium feel */
+  border: 3px solid rgba(168, 19, 237, 0.15); /* Slightly more visible border */
+  transition: box-shadow 0.3s ease-out, border-color 0.3s ease-out; /* Smooth transitions */
+}
+
+/* Dark mode specific inner shadows and borders for better integration */
+.dark .video-shadow-inset {
+  box-shadow:
+    inset 0 0 20px rgba(0, 0, 0, 0.8), /* Even more intense dark inner shadow */
+    inset 0 0 8px rgba(255, 255, 255, 0.08); /* Subtler light highlight in dark mode */
+  border: 1px solid rgba(255, 255, 255, 0.08); /* Fainter border in dark mode */
+}
+
+/* The iframe itself: ensures it fills its container and has no default borders */
+.video-aspect-ratio iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit; /* Crucial: ensures the iframe itself is rounded */
+  border: none; /* Removes the default iframe border for a seamless look */
+  background-color: black; /* Fallback/initial background for iframe area */
+}
 
 /* leaderboard.css */
 
@@ -446,3 +545,599 @@
   letter-spacing: 0.04em;
 }
 
+
+/* leaderboard.css additions */
+
+.leaderboard-title {
+  display: flex;
+  align-items: center; /* Align items vertically */
+  gap: 10px; /* Space between title and button */
+}
+
+.info-button {
+  background-color: #ffd900; /* Example blue color */
+  color: rgb(0, 0, 0);
+  border: none;
+  border-radius: 50%; /* Makes it circular */
+  width: 25px; /* Adjust size as needed */
+  height: 25px; /* Adjust size as needed */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.info-button:hover {
+  background-color: #b30083; /* Darker blue on hover */
+}
+
+/* Modal Styles */
+.score-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
+  backdrop-filter: blur(8px); /* Blur effect */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it's on top of everything */
+}
+
+.score-modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  position: relative;
+  max-width: 600px;
+  max-height:800px;
+}
+
+.score-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #333;
+}
+
+.score-explanation-image {
+  max-width: 100%;
+  height: auto;
+  display: block; /* Remove extra space below image */
+}
+/* main.css additions */
+
+/* Tooltip styles */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 160px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%; /* Position the tooltip above the text */
+  left: 50%;
+  margin-left: -80px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%; /* At the bottom of the tooltip */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Spinner for loading states */
+.spinner {
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid #fff;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* User Card specific styles */
+.user-card-link {
+  text-decoration: none; /* Remove underline from link */
+  color: inherit; /* Inherit text color */
+  display: block; /* Make the entire card clickable */
+  position: relative; /* For rank overlay positioning */
+}
+
+.user-card {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  padding: 1rem 1.5rem;
+  display: flex;
+  color: #1e293b; /* Dark text for light mode */
+  align-items: center;
+  gap: 1rem;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  height: 100%; /* Ensure cards in grid have uniform height */
+}
+
+.user-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.dark .user-card {
+  background-color: #1a202c; /* Dark mode background */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.dark .user-card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.user-card-avatar {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  overflow: hidden; /* Ensure SVG avatars are clipped */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-card-avatar svg {
+  width: 100%;
+  height: 100%;
+}
+
+.user-card-details {
+  width:100%;
+}
+
+.user-card-username {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b; /* Dark text for light mode */
+  margin-bottom: 0.25rem;
+}
+
+.dark .user-card-username {
+  color: #8b06f0; /* Light text for dark mode */
+}
+
+.user-card-score {
+  font-size: 1rem;
+  color: #4a5568; /* Slightly lighter text */
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.dark .user-card-score {
+  color: #a0aec0;
+}
+
+.user-card-techquanta-commits {
+  font-size: 0.9rem;
+  color: #2f855a; /* Green for commits */
+  font-weight: 500;
+  margin-top: 0.2rem;
+}
+
+.dark .user-card-techquanta-commits {
+  color: #68d391;
+}
+
+.user-card-badges {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.badge-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.badge-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.dark .badge-name {
+  color: #e71260;
+}
+
+/* Top Three User Card Specifics */
+.user-card-top-three .user-card {
+  background: linear-gradient(135deg, #f0f9ff, #d0e8ff);
+  border: 2px solid #a3c4f3;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15), 0 0 0 3px rgba(163, 196, 243, 0.5);
+  transform: translateY(-8px) scale(1.02); /* Lift and slightly enlarge */
+}
+
+.user-card-top-three .user-card:hover {
+  transform: translateY(-12px) scale(1.04);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25), 0 0 0 4px rgba(163, 196, 243, 0.7);
+}
+
+.dark .user-card-top-three .user-card {
+  background: linear-gradient(135deg, #2a3340, #3c4a5c);
+  border: 2px solid #4a5568;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 0 0 0 3px rgba(74, 85, 104, 0.5);
+}
+
+.dark .user-card-top-three .user-card:hover {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 0 4px rgba(74, 85, 104, 0.7);
+}
+
+
+.user-rank-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #ffd700; /* Gold color */
+  color: #333;
+  font-weight: bold;
+  padding: 0.25rem 0.5rem;
+  border-top-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  font-size: 0.9rem;
+  z-index: 5;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Leaderboard Grid Layout */
+.users-scroll-container {
+  overflow-y: auto; /* Enable scrolling if content overflows */
+  padding-top: 1rem; /* Space below sticky header */
+  padding-bottom: 2rem; /* Space above fixed search result */
+  height: calc(100vh - 200px); /* Adjust height based on header and potential fixed search card */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.users-scroll-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+
+.users-list-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+/* No Users Display */
+.no-users-display {
+  grid-column: 1 / -1; /* Span across all columns */
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+  color: #64748b;
+  font-style: italic;
+  margin-top: 2rem;
+}
+
+/* Header Top Row */
+.header-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 1.5rem; /* Space between top row and search/filter */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    gap: 1rem; /* Space between items when wrapped */
+}
+
+/* Sparkle Emoji */
+.sparkle-emoji {
+  animation: sparkle-glow 1.5s infinite alternate;
+  display: inline-block;
+  margin-left: 5px;
+}
+
+@keyframes sparkle-glow {
+  0% { text-shadow: 0 0 5px rgba(255,255,255,0.7); }
+  100% { text-shadow: 0 0 15px rgba(255,255,255,1), 0 0 25px rgba(255,255,255,0.8); }
+}
+
+/* Coming Soon Button in Nav */
+.coming-soon-nav-button {
+  padding: 0.6rem 1.2rem;
+  background: linear-gradient(90deg, #ff7e5f, #feb47b);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(255, 126, 95, 0.4);
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.coming-soon-nav-button:hover {
+  background: linear-gradient(90deg, #feb47b, #ff7e5f);
+  box-shadow: 0 8px 20px rgba(255, 126, 95, 0.6);
+  transform: translateY(-2px);
+}
+
+.pulse-effect {
+  animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+
+
+/* Search Result Card fixed at bottom */
+.search-result-card-fixed-bottom {
+  position: fixed; /* Changed to sticky */
+  bottom: 1rem; /* Adjust as needed for spacing from the bottom */
+  width: 100%;
+  max-width: 650px; /* Same max-width as existing search-result-card-container */
+  margin: 0 auto; /* Center the card horizontally */
+  z-index: 90; /* Ensure it stays above other content but below header */
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  padding: 1rem 1.2rem;
+  transition: all 0.3s ease; /* Smooth transition for any changes */
+  box-sizing: border-box; /* Include padding in width calculation */
+  margin-top: 1.5rem; /* Give some space from the last user card */
+}
+
+
+.verified-emoji {
+  margin-left: 5px;
+  font-size: 1.1em;
+}
+
+.techquanta-contributions {
+  font-weight: 700;
+  color: #d97706; /* Amber color for emphasis */
+}
+
+/* Modal Specific Styles (for generic Modal component) */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-backdrop.active-modal-backdrop {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  position: relative;
+  max-width: 90%;
+  max-height: 90vh; /* Limit height to prevent overflow on smaller screens */
+  overflow-y: auto; /* Enable scrolling for modal content */
+  transform: translateY(-20px);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.modal-backdrop.active-modal-backdrop .modal-content {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #4a5568;
+  transition: color 0.2s ease;
+}
+
+.modal-close:hover {
+  color: #e53e3e; /* Red on hover */
+}
+
+.modal-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1a202c;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.modal-description {
+  font-size: 1.1rem;
+  color: #4a5568;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.modal-footer {
+  font-size: 1rem;
+  color: #64748b;
+  margin-top: 1.5rem;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Specific Modal styles */
+.score-modal-content {
+  background: linear-gradient(145deg, #e0f2fe, #bfdbfe);
+  border: 1px solid #90cdf4;
+}
+
+.coming-soon-content {
+  background: linear-gradient(145deg, #d3f9d8, #a7f3d0);
+  border: 1px solid #6ee7b7;
+}
+
+.coming-soon-icon {
+  font-size: 4rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.learn-more-button {
+  display: block;
+  width: fit-content;
+  margin: 1.5rem auto 0 auto;
+  padding: 0.8rem 2rem;
+  background: linear-gradient(45deg, #4299e1, #3182ce);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(66, 153, 225, 0.4);
+}
+
+.learn-more-button:hover {
+  background: linear-gradient(45deg, #3182ce, #2c5282);
+  box-shadow: 0 6px 20px rgba(49, 130, 206, 0.6);
+  transform: translateY(-2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .leaderboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+  }
+
+  .header-top-row {
+      flex-direction: column;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+  }
+
+  .leaderboard-title {
+    text-align: left;
+    font-size: 1.8rem;
+    width: 100%; /* Take full width */
+    margin-bottom: 1rem;
+  }
+
+  .leaderboard-feature-buttons {
+    width: 100%;
+    justify-content: center; /* Center buttons horizontally */
+    margin-bottom: 1rem;
+  }
+
+  .leaderboard-search-filter {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: 1rem;
+  }
+
+  .search-bar-wrapper {
+    width: 100%;
+  }
+
+  .filter-controls {
+    width: 100%;
+    flex-wrap: wrap; /* Allow filter controls to wrap */
+  }
+
+  .filter-select,
+  .filter-button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .users-list-grid {
+    grid-template-columns: 1fr; /* Single column on small screens */
+    padding: 0.5rem;
+  }
+
+  .user-card {
+    padding: 0.8rem 1rem;
+  }
+
+  .search-result-card-fixed-bottom {
+    padding: 0.8rem 1rem;
+    bottom: 0.5rem; /* Less space from bottom on small screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .leaderboard-title {
+    font-size: 1.5rem;
+  }
+
+  .feature-button {
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .search-input {
+    font-size: 0.9rem;
+  }
+
+  .filter-select,
+  .filter-button {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+  }
+}

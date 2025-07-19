@@ -2,52 +2,58 @@
 import React from "react";
 import { HeroHighlight } from "../ui/hero-highlight";
 import { AnimatedTestimonials } from "../ui/animated-testimonials";
+import Balram from "../../assets/profiles/dhakadbalram.png";
+import Ashmeet from "../../assets/profiles/singashmeet.webp";
+import Himanshu from "../../assets/profiles/sahuhimanshu.webp";
+import Kishan from "../../assets/profiles/rathorekishan.jpg";
+import Jayesh from "../../assets/profiles/tapadiyajayesh.webp";
 
 const testimonials = [
-  {
+    {
     quote:
-      "The attention to detail and innovative features have completely transformed our workflow. This is exactly what we've been looking for.",
-    name: "Sarah Chen",
-    designation: "Product Manager at TechFlow",
-    src: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=3560&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "As a Co-Founder, what stood out most was the intuitive design. It enabled our team to hit the ground running with minimal friction.",
+    name: "Jayesh Tapadiya",
+    designation: "Founder",
+    src: Jayesh,
+  },
+    {
+    quote:
+      "From idea to execution, this product supported us at every stage. It's rare to find something so founder-friendly yet scalable.",
+    name: "Himanshu Sahu",
+    designation: "CEO",
+    src: Himanshu,
   },
   {
     quote:
-      "Implementation was seamless and the results exceeded our expectations. The platform's flexibility is remarkable.",
-    name: "Michael Rodriguez",
-    designation: "CTO at InnovateSphere",
-    src: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "As a CEO, I constantly seek efficiency and innovation. This platform delivered both—elevating our operations to new heights.",
+    name: "Balram Dhakad",
+    designation: "CEO",
+    src: Balram,
   },
   {
     quote:
-      "This solution has significantly improved our team's productivity. The intuitive interface makes complex tasks simple.",
-    name: "Emily Watson",
-    designation: "Operations Director at CloudScale",
-    src: "https://images.unsplash.com/photo-1623582854588-d60de57fa33f?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "Being in a leadership role, ease of integration and reliability are non-negotiables. This solution checked all the boxes and more.",
+    name: "Ashmeet Singh",
+    designation: "Co-Founder",
+    src: Ashmeet,
   },
+
   {
     quote:
-      "Outstanding support and robust features. It's rare to find a product that delivers on all its promises.",
-    name: "James Kim",
-    designation: "Engineering Lead at DataPro",
-    src: "https://images.unsplash.com/photo-1636041293178-808a6762ab39?q=80&w=3464&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    quote:
-      "The scalability and performance have been game-changing for our organization. Highly recommend to any growing business.",
-    name: "Lisa Thompson",
-    designation: "VP of Technology at FutureNet",
-    src: "https://images.unsplash.com/photo-1624561172888-ac93c696e10c?q=80&w=2592&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "As a Co-Founder scaling a fast-paced team, performance and adaptability are everything. This solution delivered exceptionally well.",
+    name: "Kishan Rathore",
+    designation: "Co-Founder",
+    src: Kishan,
   },
 ];
 
 const Partners = () => {
   return (
-    <div className="hidden flex justify-center flex-col items-center h-full w-full px-4 py-5 pt-[200px]">
+    <div className="flex justify-center flex-col items-center h-full w-full px-4 py-5 pt-[200px]">
       <div className="pb-[100px]">
         <HeroHighlight>
           <span className="text-black dark:text-white font-mono text-5xl text-center mb-5">
-            Partners
+            Community Founders
           </span>
           <AnimatedTestimonials testimonials={testimonials} />
         </HeroHighlight>

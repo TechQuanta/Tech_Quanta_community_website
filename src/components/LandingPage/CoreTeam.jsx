@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import teamdetails from './teamdetails';  // your array of volunteers
+import teamdetails from './teamdetails'; // your array of volunteers
 import './landing.css';
+import { FaLinkedin } from 'react-icons/fa'; // Import the LinkedIn icon
 
 const CoreTeam = () => {
   const containerRef = useRef(null);
@@ -47,7 +48,7 @@ const CoreTeam = () => {
   const bubbleSize = useMemo(() => getBubbleSize(containerSize.width), [containerSize.width]);
 
   const adjustedPattern = useMemo(() => {
-    const pattern = [3, 2, 5, 2, 3];
+    const pattern = [2, 4, 5, 4, 2];
     let adjusted = [];
     let total = 0;
     for (let i = 0; i < pattern.length && total < teamData.length; i++) {
@@ -121,8 +122,12 @@ const CoreTeam = () => {
               <div className="volunteer-avatar" style={{ width: bubbleSize, height: bubbleSize }}>
                 <img src={v.image} alt={v.name} className="volunteer-image" loading="lazy" />
               </div>
-              <div className="volunteer-name">{v.name}</div>
-              {/* <div className="volunteer-role">{v.role}</div> */}
+              {v.linkedin && (
+                <a href={v.linkedin} target="_blank" rel="noopener noreferrer" className="linkedin-button flex-wrap">
+                  <div className="volunteer-name">{v.name}  {/* Add LinkedIn button for mobile view */}
+              </div>
+                </a>
+              )}
             </div>
           ))}
         </div>
@@ -143,8 +148,12 @@ const CoreTeam = () => {
               <div className="volunteer-avatar" style={{ width: bubbleSize, height: bubbleSize }}>
                 <img src={v.image} alt={v.name} className="volunteer-image" loading="lazy" />
               </div>
-              <div className="volunteer-name">{v.name}</div>
-              {/* <div className="volunteer-role">{v.role}</div> */}
+              {/* Add LinkedIn button for desktop view */}
+              {v.linkedin && (
+                <a href={v.linkedin} target="_blank" rel="noopener noreferrer" className="linkedin-button">
+                  <div className="volunteer-name">{v.name}</div>
+                </a>
+              )}
             </div>
           );
         })

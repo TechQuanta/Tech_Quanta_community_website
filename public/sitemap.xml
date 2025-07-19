@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+    
+    <!-- Homepage: Highest priority, likely to change frequently -->
+    <url>
+        <loc>https://www.techquanta.tech/</loc>
+        <lastmod>2025-07-19T00:00:00+00:00</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+
+    <!-- About Us Page: Important, but less frequent changes -->
+    <url>
+        <loc>https://www.techquanta.tech/about</loc>
+        <lastmod>2025-07-19T00:00:00+00:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Community Work Page: Highly relevant for "TechQuanta community", updates with new projects/initiatives -->
+    <url>
+        <loc>https://www.techquanta.tech/community-work</loc>
+        <lastmod>2025-07-19T00:00:00+00:00</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+    </url>
+    
+    <!-- Leaderboard Page: Content changes frequently with new activity/rankings -->
+    <url>
+        <loc>https://www.techquanta.tech/leaderboard</loc>
+        <lastmod>2025-07-19T00:00:00+00:00</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+    <!-- FAQs Page: Content might be updated periodically with new questions/answers -->
+    <!-- <url>
+        <loc>https://www.techquanta.tech/faqs</loc> 
+        <lastmod>2025-07-19T00:00:00+00:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url> -->
+
+    <!-- Blog/Articles (Example - include actual blog post URLs if applicable) -->
+    <!-- If you have a blog, list individual blog posts here. Adjust changefreq and priority based on how often they are updated. -->
+    <!-- <url>
+        <loc>https://www.techquanta.tech/blog</loc>
+        <lastmod>2025-07-19T00:00:00+00:00</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.techquanta.tech/blog/latest-article-title</loc>
+        <lastmod>2025-07-18T14:30:00+00:00</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.6</priority>
+    </url> -->
+
+    <!-- Contact Us Page: Less frequent changes -->
+    <!-- <url>
+        <loc>https://www.techquanta.tech/contact</loc>
+        <lastmod>2025-07-19T00:00:00+00:00</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.6</priority>
+    </url> -->
+
+    <!-- TechQuanta GitHub Profile (External): Included as per your previous request.
+         While it helps Google understand related properties, its direct SEO impact
+         on your main website (techquanta.tech) is indirect. -->
+    <!-- <url>
+        <loc>https://github.com/techquanta</loc>
+        <lastmod>2025-07-19T00:00:00+00:00</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.6</priority>
+    </url> -->
+
+    <!-- Add any other important pages of your website here following the same structure. -->
+
+</urlset>

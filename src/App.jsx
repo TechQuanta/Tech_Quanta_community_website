@@ -2,13 +2,12 @@
 import React from "react";
 import { RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import router from "./routes/AppRoutes";
 import "react-toastify/dist/ReactToastify.css";
-import { ThemeProvider } from "./context/ThemeContext";
-import router from "./routes/AppRoutes"; // Import router created with createBrowserRouter
 
 function App() {
   return (
-    <ThemeProvider>
+    <>
       <RouterProvider router={router} />
       <ToastContainer
         position="top-right"
@@ -21,7 +20,7 @@ function App() {
         pauseOnFocusLoss
         theme="colored"
       />
-    </ThemeProvider>
+    </>
   );
 }
 

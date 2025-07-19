@@ -10,7 +10,7 @@ const Loading = () => (
     className="flex flex-col items-center justify-center h-64 w-full font-space-grotesk" // Applied font-space-grotesk
   >
     <svg
-      className="animate-spin h-12 w-12 text-[#00BFFF] dark:text-[#2ECC71]"
+      className="animate-spin h-12 w-12 text-black dark:tex-white"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
@@ -29,7 +29,7 @@ const Loading = () => (
         d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
       />
     </svg>
-    <p className="mt-4 font-semibold text-lg text-[#00BFFF] select-none">Sending...</p>
+    <p className="mt-4 font-semibold text-lg text-black dark:text-white select-none">Sending...</p>
   </motion.div>
 );
 
@@ -41,6 +41,16 @@ const ContactForm = () => {
   const [hasError, setHasError] = useState(false);
 
   const handleNext = () => {
+    // Optional: Add basic validation before moving to the next step
+    if (step === 1 && !formData.name.trim()) {
+      // You could set a local error state here to show a message
+      return;
+    }
+    if (step === 2 && (!formData.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))) {
+      // You could set a local error state here to show a message
+      return;
+    }
+
     if (step < 3) setStep(step + 1);
   };
 
@@ -68,6 +78,8 @@ const ContactForm = () => {
 
       if (result.success) {
         setIsSubmitted(true);
+        // You might want to clear the form data here after successful submission
+        setFormData({ name: "", email: "", message: "" });
       } else {
         setHasError(true);
       }
@@ -78,20 +90,57 @@ const ContactForm = () => {
     }
   };
 
+  const resetForm = () => {
+    setStep(1);
+    setFormData({ name: "", email: "", message: "" });
+    setIsSubmitting(false);
+    setIsSubmitted(false);
+    setHasError(false);
+  };
+
   if (isSubmitting) return <Loading />;
 
   if (isSubmitted) {
     return (
-      <div className="text-center font-space-grotesk text-transparent bg-clip-text bg-transparent font-semibold text-xl min-h-screen flex items-center justify-center bg-transparent"> {/* Applied font-space-grotesk */}
-        Thank you! We'll be in touch soon.
-      </div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="min-h-screen flex flex-col items-center justify-center px-4"
+      >
+        <div className="bg-transparent backdrop-blur w-full max-w-md p-8 space-y-6 rounded-xl border-none transition-colors duration-300">
+          <svg
+            className="w-20 h-20 text-[#2ECC71] mx-auto mb-4 animate-bounce"
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h2 className="text-center text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#2ECC71] to-[#27AE60] font-exo2">
+            Message Sent!
+          </h2>
+          <p className="text-center text-gray-300 font-space-grotesk text-lg">
+            Thanks for reaching out! We've received your message and will get back to you as soon as possible.
+          </p>
+          <button
+            onClick={resetForm}
+            className="w-full bg-[#00BFFF] hover:bg-[#8E44AD] text-black font-bold py-4 rounded-md text-lg transition-colors duration-300 shadow-lg font-rajdhani"
+          >
+            Send Another Message
+          </button>
+        </div>
+      </motion.div>
     );
   }
 
   if (hasError) {
     return (
       <div className="min-h-[500px] flex items-center justify-center bg-transparent px-4">
-        <div className="text-center font-space-grotesk text-red-400"> {/* Applied font-space-grotesk */}
+        <div className="text-center font-space-grotesk text-red-400">
           <p className="text-xl font-semibold mb-4">
             Email couldn't be sent — server issue.
           </p>
@@ -105,6 +154,12 @@ const ContactForm = () => {
             </a>
             .
           </p>
+          <button
+            onClick={resetForm}
+            className="mt-6 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md transition-colors duration-300 font-rajdhani"
+          >
+            Try Again
+          </button>
         </div>
       </div>
     );
@@ -146,9 +201,9 @@ const ContactForm = () => {
               className="peer w-full h-full text-white px-4 pt-5 bg-transparent focus:outline-none font-rajdhani placeholder-transparent" // Applied font-rajdhani
             />
             <label
-              className={`absolute left-4 text-sm text-[#00BFFF] transition-all 
-                duration-200 pointer-events-none 
-                peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 
+              className={`absolute left-4 text-sm text-[#00BFFF] transition-all
+                duration-200 pointer-events-none
+                peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500
                 peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#00BFFF] group-hover:text-[#2ECC71] font-space-grotesk ${ // Applied font-space-grotesk
                   formData.name ? "top-1 text-sm" : ""
                 }`}
@@ -177,9 +232,9 @@ const ContactForm = () => {
               className="peer w-full h-full text-white px-4 pt-5 bg-transparent focus:outline-none font-rajdhani placeholder-transparent" // Applied font-rajdhani
             />
             <label
-              className={`absolute left-4 text-sm text-[#00BFFF] transition-all 
-                duration-200 pointer-events-none 
-                peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 
+              className={`absolute left-4 text-sm text-[#00BFFF] transition-all
+                duration-200 pointer-events-none
+                peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500
                 peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#00BFFF] group-hover:text-[#2ECC71] font-space-grotesk ${ // Applied font-space-grotesk
                   formData.email ? "top-1 text-sm" : ""
                 }`}
@@ -208,9 +263,9 @@ const ContactForm = () => {
                 className="peer w-full h-full text-white p-4 pt-6 bg-transparent resize-none focus:outline-none font-rajdhani placeholder-transparent" // Applied font-rajdhani
               ></textarea>
               <label
-                className={`absolute left-4 text-sm text-[#00BFFF] transition-all 
-                  duration-200 pointer-events-none 
-                  peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 
+                className={`absolute left-4 text-sm text-[#00BFFF] transition-all
+                  duration-200 pointer-events-none
+                  peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500
                   peer-focus:top-1 peer-focus:text-sm peer-focus:text-[#00BFFF] group-hover:text-[#2ECC71] font-space-grotesk ${ // Applied font-space-grotesk
                     formData.message ? "top-1 text-sm" : ""
                   }`}

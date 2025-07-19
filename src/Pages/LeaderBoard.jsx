@@ -1,13 +1,12 @@
-import React, { useState, useMemo, useEffect, useRef } from "react";
+import React, { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import Loading from "../components/ui/loader";
 import { useGitHubLeaderboardData } from "../hooks/GraphQlQuery";
 import "./leaderboard.css";
 import "./main.css";
 
-// Assets (adjust paths if your assets are not directly under the root of your project)
-import SearchImg1 from "../assets/SearchIMg1.gif";
-import SearchImg2 from "../assets/SearchIMG2.gif";
-import SearchImg3 from "../assets/SearchIMG3.gif";
+import SearchImg1 from "/SearchIMg1.gif";
+import SearchImg2 from "/SearchIMG2.gif";
+import SearchImg3 from "/SearchIMG3.gif";
 
 import CommunityChampion from "../assets/communitychampion.png";
 import Conversationalist from "../assets/conversationalist.png";
@@ -16,14 +15,18 @@ import Superstar from "../assets/superstar.png";
 import Supporter from "../assets/supporter.png";
 import Joining from "../assets/join.png";
 
-const rotatingImages = [SearchImg1, SearchImg2, SearchImg3];
+import ScoreExplanationImage from "/ScoringCalculation.jpg";
+
+import { Helmet } from 'react-helmet'; // <--- Import Helmet
+
+const rotatingImages = ["/SearchIMg1.gif", "/SearchIMG2.gif", "/SearchIMG3.gif"];
 const badges = [
-  { src: CommunityChampion, name: "Community Champion" },
-  { src: Conversationalist, name: "Conversation List" },
-  { src: Initiator, name: "Initiator" },
-  { src: Superstar, name: "Superstar" },
-  { src: Supporter, name: "Supporter" },
-  { src: Joining, name: "Joining" },
+  { src: CommunityChampion, name: "Community Champion", threshold: 40000 },
+  { src: Conversationalist, name: "Conversationalist", threshold: 20000 },
+  { src: Initiator, name: "Initiator", threshold: 10000 },
+  { src: Superstar, name: "Superstar", threshold: 5000 },
+  { src: Supporter, name: "Supporter", threshold: 2500 },
+  { src: Joining, name: "Joining", threshold: 0 },
 ];
 
 const sortFunctions = {
@@ -34,29 +37,88 @@ const sortFunctions = {
 };
 
 const featureButtons = [
-  { label: "innovate", color: "bg-orange-300", border: "border-orange-400" },
-  { label: "elevate", color: "bg-green-300", border: "border-green-400" },
-  { label: "collaborate", color: "bg-purple-300", border: "border-purple-400" },
+  { label: "Innovate", color: "bg-orange-300", border: "border-orange-400" },
+  { label: "Elevate", color: "bg-green-300", border: "border-green-400" },
+  { label: "Collaborate", color: "bg-purple-300", border: "border-purple-400" },
 ];
 
-function getBadgeIndexByScore(score) {
-  if (score >= 40000) return 0;
-  if (score >= 20000) return 1;
-  if (score >= 10000) return 2;
-  if (score >= 5000) return 3;
-  if (score >= 2500) return 4;
-  return 5;
+function getBadgeInfoByScore(score) {
+  for (const badge of badges) {
+    if (score >= badge.threshold) {
+      return badge;
+    }
+  }
+  return badges[badges.length - 1];
 }
+
+const UserCard = React.memo(({ user, index, filterActive }) => {
+  const badge = getBadgeInfoByScore(user.score);
+  const isTopThree = index < 3;
+
+  const githubUrl = `https://github.com/${user.username}`;
+  // console.log(`UserCard: User "${user.username}" will link to: ${githubUrl}`); // Debugging line
+
+  return (
+    <a
+      href={githubUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`user-card-link ${isTopThree ? 'user-card-top-three' : ''}`}
+      aria-label={`View ${user.username}'s GitHub profile`}
+    >
+      <div className="user-card">
+        {isTopThree && <span className="user-rank-overlay">#{index + 1}</span>}
+        <div
+          className="user-card-avatar"
+          dangerouslySetInnerHTML={{ __html: user.avatarSvg }}
+        />
+        <div className="user-card-details">
+          <h3 className="user-card-username">{user.username}</h3>
+          <p className="user-card-score">TQ Points: {user.score}</p>
+          {filterActive && user.techquantaCommits > 0 && (
+            <p className="user-card-techquanta-commits">
+              Commits: {user.techquantaCommits}
+            </p>
+          )}
+          <div className="user-card-badges">
+            <img
+              src={badge.src}
+              alt={badge.name}
+              className="badge-icon"
+              loading="lazy"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = "https://placehold.co/40x40/cccccc/333333?text=Badge";
+              }}
+            />
+            <span className="badge-name">{badge.name}</span>
+          </div>
+        </div>
+      </div>
+    </a>
+  );
+});
+
+const Modal = ({ children, onClose, className = '' }) => {
+  return (
+    <div className={`modal-backdrop ${className.includes('score-modal-content') || className.includes('coming-soon-content') ? 'active-modal-backdrop' : ''}`} onClick={onClose}>
+      <div className={`modal-content ${className}`} onClick={(e) => e.stopPropagation()}>
+        <button className="modal-close" onClick={onClose}>&times;</button>
+        {children}
+      </div>
+    </div>
+  );
+};
 
 export default function App() {
   const {
-    userStats, // This now defaults to all members initially
+    userStats,
     loading,
     error,
     filterActive,
     loadingFilter,
     showActiveMembers,
-    showAllMembers, // Still available to reset filter
+    showAllMembers,
     allDataNull,
   } = useGitHubLeaderboardData();
 
@@ -64,16 +126,20 @@ export default function App() {
   const [sortKey, setSortKey] = useState("scoreDesc");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [imageIndex, setImageIndex] = useState(0);
-  const searchRef = useRef(null);
-  const [isSticky, setIsSticky] = useState(false);
+  const headerRef = useRef(null);
+  const mainContentRef = useRef(null);
+  const [showScoreModal, setShowScoreModal] = useState(false);
+  const [showComingSoonModal, setShowComingSoonModal] = useState(false);
 
-  // Debounce search input
   useEffect(() => {
-    const handler = setTimeout(() => setDebouncedSearch(search.trim()), 300);
+    const handler = setTimeout(() => setSearch(search.trim()), 300);
     return () => clearTimeout(handler);
   }, [search]);
 
-  // Rotate search images every 4 seconds
+  useEffect(() => {
+    setDebouncedSearch(search.trim());
+  }, [search]);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setImageIndex((i) => (i + 1) % rotatingImages.length);
@@ -81,27 +147,6 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
-  // Scroll event with rAF throttle for sticky header
-  useEffect(() => {
-    let ticking = false;
-
-    const onScroll = () => {
-      if (!searchRef.current) return;
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          // Check if search bar's top is at or above 10px from viewport top
-          setIsSticky(searchRef.current.getBoundingClientRect().top <= 10);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  // Memoized filtered and sorted users
   const filteredSortedUsers = useMemo(() => {
     if (!Array.isArray(userStats)) return [];
 
@@ -111,57 +156,141 @@ export default function App() {
       : userStats;
 
     const sortFn = sortFunctions[sortKey] || sortFunctions.scoreDesc;
+
     return [...filtered].sort(sortFn);
-  }, [userStats, debouncedSearch, sortKey]); // userStats now reflects the current active/all view
+  }, [userStats, debouncedSearch, sortKey]);
+
+  const handleSearchChange = useCallback((e) => {
+    setSearch(e.target.value);
+  }, []);
+
+  const handleSortChange = useCallback((e) => {
+    setSortKey(e.target.value);
+  }, []);
+
+  const toggleScoreModal = useCallback(() => {
+    setShowScoreModal((prev) => !prev);
+  }, []);
+
+  const toggleComingSoonModal = useCallback(() => {
+    setShowComingSoonModal((prev) => !prev);
+  }, []);
 
   if (loading)
     return (
       <div className="leaderboard-loading-screen h-screen flex justify-center items-center">
-        <Loading message="Compiling....." />
+        <Loading message="Igniting the Arkenlist..." />
       </div>
     );
   if (error)
     return (
       <div className="leaderboard-error-screen text-red-500 text-center py-8">
-        {error}
+        Oops! Failed to load the Arkenlist. Please try again later.
+        <br />
+        Error: {error.message || 'Unknown error'}
       </div>
     );
 
-  const searchedUser = filteredSortedUsers[0] || null;
+  const searchedUser = debouncedSearch && filteredSortedUsers.length > 0
+    ? filteredSortedUsers.find(user => user.username.toLowerCase() === debouncedSearch.toLowerCase()) || filteredSortedUsers[0]
+    : null;
+
+  const searchedUserGithubUrl = searchedUser ? `https://github.com/${searchedUser.username}` : '#';
+  // if (searchedUser) {
+  //   console.log(`App.js: Searched user "${searchedUser.username}" link will be: ${searchedUserGithubUrl}`);
+  // }
+
+  // Define SEO metadata for the Leaderboard page
+  const pageTitle = "Tech Quanta Leaderboard - The Arkenlist | Top Open Source Contributors";
+  const pageDescription = "Explore the Tech Quanta Arkenlist, a real-time leaderboard of top open-source contributors. See rankings, TQ Points, GitHub profiles, and more. Join our community and climb the ranks!";
+  const canonicalUrl = "https://www.yourwebsite.com/leaderboard"; // IMPORTANT: Replace with your actual leaderboard page URL
+  const ogImage = "https://www.yourwebsite.com/opengraph-leaderboard.jpg"; // IMPORTANT: Path to a relevant image for social sharing
 
   return (
     <div className="leaderboard-container">
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <link rel="canonical" href={canonicalUrl} />
+
+        {/* Open Graph / Social Media Tags (for Facebook, LinkedIn, etc.) */}
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:image:alt" content="Tech Quanta Leaderboard with user profiles and scores" />
+        {/* You might want to add og:site_name if your brand has one */}
+        {/* <meta property="og:site_name" content="Tech Quanta" /> */}
+
+        {/* Twitter Card Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={pageDescription} />
+        <meta name="twitter:image" content={ogImage} />
+        {/* If your organization has a Twitter handle */}
+        {/* <meta name="twitter:site" content="@yourtwitterhandle" /> */}
+
+        {/* Potentially add some structured data (Schema.org) for a collection page if applicable */}
+        {/* For a leaderboard, you might consider "CollectionPage" or "WebPage" with relevant properties.
+            This is more advanced and depends on your exact content.
+        <script type="application/ld+json">
+          {`
+            {
+              "@context": "https://schema.org",
+              "@type": "CollectionPage",
+              "name": "${pageTitle}",
+              "description": "${pageDescription}",
+              "url": "${canonicalUrl}",
+              "image": "${ogImage}"
+            }
+          `}
+        </script>
+        */}
+      </Helmet>
+
       <div
-        ref={searchRef}
-        className={`leaderboard-header ${
-          isSticky ? "leaderboard-header-sticky" : ""
-        }`}
+        ref={headerRef}
+        className="leaderboard-header"
       >
-        <div className="leaderboard-feature-buttons">
-          {featureButtons.map(({ label, color, border }, i) => {
-            const rotation = [10, -3, -10][i % 3];
-            return (
-              <div
-                key={label}
-                className={`feature-button ${color} ${border}`}
-                style={{
-                  transform: `rotate(${rotation}deg)`,
-                  perspective: "1000px",
-                }}
-              >
-                <div className="feature-button-inner">{label}</div>
-              </div>
-            );
-          })}
+        <div className="header-top-row">
+          <div className="leaderboard-feature-buttons">
+            {featureButtons.map(({ label, color, border }, i) => {
+              const rotation = [10, -3, -10][i % 3];
+              return (
+                <div
+                  key={label}
+                  className={`feature-button ${color} ${border}`}
+                  style={{
+                    transform: `rotate(${rotation}deg)`,
+                    perspective: "1000px",
+                  }}
+                >
+                  <div className="feature-button-inner">{label}!</div>
+                </div>
+              );
+            })}
+          </div>
+
+          <h1 className="leaderboard-title">
+            The Arkenlist <span className="sparkle-emoji">✨</span>
+          </h1>
+
+          <button
+            className="coming-soon-nav-button pulse-effect"
+            onClick={toggleComingSoonModal}
+            aria-label="New Features Coming Soon"
+          >
+            Coming Soon! 🚀
+          </button>
         </div>
 
-        <h1 className="leaderboard-title">The Arkenlist</h1>
 
         <div className="leaderboard-search-filter">
           <div className="search-bar-wrapper">
             <img
               src={rotatingImages[imageIndex]}
-              alt="Rotating search"
+              alt="Searching for brilliance"
               className="search-rotating-image"
               loading="lazy"
               onError={(e) => {
@@ -171,9 +300,9 @@ export default function App() {
             />
             <input
               type="text"
-              placeholder="Search users..."
+              placeholder="Find your hero..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={handleSearchChange}
               className="search-input"
               aria-label="Search users"
             />
@@ -182,151 +311,149 @@ export default function App() {
           <div className="filter-controls">
             <select
               value={sortKey}
-              onChange={(e) => setSortKey(e.target.value)}
+              onChange={handleSortChange}
               className="filter-select"
               aria-label="Sort users"
             >
-              <option value="scoreDesc">Filter</option>
+              <option value="scoreDesc">Sort by...</option>
+              <option value="scoreDesc">Score: High → Low</option>
               <option value="scoreAsc">Score: Low → High</option>
-              <option value="alphaAZ">A → Z</option>
-              <option value="alphaZA">Z → A</option>
+              <option value="alphaAZ">Name: A → Z</option>
+              <option value="alphaZA">Name: Z → A</option>
             </select>
 
-            {/* The "Show All" button is only visible if a filter is active */}
             {filterActive && (
               <button
-                disabled={loadingFilter} // Only disable if actively loading a filter
+                disabled={loadingFilter}
                 onClick={showAllMembers}
                 className="filter-button show-all-button"
                 type="button"
               >
-                Show All
+                Show All Members
               </button>
             )}
 
             <button
               disabled={filterActive || loadingFilter}
               onClick={showActiveMembers}
-              className="filter-button active-filter-button"
+              className="filter-button active-filter-button tooltip"
               aria-label="Filter active members"
               type="button"
             >
               {loadingFilter ? (
                 <div className="spinner"></div>
               ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 512 512"
-                  fill="currentColor"
-                  className="w-4 h-4 inline-block"
-                >
-                  <path d="M3.9 54.9C10.5 45.4 22.3 40 34.5 40H477.5c12.2 0 24 5.4 30.6 14.9s6.6 22.1 0 31.6l-139.7 201.2c-3.1 4.4-4.8 9.6-4.8 15.1V448h-80V302.7c0-5.5-1.7-10.7-4.8-15.1L3.9 86.5c-6.6-9.6-6.6-22.1 0-31.6z" />
-                </svg>
+                <>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 512 512"
+                    fill="currentColor"
+                    className="w-4 h-4 inline-block"
+                  >
+                    <path d="M3.9 54.9C10.5 45.4 22.3 40 34.5 40H477.5c12.2 0 24 5.4 30.6 14.9s6.6 22.1 0 31.6l-139.7 201.2c-3.1 4.4-4.8 9.6-4.8 15.1V448h-80V302.7c0-5.5-1.7-10.7-4.8-15.1L3.9 86.5c-6.6-9.6-6.6-22.1 0-31.6z" />
+                  </svg>
+                  <span className="tooltiptext">Show Active Contributors</span>
+                </>
               )}
+            </button>
+
+            <button
+              className="info-button tq-points-info-button tooltip"
+              onClick={toggleScoreModal}
+              aria-label="Show score information"
+            >
+              i
+              <span className="tooltiptext">Understand TQ Points!</span>
             </button>
           </div>
         </div>
       </div>
 
-      <div
-        style={{
-          position: isSticky ? "fixed" : "static",
-          bottom: isSticky ? 0 : "auto",
-          left: isSticky ? 0 : "auto",
-          right: isSticky ? 0 : "auto",
-          margin: isSticky ? "0 auto" : "initial",
-          zIndex: isSticky ? 999 : "auto",
-          width: isSticky ? "100%" : "auto",
-          backgroundColor: isSticky ? "rgba(255,255,255,0.8)" : "transparent",
-          backdropFilter: isSticky ? "blur(6px)" : "none",
-        }}
-        className={`search-result-card-container ${
-          isSticky ? "sticky-active" : ""
-        }`}
-      >
-        {debouncedSearch && searchedUser ? (
-          <div className="search-result-card">
-            <img
-              src={searchedUser.avatar}
-              alt={`${searchedUser.username} avatar`}
-              className="search-result-avatar"
-              loading="lazy"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = "https://placehold.co/80x80/cccccc/333333?text=N/A";
-              }}
-            />
-            <div className="search-result-info">
-              <h2>{searchedUser.username}</h2>
-              <p>
-                Score: {searchedUser.score} | Repos:{" "}
-                {searchedUser.reposContributed} | Commits:{" "}
-                {searchedUser.commits} | PRs: {searchedUser.pullRequests}
-              </p>
-              {searchedUser.techquantaCommits > 0 && (
-                <p className="techquanta-contributions">
-                  TechQuanta Commits: {searchedUser.techquantaCommits}
-                </p>
-              )}
-            </div>
-          </div>
-        ) : debouncedSearch ? (
-          <div className="no-user-found">No user found...</div>
-        ) : null}
-      </div>
-      <div className="users-scroll-container mb-20">
-        <div className="users-list-grid">
-          {filteredSortedUsers.length > 0 ? (
-            filteredSortedUsers.map((user, index) => {
-              const badgeIndex = getBadgeIndexByScore(user.score);
-              const badge = badges[badgeIndex];
-              return (
-                <div key={user.username} className="user-card">
-                  <img
-                    src={user.avatar}
-                    alt={`${user.username} avatar`}
-                    className="user-card-avatar"
-                    loading="lazy"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = "https://placehold.co/100x100/cccccc/333333?text=N/A";
-                    }}
-                  />
-                  <div className="user-card-details">
-                    <h3 className="user-card-username">{user.username}</h3>
-                    <p className="user-card-score">TQ Points: {user.score}</p>
-                    {filterActive && user.techquantaCommits > 0 && (
-                      <p className="user-card-techquanta-commits">
-                        Commits: {user.techquantaCommits}
-                      </p>
-                    )}
-                    <div className="user-card-badges">
-                      <img
-                        src={badge.src}
-                        alt={badge.name}
-                        className="badge-icon"
-                        loading="lazy"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = "https://placehold.co/40x40/cccccc/333333?text=Badge";
-                        }}
-                      />
-                    </div>
-                  </div>
+      <div ref={mainContentRef} className="main-leaderboard-content">
+        {debouncedSearch && (
+          <div
+            className="search-result-card-fixed-bottom"
+          >
+            {searchedUser ? (
+              <div className="search-result-card searched-highlight">
+                <div
+                  className="search-result-avatar"
+                  dangerouslySetInnerHTML={{ __html: searchedUser.avatarSvg }}
+                />
+                <div className="search-result-info">
+                  <a href={searchedUserGithubUrl} target="_blank" rel="noopener noreferrer" className="search-result-username-link">
+                    <h2>{searchedUser.username} <span className="verified-emoji">✅</span></h2>
+                  </a>
+                  <p>
+                    TQ Score: <strong> {searchedUser.score} </strong> | Repos:{" "}
+                    <strong>{searchedUser.reposContributed}</strong> | Commits:{" "}
+                    <strong>{searchedUser.commits || searchedUser.techquantaCommits}</strong> | PRs: <strong>{searchedUser.pullRequests}</strong>
+                  </p>
+                  {searchedUser.techquantaCommits > 0 && (
+                    <p className="techquanta-contributions">
+                      TechQuanta Commits: <strong>{searchedUser.techquantaCommits} 🔥</strong>
+                    </p>
+                  )}
                 </div>
-              );
-            })
-          ) : (
-            <div className="no-users-display">
-              {allDataNull
-                ? "No data available."
-                : filterActive
-                ? "No active TechQuanta contributors found."
-                : "No users found based on your search/filters."}
-            </div>
-          )}
+              </div>
+            ) : (
+              <div className="no-user-found">No hero found with that name... Keep exploring!</div>
+            )}
+          </div>
+        )}
+
+
+        <div className="users-scroll-container mb-20">
+          <div className="users-list-grid">
+            {filteredSortedUsers.length > 0 ? (
+              filteredSortedUsers.map((user, index) => (
+                <UserCard
+                  key={user.username}
+                  user={user}
+                  index={index}
+                  filterActive={filterActive}
+                />
+              ))
+            ) : (
+              <div className="no-users-display">
+                {allDataNull
+                  ? "No data available yet. Be the first to contribute!"
+                  : filterActive
+                    ? "No active TechQuanta contributors found this cycle."
+                    : "No users found based on your search/filters. Try a different query!"}
+              </div>
+            )}
+          </div>
         </div>
       </div>
+
+      {showScoreModal && (
+        <Modal onClose={toggleScoreModal} className="score-modal-content">
+          <h2 className="modal-title">Understanding Your TQ Points 💡</h2>
+          <p className="modal-description">
+            Your <strong>TQ Points</strong> are a reflection of your contributions and engagement within the TechQuanta community. Here's how they're calculated:
+          </p>
+          <img
+            src={ScoreExplanationImage}
+            alt="Score Explanation"
+            className="score-explanation-image"
+          />
+          <p className="modal-footer">
+            Keep contributing, collaborating, and elevating to climb the ranks!
+          </p>
+        </Modal>
+      )}
+
+      {showComingSoonModal && (
+        <Modal onClose={toggleComingSoonModal} className="coming-soon-content">
+          <div className="coming-soon-icon">🚀</div>
+          <h2 className="modal-title">Feature Coming Soon!</h2>
+          <p className="modal-description">
+            We're hard at work building awesome new functionalities for you. Stay tuned for exciting updates!
+          </p>
+          <button className="learn-more-button" onClick={toggleComingSoonModal}>Got It!</button>
+        </Modal>
+      )}
     </div>
   );
 }

@@ -1,85 +1,91 @@
-// src/AppRoutes.jsx
+// src/routes/AppRoutes.jsx
 import React, { lazy, Suspense, useEffect } from "react";
 import { createBrowserRouter } from "react-router-dom";
-import Layout from "../Layout/Layout";
-import { useGitHubLeaderboardData } from "../hooks/GraphQlQuery"; // Import the hook
+import Layout from "../Layout/Layout.jsx"; // Adjust path if Layout is elsewhere
+import { useGitHubLeaderboardData } from "../hooks/GraphQlQuery"; // Adjust path if hooks are elsewhere
+
+// IMPORTANT: Import the plain JavaScript route configuration
+// Path from src/routes/AppRoutes.jsx to src/routesConfig.js is '../routesConfig.js'
+import routesConfig from '../routesConfig.js';
 
 // Dynamically import components for lazy loading
-const Home = lazy(() => import("../pages/Home"));
-const About = lazy(() => import("../pages/About"));
-const CommunityWork = lazy(() => import("../pages/CommunityWork"));
-const LeaderBoard = lazy(() => import("../pages/LeaderBoard"));
-const Maintenance = lazy(() => import("../pages/Maintenance"));
+const Home = lazy(() => import("../pages/Home")); // Adjust path relative to AppRoutes.jsx
+const About = lazy(() => import("../pages/About")); // Adjust path relative to AppRoutes.jsx
+const CommunityWork = lazy(() => import("../pages/CommunityWork")); // Adjust path relative to AppRoutes.jsx
+const LeaderBoard = lazy(() => import("../pages/LeaderBoard")); // Adjust path relative to AppRoutes.jsx
+const Maintenance = lazy(() => import("../pages/Maintenance")); // Adjust path relative to AppRoutes.jsx
 
 // Create a wrapper component to fetch data
 const AppLoader = () => {
   const { fetchAllLeaderboardData } = useGitHubLeaderboardData();
 
   useEffect(() => {
-    // Trigger data fetch as soon as this component mounts
-    // This will happen when the app effectively starts
     fetchAllLeaderboardData();
-  }, [fetchAllLeaderboardData]); // Dependency on the function to ensure it's called if it changes (though it's useCallback'd)
+  }, [fetchAllLeaderboardData]);
 
-  // This component doesn't render anything itself,
-  // it just ensures the data fetching is initiated.
   return null;
 };
 
+// Function to map the plain route config to the full React Router config
+const createReactRouterConfig = (routes) => {
+    return routes.map(route => {
+        const newRoute = { ...route };
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: (
-      <>
-        {/* Call AppLoader to trigger background data fetch */}
-        <AppLoader />
-        <Layout />
-      </>
-    ),
-    children: [
-      {
-        index: true,
-        element: (
-          <Suspense fallback={<div>Loading Home...</div>}>
-            <Home />
-          </Suspense>
-        ),
-      },
-      {
-        path: "about",
-        element: (
-          <Suspense fallback={<div>Loading About page...</div>}>
-            <About />
-          </Suspense>
-        ),
-      },
-      {
-        path: "community-work",
-        element: (
-          <Suspense fallback={<div>Loading Community Work...</div>}>
-            <CommunityWork />
-          </Suspense>
-        ),
-      },
-      {
-        path: "leaderboard",
-        element: (
-          <Suspense fallback={<div>Loading Leaderboard...</div>}>
-            <LeaderBoard />
-          </Suspense>
-        ),
-      },
-      {
-        path: "main",
-        element: (
-          <Suspense fallback={<div>Loading Maintenance page...</div>}>
-            <Maintenance />
-          </Suspense>
-        ),
-      },
-    ],
-  },
-]);
+        if (newRoute.path === '/') {
+            newRoute.element = (
+                <>
+                    <AppLoader />
+                    <Layout />
+                </>
+            );
+            if (newRoute.children) {
+                newRoute.children = newRoute.children.map(childRoute => {
+                    let elementComponent;
+                    let fallbackText = "Loading...";
+
+                    if (childRoute.index) { // Handle index route (path undefined or '')
+                        elementComponent = Home;
+                        fallbackText = "Loading Home...";
+                    } else {
+                        switch(childRoute.path) {
+                            case 'about':
+                                elementComponent = About;
+                                fallbackText = "Loading About page...";
+                                break;
+                            case 'community-work':
+                                elementComponent = CommunityWork;
+                                fallbackText = "Loading Community Work...";
+                                break;
+                            case 'leaderboard':
+                                elementComponent = LeaderBoard;
+                                fallbackText = "Loading Leaderboard...";
+                                break;
+                            case 'main':
+                                elementComponent = Maintenance;
+                                fallbackText = "Loading Maintenance page...";
+                                break;
+                            default:
+                                elementComponent = null; // Or a 404 component
+                        }
+                    }
+
+                    return {
+                        ...childRoute,
+                        element: elementComponent ? (
+                            <Suspense fallback={<div>{fallbackText}</div>}>
+                                {React.createElement(elementComponent)}
+                            </Suspense>
+                        ) : null,
+                    };
+                });
+            }
+        }
+        // You might add logic for other top-level routes here if they exist
+        return newRoute;
+    });
+};
+
+
+const router = createBrowserRouter(createReactRouterConfig(routesConfig));
 
 export default router;
