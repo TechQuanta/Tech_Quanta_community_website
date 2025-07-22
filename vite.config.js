@@ -28,7 +28,7 @@ import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig({
   plugins: [react()],
-  base: '/Tech_Quanta_community_website/', // <--- CHANGE THIS LINE!
+  base: '/', // <--- CHANGE THIS LINE!
   envPrefix: [
     'VITE_',
     'GOOGLE_MACRO_API',
