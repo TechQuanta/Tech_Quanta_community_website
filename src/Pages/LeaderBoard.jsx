@@ -4,9 +4,6 @@ import { useGitHubLeaderboardData } from "../hooks/GraphQlQuery";
 import "./leaderboard.css";
 import "./main.css";
 
-import SearchImg1 from "/SearchIMg1.gif";
-import SearchImg2 from "/SearchIMG2.gif";
-import SearchImg3 from "/SearchIMG3.gif";
 
 import CommunityChampion from "../assets/communitychampion.png";
 import Conversationalist from "../assets/conversationalist.png";
@@ -14,12 +11,15 @@ import Initiator from "../assets/initiator.png";
 import Superstar from "../assets/superstar.png";
 import Supporter from "../assets/supporter.png";
 import Joining from "../assets/join.png";
+import search1 from "../assets/SearchIMg1.gif";
+import search2 from "../assets/SearchIMG2.gif";
+import search3 from "../assets/SearchIMG3.gif";
 
-import ScoreExplanationImage from "/ScoringCalculation.jpg";
+import ScoreExplanationImage from "../assets/ScoringCalculation.jpg";
 
 import { Helmet } from 'react-helmet'; // <--- Import Helmet
 
-const rotatingImages = ["/SearchIMg1.gif", "/SearchIMG2.gif", "/SearchIMG3.gif"];
+const rotatingImages = [search1, search2, search3];
 const badges = [
   { src: CommunityChampion, name: "Community Champion", threshold: 40000 },
   { src: Conversationalist, name: "Conversationalist", threshold: 20000 },
