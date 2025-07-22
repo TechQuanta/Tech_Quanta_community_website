@@ -1,5 +1,6 @@
 // BecomeSpeakerSection.jsx
 import React, { useEffect, useRef, useState } from "react";
+import banner from "../../assets/BecomeSpeakerBanner.png"
 
 const BecomeSpeakerSection = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -162,7 +163,7 @@ const BecomeSpeakerSection = () => {
           }}
         >
           <img
-            src="/BecomeSpeakerBanner.png"
+            src={banner}
             alt="Become a Speaker Banner"
             className="w-full h-auto  object-cover select-none"
             loading="lazy"

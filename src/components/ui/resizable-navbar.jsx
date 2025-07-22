@@ -10,6 +10,8 @@ import {
 import React, { useRef, useState } from "react";
 import {NavLink} from "react-router-dom";
 import { cn } from './../../lib/utils';
+import lightlogo from "../../assets/lightlogo.png";
+import darklogo from "../../assets/darklogo.png"
 
 
 export const Navbar = ({
@@ -228,7 +230,7 @@ export const NavbarLogo = () => {
             
             {/* Dark logo for dark mode */}
             <img
-                src="/lightlogo.png"
+                src={lightlogo}
                 alt="Dark Logo"
                 width={30}
                 height={30}
@@ -236,7 +238,7 @@ export const NavbarLogo = () => {
 
             {/* Light logo for light mode */}
             <img
-                src="/darklogo.png"
+                src={darklogo}
                 alt="Light Logo"
                 width={30}
                 height={30}

@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { FaUsers, FaCode, FaGlobe } from "react-icons/fa";
 import { ThemeContext } from "../../context/ThemeContext";
 import { Helmet } from 'react-helmet'; // Import Helmet
+import about from "../../assets/About.jpg";
 
 const communityValues = [
   {
@@ -72,7 +73,7 @@ const AboutInfo = () => {
           className="flex justify-center md:justify-start"
         >
           <img
-            src="/About.jpg"
+            src={about}
             alt="Tech Quanta Logo"
             className="w-[300px] h-auto rounded-xl shadow-2xl border border-[#00BFFF]"
           />

@@ -11,6 +11,8 @@ import {
 } from "../ui/resizable-navbar";
 import { useState, useEffect, useMemo } from "react";
 import { NavLink, useLocation } from "react-router-dom";
+import lightlogo from "../../assets/lightlogo.png";
+import darklogo from "../../assets/darklogo.png";
 
 // Custom hook to detect dark mode preference
 function usePrefersDarkMode() {
@@ -94,14 +96,14 @@ function Header() {
             <NavbarLogo>
               <NavLink to="/" className="flex items-center space-x-2" aria-label="Homepage">
                 <img
-                  src="/lightlogo.png"
+                  src={lightlogo}
                   alt="TechQuanta Light Logo"
                   width={40}
                   height={40}
                   className="inline-block rounded-full dark:block"
                 />
                 <img
-                  src="/darklogo.png"
+                  src={darklogo}
                   alt="TechQuanta Dark Logo"
                   width={40}
                   height={40}
