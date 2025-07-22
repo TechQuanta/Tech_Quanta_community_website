@@ -6,7 +6,7 @@ on:
     branches:
       # This specifies which branch will trigger the workflow.
       # Make sure this matches your main development branch (e.g., 'main' or 'master').
-      - main # Most common, but use 'deploy' if that's your specific branch
+      - deploy # Most common, but use 'deploy' if that's your specific branch
 
 jobs:
   build-and-deploy:
