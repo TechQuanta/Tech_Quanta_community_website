@@ -17,7 +17,7 @@ import memoji5 from "./assets/memoji/memoji5-1.webp";
 import memoji6 from "./assets/memoji/memoji6-1.webp";
 
 // ✅ Correct Clerk env variable for Vite
-const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+const clerkPublishableKey = import.meta.env.VITE_APP_CLERK_PUBLISHABLE_KEY;
 
 const clerkAppearance = {
   variables: {

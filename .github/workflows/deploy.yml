@@ -4,15 +4,18 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - deploy # Or 'main', depending on your primary branch
+      # This specifies which branch will trigger the workflow.
+      # Make sure this matches your main development branch (e.g., 'main' or 'master').
+      - main # Most common, but use 'deploy' if that's your specific branch
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     environment: github-pages
-    # ADD THIS PERMISSIONS BLOCK HERE:
+    # Permissions for the GITHUB_TOKEN used by the workflow.
+    # 'contents: write' is crucial for the peaceiris/actions-gh-pages action to push to gh-pages.
     permissions:
-      contents: write # This grants write permission to the GITHUB_TOKEN for this job
+      contents: write
 
     steps:
       - name: Checkout code
@@ -21,24 +24,36 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: '20' # Ensure this matches your local Node.js version
+          cache: 'npm' # Caches npm dependencies for faster builds
 
       - name: Install dependencies
+        # Use --legacy-peer-deps to bypass peer dependency conflicts (as seen previously)
         run: npm ci --legacy-peer-deps
 
       - name: Build project and prepare 404.html
         run: |
           npm run build
+          # Copy index.html to 404.html for single-page application routing on GitHub Pages
           cp dist/index.html dist/404.html
         env:
+          # These environment variables are passed to your Vite build process.
+          # Vite picks them up if they are prefixed with VITE_.
+          # You MUST add these as secrets in your GitHub repository settings.
           VITE_APP_GITHUB_TOKEN: ${{ secrets.VITE_APP_GITHUB_TOKEN }}
-          VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }} # <--- ADD THIS LINE
+          VITE_APP_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_APP_CLERK_PUBLISHABLE_KEY }}
+          VITE_APP_EMAIL_ACCESS_KEY: ${{ secrets.VITE_APP_EMAIL_ACCESS_KEY }}
+          VITE_APP_GOOGLE_MACRO_API: ${{ secrets.VITE_APP_GOOGLE_MACRO_API }}
+          VITE_APP_GOOGLE_MACRO_API_USERNAME: ${{ secrets.VITE_APP_GOOGLE_MACRO_API_USERNAME }}
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }} # Ensure this is GITHUB_TOKEN
-          publish_dir: ./dist
-          publish_branch: gh-pages
+          # This 'github_token' is a special token automatically provided by GitHub for the workflow.
+          # It uses the permissions defined in the 'permissions' block above.
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist # The directory containing your built static files
+          publish_branch: gh-pages # The branch where your GitHub Pages site will be hosted
+          # Uncomment the line below if you want this action to manage the CNAME file for your custom domain.
+          # This is usually not needed if you've already configured your custom domain in GitHub Pages settings.
           # cname: opensource.techquanta.tech

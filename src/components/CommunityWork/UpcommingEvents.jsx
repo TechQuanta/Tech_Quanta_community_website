@@ -195,7 +195,7 @@ export default function SliderShowcase() {
             try {
                 // Ensure VITE_GOOGLE_MACRO_API is correctly set in your .env file
                 // and your dev server is restarted after changing it.
-                const response = await axios.get(import.meta.env.GOOGLE_MACRO_API);
+                const response = await axios.get(import.meta.env.VITE_APP_GOOGLE_MACRO_API);
                 const fetchedEvents = response.data?.events || [];
 
                 // --- CRITICAL FIX: Removed .filter(slide => slide.image) ---
