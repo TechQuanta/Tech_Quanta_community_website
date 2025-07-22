@@ -205,11 +205,11 @@ import { useGitHubLeaderboardData } from "../hooks/GraphQlQuery";
 import routesConfig from '../routesConfig.js';
 
 // Dynamically import components for lazy loading - ADDED .jsx EXTENSIONS
-const Home = lazy(() => import("../pages/Home.jsx"));
-const About = lazy(() => import("../pages/About.jsx"));
-const CommunityWork = lazy(() => import("../pages/CommunityWork.jsx"));
-const LeaderBoard = lazy(() => import("../pages/LeaderBoard.jsx"));
-const Maintenance = lazy(() => import("../pages/Maintenance.jsx"));
+const Home = lazy(() => import("../Pages/Home.jsx"));
+const About = lazy(() => import("../Pages/About.jsx"));
+const CommunityWork = lazy(() => import("../Pages/CommunityWork.jsx"));
+const LeaderBoard = lazy(() => import("../Pages/LeaderBoard.jsx"));
+const Maintenance = lazy(() => import("../Pages/Maintenance.jsx"));
 
 // Create a wrapper component to fetch data
 const AppLoader = () => {
