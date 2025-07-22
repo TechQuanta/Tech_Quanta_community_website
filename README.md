@@ -1,7 +1,6 @@
 <h1 align="center">🌐 TechQuanta Community Website</h1>
 
 
-
 <p align="center">
   🚀 A fully open-source, developer-focused platform for collaboration, learning, and innovation. <br/>
   🔥 Built by the community, for the community!
