@@ -33,6 +33,7 @@ jobs:
           cp dist/index.html dist/404.html
         env:
           VITE_APP_GITHUB_TOKEN: ${{ secrets.VITE_APP_GITHUB_TOKEN }}
+          VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }} # <--- ADD THIS LINE
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
