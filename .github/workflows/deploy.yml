@@ -4,15 +4,15 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      # IMPORTANT: Currently set to 'deploy'.
-      # If your main development branch is 'main' or 'master', change this line accordingly.
-      # Example: - main
-      - deploy # This workflow will run whenever you push to this branch
+      - deploy # Or 'main', depending on your primary branch
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     environment: github-pages
+    # ADD THIS PERMISSIONS BLOCK HERE:
+    permissions:
+      contents: write # This grants write permission to the GITHUB_TOKEN for this job
 
     steps:
       - name: Checkout code
@@ -25,7 +25,6 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        # FIX: Added --legacy-peer-deps to bypass peer dependency conflicts
         run: npm ci --legacy-peer-deps
 
       - name: Build project and prepare 404.html
@@ -38,11 +37,7 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          # IMPORTANT: For the 'github_token' used by the deployment action itself,
-          # it's best practice to use GitHub's default workflow token (secrets.GITHUB_TOKEN).
-          # Your VITE_APP_GITHUB_TOKEN is for your frontend API calls.
-          github_token: ${{ secrets.GITHUB_TOKEN }} # Changed this back to GITHUB_TOKEN
+          github_token: ${{ secrets.GITHUB_TOKEN }} # Ensure this is GITHUB_TOKEN
           publish_dir: ./dist
           publish_branch: gh-pages
-          # Uncomment the line below if you manage your custom domain via this action
           # cname: opensource.techquanta.tech
