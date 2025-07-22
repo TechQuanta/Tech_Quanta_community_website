@@ -1,6 +1,6 @@
 // FeaturingProject.jsx
 import React, { useEffect, useState, useRef } from 'react';
-import { FaGithub, FaExternalLinkAlt } from 'react-icons/fa';
+import { FaGithub, FaExternalLinkAlt, FaLinkedin } from 'react-icons/fa'; // Import FaLinkedin
 
 const FeaturingProject = () => {
   const [projects, setProjects] = useState([]);
@@ -142,6 +142,7 @@ const FeaturingProject = () => {
               </div>
             )}
 
+            {/* MODIFIED: LinkedIn Link section */}
             {isValid(project.project_owner_profile_pic) && isValid(project.project_owner_linkedin_id) && (
               <div className="mt-8 md:mt-10 flex items-center gap-4 sm:gap-6">
                 <img
@@ -154,9 +155,10 @@ const FeaturingProject = () => {
                   href={`https://www.linkedin.com/in/${project.project_owner_linkedin_id}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-semibold text-blue-600 dark:text-blue-400 hover:underline select-text text-sm sm:text-base"
+                  className="flex items-center gap-2 font-semibold text-blue-600 dark:text-blue-400 hover:underline select-text text-sm sm:text-base"
                 >
-                  @{project.project_owner_linkedin_id}
+                  <FaLinkedin size={20} /> {/* LinkedIn Icon */}
+                  LinkedIn {/* Explicit LinkedIn Tag */}
                 </a>
               </div>
             )}

@@ -1,4 +1,4 @@
-// src/routesConfig.js
+ // src/routesConfig.js
 
 // This file defines the routes as a plain JavaScript array.
 // NO React components, NO JSX, NO Hooks (like useEffect, lazy, Suspense) in this file.
