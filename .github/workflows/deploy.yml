@@ -1,0 +1,47 @@
+# .github/workflows/deploy.yml
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - deploy # This workflow will run whenever you push to your 'main' branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest # The type of virtual machine that will run the job
+    environment: github-pages # This links to your GitHub Pages environment settings (if configured)
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4 # Action to check out your repository code
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4 # Action to set up Node.js environment
+        with:
+          node-version: '20' # Specify the Node.js version your project uses (e.g., '18', '20', '22')
+          cache: 'npm' # Caches npm dependencies to speed up builds
+
+      - name: Install dependencies
+        run: npm ci # Installs dependencies from package-lock.json (recommended for CI)
+
+      - name: Build project and prepare 404.html
+        run: | # This uses a multi-line script
+          npm run build # Runs your Vite build command
+          cp dist/index.html dist/404.html # Copies index.html to 404.html for SPA routing
+        env:
+          # This line injects your GitHub API token from GitHub Secrets
+          # as an environment variable (VITE_APP_GITHUB_TOKEN)
+          # that Vite will pick up during the build process.
+          VITE_APP_GITHUB_TOKEN: ${{ secrets.VITE_APP_GITHUB_TOKEN }}
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4 # Action specifically designed for deploying to GH Pages
+        with:
+          # This 'github_token' is a special token provided by GitHub for the workflow.
+          # It's used by the action to authenticate and push to the 'gh-pages' branch.
+          github_token: ${{ secrets.VITE_APP_GITHUB_TOKEN }}
+          publish_dir: ./dist # The directory containing your built website files
+          publish_branch: gh-pages # The branch where your GitHub Pages site will be served from
+                                  # (ensure this matches your GitHub Pages settings)
+          # Uncomment the line below if you manage your custom domain via this action
+          # cname: opensource.techquanta.tech
