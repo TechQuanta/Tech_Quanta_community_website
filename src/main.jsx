@@ -80,13 +80,7 @@ function Loader({ onFinish }) {
   return (
     <div className={`loader-container ${fadeOut ? "fade-out" : ""}`}>
       <div className="loader-glow-circle" />
-      <img src={memojiList[index]} alt="Loading" className="loader-image" />
-      <h1 className="loader-title">Tech Quanta</h1>
-      <p className="loader-subtext">
-        Empowering Open Source Minds
-        <br />
-        Code the Future. Sustain the Planet.
-      </p>
+      <img src={memojiList[index]} alt="Loading" className="loader-image mb-[130px]" />
     </div>
   );
 }

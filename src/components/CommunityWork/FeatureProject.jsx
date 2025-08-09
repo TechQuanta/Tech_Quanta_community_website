@@ -1,30 +1,49 @@
 // FeaturingProject.jsx
 import React, { useEffect, useState, useRef } from 'react';
-import { FaGithub, FaExternalLinkAlt, FaLinkedin } from 'react-icons/fa'; // Import FaLinkedin
+import { FaGithub, FaExternalLinkAlt, FaLinkedin } from 'react-icons/fa';
 
 const FeaturingProject = () => {
   const [projects, setProjects] = useState([]);
   const [index, setIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+  // Removed showAllDevelopers state and related logic as per request for full slider
   const timeoutRef = useRef(null);
 
+  // Function to fetch project data from Google Apps Script
   useEffect(() => {
     fetch(
-      'https://script.google.com/macros/s/AKfycbx4d9IOyWBl0Pz0f-Qnp9nekrtEVwd8xv7-jbdrMHIMYp_nNKhFGbmb1I8sElxTUUhK/exec'
+      'https://script.google.com/macros/s/AKfycbw-wqfKt5i6bZQkEEp2EI_iajddjB2m-_a6vxHLpCeB32ooFQYaJiUaMXVlgEgZgpzK/exec'
     )
       .then(res => res.json())
-      .then(data => setProjects(Array.isArray(data) ? data : [data]))
-      .catch(console.error);
+      .then(data => {
+        setProjects(Array.isArray(data) ? data : [data]);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error("Error fetching projects:", error);
+        setLoading(false);
+      });
   }, []);
 
+  // Effect for auto-cycling through projects
   useEffect(() => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    if (projects.length) {
-      timeoutRef.current = setTimeout(() => setIndex(i => (i + 1) % projects.length), 8000);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
     }
-    return () => clearTimeout(timeoutRef.current);
+    if (projects.length) {
+      timeoutRef.current = setTimeout(() => {
+        setIndex(i => (i + 1) % projects.length);
+      }, 8000);
+    }
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
   }, [projects, index]);
 
-  if (!projects.length) {
+  // Handle initial loading state
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-center font-space-grotesk font-semibold animate-pulse text-gray-600 dark:text-gray-400 px-4">
         Loading featured projects...
@@ -32,15 +51,48 @@ const FeaturingProject = () => {
     );
   }
 
+  // Handle no projects found after loading
+  if (!projects.length && !loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-center font-space-grotesk font-semibold text-gray-600 dark:text-gray-400 px-4">
+        No featured projects available.
+      </div>
+    );
+  }
+
   const project = projects[index];
-  const isValid = val => val?.trim();
+  // Helper function to validate string data
+  const isValid = val => val && typeof val === 'string' && val.trim().length > 0;
+
+  // Process developer data
+  const developerNames = isValid(project.project_developer_name) ? project.project_developer_name.split(',').map(name => name.trim()) : [];
+  const developerProfilePics = isValid(project.project_owner_profile_pic) ? project.project_owner_profile_pic.split(',').map(pic => pic.trim()) : [];
+  const developerLinkedInIds = isValid(project.project_owner_linkedin_id) ? project.project_owner_linkedin_id.split(',').map(id => id.trim()) : [];
+
+  // Combine and filter developer data to ensure consistency and only include valid entries
+  const allDevelopers = Array.from({ length: Math.max(developerNames.length, developerProfilePics.length, developerLinkedInIds.length) }).map((_, idx) => {
+    const name = developerNames[idx];
+    const profilePic = developerProfilePics[idx];
+    const linkedInId = developerLinkedInIds[idx];
+
+    // Only return developer object if at least one piece of info is valid
+    if (!isValid(name) && !isValid(profilePic) && !isValid(linkedInId)) {
+      return null;
+    }
+    return {
+      name: isValid(name) ? name : 'Developer',
+      profilePic: isValid(profilePic) ? profilePic : null,
+      LinkedIn: isValid(linkedInId) ? `https://www.linkedin.com/in/${linkedInId}` : null,
+    };
+  }).filter(Boolean); // Remove any null entries
+
+  // Array for skeleton loaders, showing a few by default if data isn't ready
+  const skeletonLoaders = Array.from({ length: 3 });
 
   return (
     <>
-      <div
-        className="min-h-screen flex items-center justify-center uniform-background-gradient p-6 md:p-8 relative overflow-visible select-none" /* CHANGED */
-      >
-        {/* LEFT blobs */}
+      <div className="min-h-screen flex items-center justify-center uniform-background-gradient p-6 md:p-8 relative overflow-visible select-none">
+        {/* LEFT blobs (decorative background elements) */}
         <div
           className="hidden md:block rounded-full bg-gradient-to-tr from-pink-400 to-purple-700 opacity-25 animate-blobFloat mix-blend-multiply filter blur-3xl"
           style={{
@@ -64,7 +116,7 @@ const FeaturingProject = () => {
           }}
         />
 
-        {/* RIGHT blobs */}
+        {/* RIGHT blobs (decorative background elements) */}
         <svg
           className="hidden md:block opacity-30 animate-pulseSlow"
           viewBox="0 0 200 200"
@@ -115,8 +167,8 @@ const FeaturingProject = () => {
         </svg>
 
         {/* MAIN content container */}
-        <div className="relative z-10 flex flex-col md:flex-row max-w-6xl w-full gap-8 md:gap-12 items-start">
-          {/* Project card */}
+        <div className="relative z-10 flex flex-col md:flex-row max-w-7xl w-full gap-8 md:gap-12 items-start overflow-hidden">
+          {/* Project card content */}
           <div
             key={project.project_name}
             className="flex-1 p-6 md:p-12 rounded-xl bg-transparent transition-transform duration-500 ease-in-out hover:scale-[1.02] animate-fadeIn flex flex-col min-h-[480px]"
@@ -142,27 +194,84 @@ const FeaturingProject = () => {
               </div>
             )}
 
-            {/* MODIFIED: LinkedIn Link section */}
-            {isValid(project.project_owner_profile_pic) && isValid(project.project_owner_linkedin_id) && (
-              <div className="mt-8 md:mt-10 flex items-center gap-4 sm:gap-6">
-                <img
-                  src={project.project_owner_profile_pic}
-                  alt="Owner Profile"
-                  className="w-12 sm:w-16 h-12 sm:h-16 rounded-full ring-4 ring-white dark:ring-gray-900 select-none"
-                  loading="lazy"
-                />
-                <a
-                  href={`https://www.linkedin.com/in/${project.project_owner_linkedin_id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 font-semibold text-blue-600 dark:text-blue-400 hover:underline select-text text-sm sm:text-base"
-                >
-                  <FaLinkedin size={20} /> {/* LinkedIn Icon */}
-                  LinkedIn {/* Explicit LinkedIn Tag */}
-                </a>
-              </div>
-            )}
+            {/* Horizontal Scrollable Tray for Developer Profiles */}
+            <div className="mt-8 md:mt-10">
+              <div className="flex flex-row overflow-x-auto pb-2 gap-2 scrollbar-hide p-2 rounded-[10px] bg-[#343541] dark:bg-white  shadow-inner max-w-full md:max-w-xl lg:max-w-[400px] xl:max-w-xl justify-center items-center"> {/* Adjusted padding, gap, and added max-width classes */}
+                {loading ? (
+                  skeletonLoaders.map((_, idx) => (
+                    <div
+                      key={`skeleton-${idx}`}
+                      className="flex-shrink-0 flex flex-col items-center gap-1 animate-pulse" // Adjusted gap
+                      style={{ minWidth: '80px' }}
+                    >
+                      <div className="w-20 h-20 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+                      <div className="h-4 w-16 bg-gray-300 dark:bg-gray-700 rounded"></div>
+                    </div>
+                  ))
+                ) : (
+                  allDevelopers.length > 0 ? (
+                    allDevelopers.map((dev, idx) => (
+                      <div
+                        key={`developer-${idx}`}
+                        className="flex-shrink-0 flex flex-col items-center gap-1 relative group" // Adjusted gap
+                        style={{ minWidth: '80px' }}
+                      >
+                        {/* Profile Picture */}
+                        {dev.profilePic ? (
+                          <img
+                            src={dev.profilePic}
+                            alt={`Profile of ${dev.name}`}
+                            className="w-10 h-10 rounded-full object-cover shadow-md transition-transform duration-300 group-hover:scale-105"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-gray-500 text-sm">
+                            No Pic
+                          </div>
+                        )}
 
+                        {/* Developer Name as Underlined Link with Tooltip */}
+                        {dev.name && (
+                          <div className="relative mt-2"> {/* Added relative for tooltip positioning */}
+                            {dev.LinkedIn ? (
+                              <a
+                                href={dev.LinkedIn}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label={`LinkedIn profile of ${dev.name}`}
+                                className="text-gray-100 dark:text-gray-800 text-sm font-medium hover:underline hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-200"
+                              >
+                                {dev.name}
+                              </a>
+                            ) : (
+                              <span className="text-gray-100 dark:text-gray-600 text-sm font-medium">
+                                {dev.name}
+                              </span>
+                            )}
+                            {/* Tooltip for Name AND LinkedIn Icon on Hover */}
+                            {dev.LinkedIn && ( // Only show tooltip if there's a LinkedIn link
+                              <div
+                                className="absolute bottom-full left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-700/90 dark:bg-white/90 text-gray-100 dark:text-gray-800 text-xs rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform scale-90 group-hover:scale-100 whitespace-nowrap z-50 font-semibold flex items-center gap-1"
+                                style={{ marginBottom: '8px' }} // Adjusted margin to be above the name
+                              >
+                                <FaLinkedin size={12} className="flex-shrink-0 text-blue-500 dark:text-blue-300" />
+                                <span>LinkedIn</span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-500 dark:text-gray-400 text-sm w-full text-center py-4">
+                      No developers listed for this project.
+                    </p>
+                  )
+                )}
+              </div>
+            </div>
+
+            {/* Project Promotion Video */}
             {isValid(project.project_promo_link) && (
               <div className="mt-10 md:mt-12 aspect-video rounded-xl overflow-hidden ring-1 ring-white/20 dark:ring-gray-700 transition-shadow duration-500 hover:shadow-[0_30px_60px_rgba(0,0,0,0.4)]">
                 <iframe
@@ -178,7 +287,7 @@ const FeaturingProject = () => {
             )}
           </div>
 
-          {/* LINKS PANEL */}
+          {/* LINKS PANEL (GitHub and Live Demo) */}
           <div
             className="flex md:flex-col flex-row gap-4 md:gap-6 sticky md:top-24 top-auto md:min-w-[160px] w-full md:w-auto"
             aria-label="Project links"
@@ -231,7 +340,7 @@ const FeaturingProject = () => {
         </div>
       </div>
 
-      {/* Keep existing styles, they are specific to this component's animations */}
+      {/* Existing CSS animations */}
       <style>{`
         @keyframes blobFloat {
           0%, 100% { transform: translateY(0) rotate(0deg); }
@@ -255,6 +364,15 @@ const FeaturingProject = () => {
         }
         .animate-fadeIn {
           animation: fadeIn 0.8s ease forwards;
+        }
+
+        /* Custom scrollbar styles for a cleaner look (optional, can be adjusted) */
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none; /* For Chrome, Safari, and Opera */
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none; /* For Internet Explorer and Edge */
+          scrollbar-width: none; /* For Firefox */
         }
       `}</style>
     </>

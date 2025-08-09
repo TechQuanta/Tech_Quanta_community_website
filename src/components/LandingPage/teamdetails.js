@@ -16,7 +16,7 @@ import deepakRathore from '../../assets/profiles/deepak.png';
 import anirudhagune from '../../assets/profiles/ani.webp';
 import harpreet from '../../assets/profiles/harpreet.png';
 import singhborana from '../../assets/profiles/singhborana.png';
-import prerna from '../../assets/profiles/prerna.jpg';
+import prerna from '../../assets/profiles/prerna.png';
 // import memoji from '../../assets/memoji.webp';
 
 const TeamDetails = [
