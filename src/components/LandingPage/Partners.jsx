@@ -45,13 +45,13 @@ const domainData = [
     title: 'Open Source',
     description: 'Contributing to, and building on, projects that are openly available to everyone.',
     icon: <Code className="w-12 h-12 text-slate-500 dark:text-slate-400" />,
-    link: 'https://hub.docker.com/',
+    link: 'https://hub.docker.com/u/techquanta',
   },
   {
     title: 'AI & ML',
     description: 'Exploring the latest advancements in artificial intelligence and machine learning.',
     icon: <Brain className="w-12 h-12 text-purple-500 dark:text-purple-400" />,
-    link: 'https://www.kaggle.com/',
+    link: 'https://www.kaggle.com/tquanta',
   },
   {
     title: 'Research',
