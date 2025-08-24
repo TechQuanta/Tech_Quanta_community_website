@@ -54,7 +54,7 @@ const CommunityWork = () => {
           <UpcomingEvents />
           <BecomeSpeakerSection />
           <FeaturingProject />
-          <FeaturingRepos />
+          {/* <FeaturingRepos /> */}
         </>
       )}
     </div>

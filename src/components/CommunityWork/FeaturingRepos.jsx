@@ -1,5 +1,5 @@
 // FeaturingReposOnly.jsx
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { request, gql } from "graphql-request";
 import { FaCode, FaGitAlt, FaTools, FaCodeBranch } from "react-icons/fa";
 
@@ -27,19 +27,14 @@ const GET_PINNED_REPOS = gql`
   }
 `;
 
-// --- Utility Functions (kept for completeness, but less critical without token rotation) ---
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
+// --- Utility Functions ---
+// These are fine to stay as they are, but a quick note on isRateLimitError:
+// The `error.response?.statusText` check might not always work as expected,
+// as the body often contains the real error message.
 function isRateLimitError(error) {
   if (!error) return false;
-
   const errors = error.response?.errors;
   if (errors && errors.some((e) => e.message?.toLowerCase().includes("rate limit"))) {
-    return true;
-  }
-  if (error.response?.status === 403 && error.response?.statusText?.toLowerCase().includes("rate limit")) {
     return true;
   }
   return false;
@@ -49,10 +44,10 @@ function isRateLimitError(error) {
 const usePinnedReposFetcher = () => {
   const [pinnedRepos, setPinnedRepos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [fetchError, setFetchError] = useState(false); // State to hold error message
+  const [fetchError, setFetchError] = useState(null);
 
   const getCurrentHeader = useCallback(() => {
-    const token = import.meta.env.VITE_APP_GITHUB_TOKEN; // Or process.env.REACT_APP_GITHUB_TOKEN etc.
+    const token = import.meta.env.VITE_APP_GITHUB_TOKEN;
     if (!token) {
       console.error("Error: GITHUB_TOKEN environment variable is not set. API requests will fail.");
       return {};
@@ -64,7 +59,6 @@ const usePinnedReposFetcher = () => {
     try {
       const headers = getCurrentHeader();
       if (!headers.Authorization) {
-        // This error will now be caught by the outer try-catch in fetchRepos
         throw new Error("Authentication token missing. Please ensure GITHUB_TOKEN is correctly configured.");
       }
       const data = await request("https://api.github.com/graphql", query, variables, headers);
@@ -73,41 +67,41 @@ const usePinnedReposFetcher = () => {
       console.error("GraphQL request failed:", err);
       let errorMessage = "Failed to fetch repositories.";
       if (err.response?.errors && err.response.errors.length > 0) {
-        errorMessage += " Details: " + err.response.errors.map(e => e.message).join(", ");
-      } else if (err.message.includes("Failed to fetch") || (err.name === "TypeError" && err.message.includes("Network request failed"))) {
-        errorMessage = "Network error: Could not connect to GitHub API. Check internet/firewall.";
+        errorMessage = "Details: " + err.response.errors.map(e => e.message).join(", ");
       } else if (isRateLimitError(err)) {
         errorMessage = "GitHub API rate limit hit. Please wait or check your token.";
+      } else if (err.message.includes("Network request failed")) {
+        errorMessage = "Network error: Could not connect to GitHub API. Check internet/firewall.";
       } else {
-        errorMessage += " " + err.message;
+        errorMessage = err.message || "An unknown error occurred.";
       }
-      throw new Error(errorMessage); // Re-throw with a user-friendly message
+      throw new Error(errorMessage);
     }
   }, [getCurrentHeader]);
 
-  useEffect(() => {
-    async function fetchRepos() {
-      setLoading(true);
-      setFetchError(null); // Clear previous errors
+  const fetchRepos = useCallback(async () => {
+    setLoading(true);
+    setFetchError(null);
 
-      try {
-        const data = await tryGraphQLRequest(GET_PINNED_REPOS);
-        const fetchedRepos = data.organization?.pinnedItems?.nodes || [];
-        setPinnedRepos(fetchedRepos);
-        if (fetchedRepos.length === 0) {
-          // If no repos are returned, but no error, it means no pins are set or found
-          setFetchError("No pinned repositories found for techquanta organization.");
-        }
-      } catch (err) {
-        console.error("Critical error fetching pinned repositories:", err);
-        setFetchError(err.message || "An unknown error occurred while fetching repositories.");
-        setPinnedRepos([]);
-      } finally {
-        setLoading(false);
+    try {
+      const data = await tryGraphQLRequest(GET_PINNED_REPOS);
+      const fetchedRepos = data.organization?.pinnedItems?.nodes || [];
+      if (fetchedRepos.length === 0) {
+        setFetchError("No pinned repositories found for techquanta organization.");
       }
+      setPinnedRepos(fetchedRepos);
+    } catch (err) {
+      console.error("Critical error fetching pinned repositories:", err);
+      setFetchError(err.message || "An unknown error occurred.");
+      setPinnedRepos([]);
+    } finally {
+      setLoading(false);
     }
-    fetchRepos();
   }, [tryGraphQLRequest]);
+
+  useEffect(() => {
+    fetchRepos();
+  }, [fetchRepos]);
 
   return { pinnedRepos, loading, fetchError };
 };
@@ -198,7 +192,6 @@ const FeaturingReposOnly = () => {
   const { pinnedRepos, loading, fetchError } = usePinnedReposFetcher();
   const headingColorClass = 'bg-gradient-to-r from-primary to-tech-green';
 
-  // Display error message if there's a fetchError
   if (fetchError) {
     return (
       <div className="uniform-background-gradient relative overflow-hidden px-6 py-20 flex justify-center items-center min-h-[400px] text-center">
@@ -216,11 +209,9 @@ const FeaturingReposOnly = () => {
     );
   }
 
-  // Display loading state
   if (loading) {
     return (
       <div className="uniform-background-gradient relative overflow-hidden px-6 py-20 flex justify-center items-center min-h-[400px]">
-        {/* Background Icons (during loading) */}
         <div className="absolute inset-0 flex items-center justify-around z-0 opacity-10">
           <FaCode className="text-gray-400 dark:text-gray-600 text-6xl animate-pulseSlow" />
           <FaGitAlt className="text-gray-400 dark:text-gray-600 text-7xl animate-pulseSlow delay-1000" />
@@ -233,10 +224,8 @@ const FeaturingReposOnly = () => {
     );
   }
 
-  // Display pinned repositories or "no repos" message
   return (
     <div className="uniform-background-gradient relative overflow-hidden px-6 py-20 flex justify-center font-space-grotesk mt-12">
-      {/* Background Icons */}
       <div className="absolute inset-0 flex items-center justify-around z-0 opacity-10">
         <FaCode className="text-blue-500 dark:text-cyan-400 text-8xl md:text-9xl animate-spinSlow" />
         <FaGitAlt className="text-purple-500 dark:text-pink-400 text-7xl md:text-8xl animate-blobFloat delay-2000" />
@@ -246,15 +235,15 @@ const FeaturingReposOnly = () => {
 
       <div className="w-full max-w-6xl relative z-10">
         <h2 className={`text-left
-            text-4xl sm:text-5xl md:text-6xl
-            font-space-grotesk font-bold tracking-tight leading-tight
-            bg-clip-text text-transparent
-            ${headingColorClass} pb-12 font-exo2`}>Our Stellar Pinned Repositories</h2>
+              text-4xl sm:text-5xl md:text-6xl
+              font-space-grotesk font-bold tracking-tight leading-tight
+              bg-clip-text text-transparent
+              ${headingColorClass} pb-12 font-exo2`}>Our Stellar Pinned Repositories</h2>
         {pinnedRepos.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
             {pinnedRepos.map((repo) => (
               <RepoCard
-                key={repo.name} // Using repo.name as key (ensure uniqueness or use repo.id if available)
+                key={repo.name}
                 name={repo.name}
                 description={repo.description}
                 language={repo.primaryLanguage}
@@ -264,14 +253,12 @@ const FeaturingReposOnly = () => {
             ))}
           </div>
         ) : (
-          // This message will now also show if fetchError is set to "No pinned repositories found"
           <div className="text-center text-gray-400 text-lg font-space-grotesk">
             No pinned repositories to display at this moment. Stay tuned for exciting projects!
           </div>
         )}
       </div>
 
-      {/* New CSS for icon animations */}
       <style>{`
         @keyframes spinSlow {
           from { transform: rotate(0deg); }
