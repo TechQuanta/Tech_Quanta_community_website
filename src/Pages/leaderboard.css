@@ -28,6 +28,7 @@
   background: linear-gradient(135deg, #f9fafb, #e2e8f0);
   transition-duration: 0.3s;
   transition-timing-function: ease;
+  width: 100%;
 }
 .user-card:hover {
   @apply z-10;
@@ -39,20 +40,13 @@
 
 /* === AVATAR SECTION === */
 .user-card-avatar {
-  @apply flex-shrink-0 mr-4 rounded-[20%_30%_20%_30%/_30%_20%_30%_20%] object-cover bg-gray-200 border-2 border-transparent;
-  width: 48px;
-  height: 48px;
-  box-shadow:
-    0 4px 8px rgba(0, 0, 0, 0.1),
-    inset 0 0 6px #60a5fa66;
+  @apply  mr-4 rounded-[20%_30%_20%_30%/_30%_20%_30%_20%] object-cover border-2 border-transparent;
+  object-fit: cover;
+  object-position: center;
   transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
 }
 .user-card:hover .user-card-avatar {
   transform: rotate(1deg) scale(1.05);
-  box-shadow:
-    0 6px 14px #2563eb55,
-    inset 0 0 10px #2563eb88;
-  border-color: #3b82f6;
 }
 
 /* === DETAILS SECTION (Right Side) === */

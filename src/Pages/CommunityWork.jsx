@@ -5,6 +5,7 @@ import UpcomingEvents from "../components/CommunityWork/UpcommingEvents";
 import BecomeSpeakerSection from "../components/CommunityWork/BecomeSpeaker";
 import FeaturingProject from "../components/CommunityWork/FeatureProject";
 import FeaturingRepos from "../components/CommunityWork/FeaturingRepos";
+import Organizers from "../components/CommunityWork/Organizers";
 import Loading from "../components/ui/loader";
 import "./main.css";
 
@@ -52,9 +53,10 @@ const CommunityWork = () => {
       ) : (
         <>
           <UpcomingEvents />
+          {/* <Organizers /> */}
           <BecomeSpeakerSection />
           <FeaturingProject />
-          {/* <FeaturingRepos /> */}
+          <FeaturingRepos />
         </>
       )}
     </div>

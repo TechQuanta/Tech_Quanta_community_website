@@ -690,6 +690,7 @@
   gap: 1rem;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   height: 100%; /* Ensure cards in grid have uniform height */
+  width:auto;
 }
 
 .user-card:hover {
@@ -708,11 +709,10 @@
 
 .user-card-avatar {
   flex-shrink: 0;
-  width: 64px;
-  height: 64px;
+  width: auto;
+  height:auto;
   border-radius: 50%;
   overflow: hidden; /* Ensure SVG avatars are clipped */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .user-card-avatar svg {
