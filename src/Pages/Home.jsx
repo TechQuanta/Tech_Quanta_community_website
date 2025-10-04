@@ -185,9 +185,9 @@ const Home = () => {
                   containerClassName="rounded-full w-full sm:w-auto font-exo2"
                   as="button"
                   className="dark:bg-black bg-transparent flex items-center justify-center space-x-2 px-6 py-3 text-sm cursor-pointer w-full"
-                  onClick={() => window.open("https://discord.com/invite/WK3aftq5vg")}
+                  onClick={() => window.open("https://techquanta.github.io/community-wall")}
                 >
-                  <span>Join the Community</span>
+                  <span>Make First Contribution</span>
                 </HoverBorderGradient>
                 <HoverBorderGradient
                   containerClassName="rounded-full w-full sm:w-auto"
@@ -238,11 +238,11 @@ const Home = () => {
         <div className="home-core-team-wrapper">
           <CoreTeam />
         </div>
-        <div>
-          <Faq/>
-        </div>
         <div className="home-partners-wrapper">
           <Partners />
+        </div>
+        <div>
+          <Faq/>
         </div>
       </section>
     </div>

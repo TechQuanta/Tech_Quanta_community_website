@@ -28,7 +28,7 @@
   background: linear-gradient(135deg, #f9fafb, #e2e8f0);
   transition-duration: 0.3s;
   transition-timing-function: ease;
-  width: 100%;
+  width: auto;
 }
 .user-card:hover {
   @apply z-10;

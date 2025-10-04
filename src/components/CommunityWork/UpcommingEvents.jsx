@@ -130,7 +130,7 @@ const CountdownTimer = ({ eventDateString, eventTimeString }) => {
     }
     if (!timeLeft) {
         if (targetTimeMs <= Date.now()) {
-            return <p className="mt-6 text-purple-400 dark:text-purple-300 font-mono text-2xl tracking-widest select-none font-bold glow-text-purple">Event has started!</p>;
+            return <p className="mt-6 text-purple-400 dark:text-purple-300 font-mono text-2xl tracking-widest select-none font-bold glow-text-purple">No More Tickets!</p>;
         }
         return null;
     }
@@ -390,9 +390,9 @@ export default function SliderShowcase() {
 
                     {/* Right Side: Organizer Details */}
                     {currentSlide.organizers && currentSlide.organizers.length > 0 && (
-                        <div className="flex-1 flex flex-col items-center justify-center text-center text-white/90 p-4 rounded-lg bg-white/5 dark:bg-gray-800/20 backdrop-blur-sm">
+                        <div className="flex-1 flex flex-col items-center justify-center text-center text-white/90 p-4 rounded-lg bg-transparent text-black dark:text-white">
                              {/* Organizer Heading */}
-                             <h2 className="text-xl sm:text-2xl font-bold mb-4">
+                             <h2 className="text-xl sm:text-2xl font-bold mb-4 text-black dark:text-white">
                                 Organizers
                             </h2>
                             <div className="flex flex-wrap justify-center gap-8">
@@ -408,7 +408,7 @@ export default function SliderShowcase() {
                                             </div>
                                         )}
                                         <div className="flex flex-col items-center">
-                                            <h3 className="text-lg font-semibold text-white">
+                                            <h3 className="text-lg font-semibold text-black dark:text-white">
                                                 {organizer.name}
                                             </h3>
                                             {organizer.post && (
@@ -417,13 +417,13 @@ export default function SliderShowcase() {
                                                 </p>
                                             )}
                                         </div>
-                                        <div className="flex justify-center space-x-4 mt-2">
+                                        <div className="flex justify-center space-x-4 mt-2 text-black dark:text-white">
                                             {organizer.linkedin && (
                                                 <a
                                                     href={organizer.linkedin}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="text-white hover:text-blue-400 transition-colors duration-200"
+                                                    className="text-black dark:text-white hover:text-blue-400 transition-colors duration-200"
                                                 >
                                                     <FaLinkedin size={24} />
                                                 </a>
@@ -433,7 +433,7 @@ export default function SliderShowcase() {
                                                     href={organizer.socials}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="text-white hover:text-gray-300 transition-colors duration-200"
+                                                    className="text-black dark:text-whtie hover:text-gray-300 transition-colors duration-200"
                                                 >
                                                     <FaGlobe size={24} />
                                                 </a>
@@ -470,7 +470,7 @@ export default function SliderShowcase() {
                     </>
                 )}
 
-                {/* Slide Indicators (Dots) */}
+                {/* Slide Indicators (Dots)
                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex space-x-3">
                     {slides.map((_, i) => (
                         <button
@@ -484,7 +484,7 @@ export default function SliderShowcase() {
                             aria-current={currentIndex === i ? 'true' : 'false'}
                         />
                     ))}
-                </div>
+                </div> */}
 
                 {/* Custom Styles for Animations and Effects */}
                 <style>{`

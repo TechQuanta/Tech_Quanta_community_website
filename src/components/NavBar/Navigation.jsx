@@ -34,8 +34,8 @@ function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = useMemo(() => [
-    { name: "Community Work", link: "community-work" },
-    { name: "LeaderBoard", link: "leaderboard" },
+    { name: "E&P", link: "community-work" },
+    { name: "▁ ▂ ▄ ▅ ▆ ▇ █ ᒪEᗩᗪEᖇᗷOᗩᖇᗪ", link: "leaderboard" },
     { name: "About", link: "about" },
   ], []);
 
@@ -61,9 +61,8 @@ function Header() {
             aria-label="Homepage"
           >
             <NavbarLogo />
-            <span className="text-sm text-black dark:text-white select-none">
-              Tech<span className="text-[1rem]">Quanta</span>
-            </span>
+            <span className="text-sm text-black dark:text-white select-none">Tech<span className="text-[1rem]">Quanta</span></span>
+             
           </div>
 
           <NavItems
@@ -85,7 +84,7 @@ function Header() {
                 )
               }
             >
-              Join
+              Add Me !
             </NavbarButton>
           </div>
         </NavBody>

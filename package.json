@@ -3,14 +3,14 @@
   "private": true,
   "version": "1.0",
   "type": "module",
-  "homepage": "https://techquanta.github.io/Tech_Quanta_community_website", 
+  "homepage": "https://techquanta.github.io/Tech_Quanta_community_website",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "predeploy": "npm run build", 
-    "deploy": "gh-pages -d dist"  
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.31.9",

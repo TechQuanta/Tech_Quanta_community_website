@@ -54,6 +54,7 @@ const CommunityWork = () => {
         <>
           <UpcomingEvents />
           {/* <Organizers /> */}
+          {/* <HostedProjectsByCom /> */}
           <BecomeSpeakerSection />
           <FeaturingProject />
           <FeaturingRepos />

@@ -48,7 +48,7 @@ const CoreTeam = () => {
   const bubbleSize = useMemo(() => getBubbleSize(containerSize.width), [containerSize.width]);
 
   const adjustedPattern = useMemo(() => {
-    const pattern = [2, 4, 5, 4, 2];
+    const pattern = [3, 5, 6, 3];
     let adjusted = [];
     let total = 0;
     for (let i = 0; i < pattern.length && total < teamData.length; i++) {

@@ -15,7 +15,7 @@ import search1 from "../assets/SearchIMg1.gif";
 import search2 from "../assets/SearchIMG2.gif";
 import search3 from "../assets/SearchIMG3.gif";
 
-import ScoreExplanationImage from "../assets/ScoringCalculation.jpg";
+
 
 import { Helmet } from 'react-helmet'; // <--- Import Helmet
 
@@ -434,7 +434,7 @@ export default function App() {
             Your <strong>TQ Points</strong> are a reflection of your contributions and engagement within the TechQuanta community. Here's how they're calculated:
           </p>
           <img
-            src={ScoreExplanationImage}
+            src="https://ikfezffnmwcdmfcvnygk.supabase.co/storage/v1/object/public/banners/ScoringCalculation.jpg"
             alt="Score Explanation"
             className="score-explanation-image"
           />
