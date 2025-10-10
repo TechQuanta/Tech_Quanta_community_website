@@ -9,7 +9,7 @@ const TeamDetails = [
   { id: 4, name: "Pratik Ajbe", image: "https://ikfezffnmwcdmfcvnygk.supabase.co/storage/v1/object/public/communitytechies/PratikAjbe/ajbepratik.png", linkedin: "https://linkedin.com/in/pratik-ajbe-710bb326a" },
   { id: 5, name: "Arsh Choudhary", image: "https://ikfezffnmwcdmfcvnygk.supabase.co/storage/v1/object/public/communitytechies/ArshChoudhary/choudharyarsh.jpg", linkedin: "https://linkedin.com/in/sync-w-arsh" },
   { id: 6, name: "Jayesh Tapadiya", image: "https://ikfezffnmwcdmfcvnygk.supabase.co/storage/v1/object/public/communitytechies/Jayesh/tapadiyajayesh.webp", linkedin: "linkedin.com/in/jayesh-tapdiya-01573024a" },
-  { id: 7, name: "Himanshu Sahu", image: "https://ikfezffnmwcdmfcvnygk.supabase.co/storage/v1/object/public/communitytechies/Himanshu/sahuhimanshu.webp", linkedin: "https://himanshu.techquanta.tech" },
+  { id: 7, name: "Himanshu Sahu", image: "https://ikfezffnmwcdmfcvnygk.supabase.co/storage/v1/object/public/communitytechies/Himanshu/sahuhimanshu.webp", linkedin: "https://himanshusahu-07.vercel.app/" },
   { id: 8, name: "Ashmeet Singh", image: "https://ikfezffnmwcdmfcvnygk.supabase.co/storage/v1/object/public/communitytechies/Ashmeet/singashmeet.webp", linkedin: "https://ashmeet.techquanta.tech" },
   { id: 9, name: "Balram Dhakad", image: "https://ikfezffnmwcdmfcvnygk.supabase.co/storage/v1/object/public/communitytechies/BalramDhakad/dhakadbalram.png", linkedin: "https://balram.techquanta.tech" },
   { id: 10, name: "Kishan Rathore", image: "https://ikfezffnmwcdmfcvnygk.supabase.co/storage/v1/object/public/communitytechies/Kishan/rathorekishan.jpg", linkedin: "https://www.linkedin.com/in/kishan-rathore-01b2a7226/" },
