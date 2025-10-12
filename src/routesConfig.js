@@ -23,6 +23,9 @@ const routes = [
       {
         path: "main",
       },
+      {
+        path: "open-sourcep",
+      },
     ],
   },
   // Add any other top-level routes here if you expand your site later, e.g.:

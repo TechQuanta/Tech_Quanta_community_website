@@ -209,6 +209,7 @@ const Home = lazy(() => import("../Pages/Home.jsx"));
 const About = lazy(() => import("../Pages/About.jsx"));
 const CommunityWork = lazy(() => import("../Pages/CommunityWork.jsx"));
 const LeaderBoard = lazy(() => import("../Pages/LeaderBoard.jsx"));
+const OpenSourceProjects = lazy(() => import("../Pages/open-sourcep.jsx"));
 const Maintenance = lazy(() => import("../Pages/Maintenance.jsx"));
 
 // Create a wrapper component to fetch data
@@ -251,6 +252,10 @@ const createReactRouterConfig = (routes) => {
                             case 'community-work':
                                 elementComponent = CommunityWork;
                                 fallbackText = "Loading Community Work...";
+                                break;
+                            case 'open-sourcep':
+                                elementComponent = OpenSourceProjects;
+                                fallbackText = "Loading Open Source Projects...";
                                 break;
                             case 'leaderboard':
                                 elementComponent = LeaderBoard;

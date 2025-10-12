@@ -19,6 +19,7 @@ const Footer = () => {
     Join: "https://docs.google.com/forms/d/e/1FAIpQLSddiwCoTtyjxuvKq6nPvgE6FXDjlMAz-35X2w8XFqscTDcYuw/viewform?usp=header",
     Hackathons: "/hackathons",
     Meetups: "/community-work",
+    Events:"/community-work",
     Linkedin: "https://www.linkedin.com/in/techquanta-community",
     Contact: "/about", // changed to a valid internal route or leave as "#"
     Discord: "https://discord.com/invite/WK3aftq5vg",
@@ -36,7 +37,7 @@ const Footer = () => {
     },
     {
       title: "Events",
-      links: ["Meetups"],
+      links: ["Meetups","Events"],
     },
     {
       title: "Socials",
