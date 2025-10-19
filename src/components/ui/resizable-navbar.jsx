@@ -1,4 +1,4 @@
-"use client";;
+"use client";
 import { IconMenu2, IconX } from "@tabler/icons-react";
 import {
     motion,
@@ -8,7 +8,7 @@ import {
 } from "framer-motion";
 
 import React, { useRef, useState } from "react";
-import {NavLink} from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { cn } from './../../lib/utils';
 import lightlogo from "../../assets/lightlogo.png";
 import darklogo from "../../assets/darklogo.png"
@@ -58,7 +58,9 @@ export const NavBody = ({
                 boxShadow: visible
                     ? "0 0 24px rgba(34, 42, 53, 0.06), 0 1px 1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(34, 42, 53, 0.04), 0 0 4px rgba(34, 42, 53, 0.08), 0 16px 68px rgba(47, 48, 55, 0.05), 0 1px 0 rgba(255, 255, 255, 0.1) inset"
                     : "none",
-                width: visible ? "40%" : "100%",
+                // MODIFIED: Increased width from 40% to 60% when visible
+                // to reduce the "squeezing" effect while maintaining the animation.
+                width: visible ? "60%" : "100%",
                 y: visible ? 10 : 0,
             }}
             transition={{
@@ -66,9 +68,7 @@ export const NavBody = ({
                 stiffness: 200,
                 damping: 50,
             }}
-            style={{
-                minWidth: "800px",
-            }}
+            // REMOVED: The non-responsive minWidth inline style is removed here.
             className={cn(
                 "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start rounded-full border-gray-400 bg-transparent px-4 py-2 lg:flex dark:bg-transparent ",
                 visible && "bg-white dark:bg-neutral-800 backdrop-blur-3xl",
@@ -80,66 +80,66 @@ export const NavBody = ({
 };
 
 export const NavItems = ({
-  items,
-  className,
-  onItemClick
+    items,
+    className,
+    onItemClick
 }) => {
-  const [hovered, setHovered] = React.useState(null);
+    const [hovered, setHovered] = React.useState(null);
 
-  // Define colors directly here:
-  const lightColors = [
-    "#ff7f7f", // light red
-    "#7fbfff", // light blue
-    "#7fff7f", // light green
-  ];
+    // Define colors directly here:
+    const lightColors = [
+        "#ff7f7f", // light red
+        "#7fbfff", // light blue
+        "#7fff7f", // light green
+    ];
 
-  return (
-    <motion.div
-      onMouseLeave={() => setHovered(null)}
-      className={cn(
-        "absolute inset-0 hidden flex-1 flex-row items-center justify-center space-x-4 text-sm transition duration-300 lg:flex",
-        className
-      )}
-    >
-      {items.map((item, idx) => {
-        // Cycle colors through the 3 defined lightColors, fallback white on dark
-        const color = 
-          window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-            ? "#ffffff"
-            : lightColors[idx % lightColors.length];
-
-        return (
-          <NavLink
-            key={`link-${idx}`}
-            to={item.link}
-            onClick={onItemClick}
-            onMouseEnter={() => setHovered(idx)}
+    return (
+        <motion.div
             onMouseLeave={() => setHovered(null)}
             className={cn(
-              "relative group px-4 py-2 font-extrabold uppercase tracking-wide font-rajdhani transition-colors duration-300",
-              "hover:scale-105"
+                "absolute inset-0 hidden flex-1 flex-row items-center justify-center space-x-4 text-sm transition duration-300 lg:flex",
+                className
             )}
-            style={{ color }}
-          >
-            <AnimatePresence mode="wait">
-              {hovered === idx && (
-                <motion.div
-                  key="hovered-bg"
-                  layoutId="hovered"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 0.1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="absolute inset-0 rounded-full bg-black dark:bg-white pointer-events-none"
-                />
-              )}
-            </AnimatePresence>
-            <span className="relative z-10">{item.name}</span>
-          </NavLink>
-        );
-      })}
-    </motion.div>
-  );
+        >
+            {items.map((item, idx) => {
+                // Cycle colors through the 3 defined lightColors, fallback white on dark
+                const color = 
+                    typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+                        ? "#ffffff"
+                        : lightColors[idx % lightColors.length];
+
+                return (
+                    <NavLink
+                        key={`link-${idx}`}
+                        to={item.link}
+                        onClick={onItemClick}
+                        onMouseEnter={() => setHovered(idx)}
+                        onMouseLeave={() => setHovered(null)}
+                        className={cn(
+                            "relative group px-4 py-2 font-extrabold uppercase tracking-wide font-rajdhani transition-colors duration-300",
+                            "hover:scale-105"
+                        )}
+                        style={{ color }}
+                    >
+                        <AnimatePresence mode="wait">
+                            {hovered === idx && (
+                                <motion.div
+                                    key="hovered-bg"
+                                    layoutId="hovered"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 0.1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                                    className="absolute inset-0 rounded-full bg-black dark:bg-white pointer-events-none"
+                                />
+                            )}
+                        </AnimatePresence>
+                        <span className="relative z-10">{item.name}</span>
+                    </NavLink>
+                );
+            })}
+        </motion.div>
+    );
 };
 
 export const MobileNav = ({
@@ -226,7 +226,8 @@ export const NavbarLogo = () => {
     return (
         <NavLink
             to="/"
-            className="relative z-20  flex items-center space-x-2  py-1 text-sm font-normal text-black">
+            // ADDED: flex-shrink-0 to ensure the logo container doesn't shrink.
+            className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black flex-shrink-0">
             
             {/* Dark logo for dark mode */}
             <img

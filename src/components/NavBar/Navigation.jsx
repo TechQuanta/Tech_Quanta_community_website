@@ -34,8 +34,8 @@ function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = useMemo(() => [
-    { name: "E&P", link: "community-work" },
-    { name: "▁ ▂ ▄ ▅ ▆ ▇ █ ᒪEᗩᗪEᖇᗷOᗩᖇᗪ", link: "leaderboard" },
+    { name: "Events", link: "community-work" },
+    { name: "▁ ▂ ▄ ▅ ▆ ▇ █ Projects", link: "open-source-contributions" },
     { name: "About", link: "about" },
   ], []);
 

@@ -1,14 +1,19 @@
-import { useMotionValue, motion, useMotionTemplate } from "framer-motion";
-import React from "react";
-import { cn } from "../../lib/utils";
+import React, { useState, useCallback } from "react";
 
+// 1. Utility function (replaces import from "../../lib/utils")
+function cn(...classes) {
+  return classes.filter(Boolean).join(' ');
+}
+
+// 2. HeroHighlight Component (Fixed for dynamic height and compilation)
 export const HeroHighlight = ({
   children,
   className,
   containerClassName
 }) => {
-  let mouseX = useMotionValue(0);
-  let mouseY = useMotionValue(0);
+  // Use standard useState instead of framer-motion's useMotionValue
+  const [mouseX, setMouseX] = useState(0);
+  const [mouseY, setMouseY] = useState(0);
 
   // SVG patterns for different states and themes
   const dotPatterns = {
@@ -22,97 +27,82 @@ export const HeroHighlight = ({
     },
   };
 
-  function handleMouseMove({
-    currentTarget,
-    clientX,
-    clientY
-  }) {
+  const handleMouseMove = useCallback(({ currentTarget, clientX, clientY }) => {
     if (!currentTarget) return;
     let { left, top } = currentTarget.getBoundingClientRect();
 
-    mouseX.set(clientX - left);
-    mouseY.set(clientY - top);
-  }
+    // Update state directly, replacing mouseX.set and mouseY.set
+    setMouseX(clientX - left);
+    setMouseY(clientY - top);
+  }, []);
+
+  // Calculate mask style dynamically (replaces useMotionTemplate)
+  const maskStyle = `radial-gradient(200px circle at ${mouseX}px ${mouseY}px, black 0%, transparent 100%)`;
+
   return (
     <div
       className={cn(
-        "group relative flex h-[40rem] w-full items-center justify-center bg-white dark:bg-[#121212]",
+        // CRITICAL FIX: Removed fixed height h-[40rem] and centering (items-center, justify-center)
+        // Added flex-grow and padding to ensure it uses available space and looks good.
+        "group relative flex flex-grow w-full bg-white dark:bg-[#121212] overflow-hidden min-h-96",
         containerClassName
       )}
-      onMouseMove={handleMouseMove}>
+      onMouseMove={handleMouseMove}
+    >
+      {/* Default Dot Pattern (Light) */}
       <div
         className="pointer-events-none absolute inset-0 dark:hidden opacity-20"
         style={{
           backgroundImage: dotPatterns.light.default,
-        }} />
+        }}
+      />
+      {/* Default Dot Pattern (Dark) */}
       <div
         className="pointer-events-none absolute inset-0 hidden dark:block opacity-20"
         style={{
           backgroundImage: dotPatterns.dark.default,
-        }} />
-      <motion.div
+        }}
+      />
+
+      {/* Motion Effect (Light - now a regular div) */}
+      <div
         className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100 dark:hidden"
         style={{
           backgroundImage: dotPatterns.light.hover,
-          WebkitMaskImage: useMotionTemplate`
-            radial-gradient(
-              200px circle at ${mouseX}px ${mouseY}px,
-              black 0%,
-              transparent 100%
-            )
-          `,
-          maskImage: useMotionTemplate`
-            radial-gradient(
-              200px circle at ${mouseX}px ${mouseY}px,
-              black 0%,
-              transparent 100%
-            )
-          `,
-        }} />
-      <motion.div
+          WebkitMaskImage: maskStyle,
+          maskImage: maskStyle,
+        }}
+      />
+      {/* Motion Effect (Dark - now a regular div) */}
+      <div
         className="pointer-events-none absolute inset-0 hidden opacity-0 transition duration-300 group-hover:opacity-100 dark:block"
         style={{
           backgroundImage: dotPatterns.dark.hover,
-          WebkitMaskImage: useMotionTemplate`
-            radial-gradient(
-              200px circle at ${mouseX}px ${mouseY}px,
-              black 0%,
-              transparent 100%
-            )
-          `,
-          maskImage: useMotionTemplate`
-            radial-gradient(
-              200px circle at ${mouseX}px ${mouseY}px,
-              black 0%,
-              transparent 100%
-            )
-          `,
-        }} />
-      <div className={cn("relative z-20", className)}>{children}</div>
+          WebkitMaskImage: maskStyle,
+          maskImage: maskStyle,
+        }}
+      />
+
+      {/* Content */}
+      <div className={cn("relative z-20 w-full p-8", className)}>
+        {children}
+      </div>
     </div>
   );
 };
 
+// 3. Highlight Component (Fixed for compilation)
 export const Highlight = ({
   children,
   className
 }) => {
   return (
-    <motion.span
-      initial={{
-        backgroundSize: "0% 100%",
-      }}
-      animate={{
-        backgroundSize: "100% 100%",
-      }}
-      transition={{
-        duration: 2,
-        ease: "linear",
-        delay: 0.5,
-      }}
+    <span // Replaced motion.span with regular span
+      // Removed initial, animate, and transition props as they rely on framer-motion
       style={{
         backgroundRepeat: "no-repeat",
         backgroundPosition: "left center",
+        backgroundSize: "100% 100%", // Static highlight
         display: "inline",
       }}
       className={cn(
@@ -120,6 +110,6 @@ export const Highlight = ({
         className
       )}>
       {children}
-    </motion.span>
+    </span>
   );
 };

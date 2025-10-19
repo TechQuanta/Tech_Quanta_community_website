@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { Helmet } from 'react-helmet-async'; // Import Helmet
 import AboutInfo from "../components/About/AboutInfo";
-import Contact from "../components/About/Contact";
 import Loading from "../components/ui/loader"; // Assuming this is your custom loader component
 import "./main.css"; // Ensure you have the correct path to your main.css
 
@@ -50,7 +49,6 @@ const About = () => {
       </Helmet>
 
       <AboutInfo />
-      <Contact />
     </main>
   );
 };

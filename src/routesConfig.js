@@ -24,7 +24,7 @@ const routes = [
         path: "main",
       },
       {
-        path: "open-sourcep",
+        path: "open-source-contributions",
       },
     ],
   },
