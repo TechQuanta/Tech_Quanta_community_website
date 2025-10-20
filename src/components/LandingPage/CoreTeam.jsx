@@ -242,22 +242,22 @@ const CoreTeam = () => {
 
                             {/* Text Content */}
                             <p className={`leading-relaxed text-lg pt-4 ${secondaryTextColor}`}> 
-                                The TechQuanta community thrives on the **unwavering dedication** of our core team. 
-                                These individuals are the **architects, mentors, and innovators** who volunteer their time 
+                                The TechQuanta community thrives on the <strong>unwavering dedication</strong> of our core team. 
+                                These individuals are the <strong>architects, mentors, and innovators</strong> who volunteer their time 
                                 and expertise to foster a supportive and productive open-source environment.
                             </p>
                             <p className={`leading-relaxed text-md ${lightSecondaryTextColor}`}>
                                 Every feature, every piece of documentation, and every encouraging word is a testament 
                                 to their commitment. They embody the spirit of collaboration that defines us. 
-                                **Click on a profile** on the right to learn more about the contributors shaping our future!
+                                <strong>Click on a profile</strong> on the right to learn more about the contributors shaping our future!
                             </p>
                             
                             {/* Button */}
                             <div className="pt-6">
                                 <button 
                                     // Removed shadow-lg and hover:shadow-xl
-                                    className="px-6 py-3 bg-teal-500 text-gray-900 font-extrabold rounded-full hover:bg-teal-400 transition-all transform hover:translate-y-[-2px]">
-                                    Join the Mission
+                                    className="px-3 py-2 bg-teal-500 text-gray-900 font-extrabold rounded-[20px] hover:bg-teal-400 transition-all transform hover:translate-y-[-2px]">
+                                    Join our Mission !
                                 </button>
                             </div>
                         </div>

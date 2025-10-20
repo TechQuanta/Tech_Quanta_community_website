@@ -293,7 +293,7 @@ export default function SliderShowcase() {
         <main>
             {/* Event Slider Section */}
             <section
-                className="relative w-full min-h-[70vh] flex justify-center items-center font-space-grotesk overflow-hidden select-none shadow-inner-lg"
+                className="relative w-full min-h-[70vh] flex justify-center items-center font-space-grotesk overflow-hidden select-none"
                 aria-live="polite"
                 aria-roledescription="carousel"
             >
@@ -305,7 +305,7 @@ export default function SliderShowcase() {
                     aria-label={`Background image for ${currentSlide.event_heading}`}
                 />
                 {/* Gradient Overlay for text readability */}
-                <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent dark:from-gray-950/80 dark:via-gray-900/70" />
+                <div className="absolute inset-0 bg-transparent" />
 
                 {/* Content Area - Full-width, less height */}
                 <article

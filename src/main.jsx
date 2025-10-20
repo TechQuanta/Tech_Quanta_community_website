@@ -16,24 +16,24 @@ import memoji4 from "./assets/memoji/memoji4-1.webp";
 import memoji5 from "./assets/memoji/memoji5-1.webp";
 import memoji6 from "./assets/memoji/memoji6-1.webp";
 
-// const clerkPublishableKey = import.meta.env.VITE_APP_CLERK_PUBLISHABLE_KEY;
+const clerkPublishableKey = import.meta.env.VITE_APP_CLERK_PUBLISHABLE_KEY;
 
-// const clerkAppearance = {
-//   variables: {
-//     colorPrimary: "#6366f1",
-//     colorBackground: "#f9fafb",
-//     colorText: "#111827",
-//     colorInputBackground: "#ffffff",
-//     colorInputText: "#111827",
-//     colorInputBorder: "#d1d5db",
-//     colorDanger: "#ef4444",
-//   },
-//   elements: {
-//     formButtonPrimary: "bg-indigo-600 hover:bg-indigo-700 text-white",
-//     card: "shadow-md border border-gray-200",
-//     headerTitle: "text-xl font-semibold",
-//   },
-// };
+const clerkAppearance = {
+  variables: {
+    colorPrimary: "#6366f1",
+    colorBackground: "#f9fafb",
+    colorText: "#111827",
+    colorInputBackground: "#ffffff",
+    colorInputText: "#111827",
+    colorInputBorder: "#d1d5db",
+    colorDanger: "#ef4444",
+  },
+  elements: {
+    formButtonPrimary: "bg-indigo-600 hover:bg-indigo-700 text-white",
+    card: "shadow-md border border-gray-200",
+    headerTitle: "text-xl font-semibold",
+  },
+};
 
 const memojiList = [memoji1, memoji2, memoji3, memoji4, memoji5, memoji6];
 
@@ -88,7 +88,7 @@ function Loader({ onFinish }) {
 function MainApp() {
   return (
     <React.StrictMode>
-      {/* <ClerkProvider publishableKey={clerkPublishableKey} appearance={clerkAppearance}> */}
+      <ClerkProvider publishableKey={clerkPublishableKey} appearance={clerkAppearance}>
         <HelmetProvider>
           <RecoilRoot>
             <ThemeProvider>
@@ -98,7 +98,7 @@ function MainApp() {
             </ThemeProvider>
           </RecoilRoot>
         </HelmetProvider>
-      {/* </ClerkProvider> */}
+      </ClerkProvider>
     </React.StrictMode>
   );
 }
