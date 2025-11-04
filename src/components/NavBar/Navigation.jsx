@@ -13,6 +13,7 @@ import { useState, useEffect, useMemo } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import lightlogo from "../../assets/lightlogo.png";
 import darklogo from "../../assets/darklogo.png";
+import SplitText from "../../components/ui/SplitText";
 
 // Custom hook to detect dark mode preference
 function usePrefersDarkMode() {
@@ -27,6 +28,10 @@ function usePrefersDarkMode() {
 
   return isDark;
 }
+
+const handleAnimationComplete = () => {
+  console.log("All letters have animated!");
+};
 
 function Header() {
   const location = useLocation();
@@ -76,7 +81,7 @@ function Header() {
           <div className="flex items-center gap-4">
             <NavbarButton
               variant="primary"
-              className="bg-[#00BFFF] hover:bg-[#8E44AD]  hover:text-white text-white font-['Exo 2'] px-4 py-1 rounded-full transition-all"
+              className="dark:bg-transparent hover:bg-[#00BFFF] border-2 border-white hover:text-white text-black font-['Exo 2'] px-4  rounded-md py-1 rounded-r-full transition-all bg-[#00BFFF30] dark:text-white " 
               onClick={() =>
                 window.open(
                   "https://docs.google.com/forms/d/e/1FAIpQLSddiwCoTtyjxuvKq6nPvgE6FXDjlMAz-35X2w8XFqscTDcYuw/viewform?usp=header",
@@ -84,7 +89,18 @@ function Header() {
                 )
               }
             >
-              Add Me !
+              <SplitText
+                      text=" Add Me !"
+                      delay={100}
+                      duration={0.6}
+                      ease="power3.out"
+                      splitType="chars"
+                      from={{ opacity: 0, y: 40 }}
+                      to={{ opacity: 1, y: 0 }}
+                      threshold={0.1}
+                      rootMargin="-100px"
+                      onLetterAnimationComplete={handleAnimationComplete}
+                    />
             </NavbarButton>
           </div>
         </NavBody>

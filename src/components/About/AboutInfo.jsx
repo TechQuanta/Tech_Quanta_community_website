@@ -8,7 +8,7 @@ const EMAIL_ACCESS_KEY = process.env.VITE_APP_EMAIL_ACCESS_KEY;
 // --- Placeholder Data & Assets ---
 
 // Using a single logo URL now, as theme state is removed.
-const ABOUT_IMAGE_URL = "/lightlogo.png"; 
+const ABOUT_IMAGE_URL = "/community.png"; 
 
 const communityValues = [
   {
@@ -142,7 +142,7 @@ const ContactForm = ({ onBack }) => {
   if (isSubmitted) {
     return (
       <div
-        className="p-6 bg-white dark:bg-gray-900 border border-[#00BFFF] rounded-xl shadow-2xl transition-all duration-500 text-center flex flex-col items-center justify-center min-h-[500px]"
+        className="p-6 bg-white dark:bg-gray-900 rounded-xl shadow-2xl transition-all duration-500 text-center flex flex-col items-center justify-center min-h-[500px]"
       >
         <Send className="w-12 h-12 text-green-400 mx-auto mb-4 animate-bounce" />
         <h2 className="text-3xl font-bold text-[#00BFFF] mb-4 font-mono">
@@ -362,11 +362,9 @@ const App = () => {
               <div className="w-20 h-1 bg-gradient-to-r from-[#00BFFF] to-[#0034FF] rounded-full mt-2 sm:mt-0 sm:mb-2"></div>
             </div>
             
-            {/* Contact Button (Now next to About, visible only when form is hidden) */}
             {!showContactForm && (
               <button
                 onClick={() => setShowContactForm(true)}
-                // Button theme is fixed to white/black for high contrast
                 className="mt-4 sm:mt-0 px-4 py-2 text-sm font-semibold rounded-lg bg-white text-black hover:bg-gray-200 hover:shadow-2xl transition-all duration-300 flex items-center justify-center whitespace-nowrap shadow-lg"
               >
                 <Mail className="w-4 h-4 mr-2" /> Contact Us
@@ -374,12 +372,10 @@ const App = () => {
             )}
           </div>
           
-          {/* Conditional Rendering Block for main content/form */}
           <div className='min-h-[500px] mt-8'> 
             {showContactForm ? (
               <ContactForm onBack={() => setShowContactForm(false)} />
             ) : (
-              // Original Text Content only
               <div>
                 {TextContent}
               </div>
@@ -388,14 +384,14 @@ const App = () => {
         </div>
       </div>
 
-      <div className="mt-20 pt-10 border-t border-gray-300 dark:border-gray-700 max-w-6xl mx-auto">
+      <div className="mt-20  dark:border-gray-700 max-w-6xl mx-auto">
         <h2 className="text-3xl font-extrabold text-center mb-10 text-[#00BFFF] font-mono">Our Values</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
           {communityValues.map(({ icon: Icon, title, description, color }) => (
             <div
               key={title}
               // Card: Base is white BG, Dark is transparent BG. Base border is gray-200, Dark is gray-800
-              className={`flex flex-col items-center max-w-xs mx-auto p-6 rounded-xl bg-white dark:bg-transparent border border-gray-200 dark:border-gray-800 hover:border-[#00BFFF] transition-all duration-300 transform shadow-lg`}
+              className={`flex flex-col items-center max-w-xs mx-auto p-6 rounded-xl bg-white dark:bg-transparent  transition-all duration-300 transform `}
             >
               <Icon className={`${color} text-5xl mb-4 w-12 h-12 transition-colors duration-300`} />
               {/* Title: Base is black, Dark is white */}

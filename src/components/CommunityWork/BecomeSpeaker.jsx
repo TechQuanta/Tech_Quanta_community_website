@@ -38,27 +38,6 @@ const BecomeSpeakerSection = () => {
       `}
       aria-label="Become a Speaker Section"
     >
-      {/* Background abstract shapes with blur - keep these */}
-      {/* Top Left Blob (unchanged) */}
-      <svg
-        className="absolute top-[-100px] left-[-100px] w-[320px] h-[320px] opacity-20 animate-blobFloat"
-        viewBox="0 0 200 200"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="url(#gradBlob1)"
-        aria-hidden="true"
-        style={{ zIndex: 0, filter: "blur(20px)" }}
-      >
-        <defs>
-          <linearGradient id="gradBlob1" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#3b82f6" />
-            <stop offset="100%" stopColor="#06b6d4" />
-          </linearGradient>
-        </defs>
-        <path
-          d="M40.2,-64.8C53.1,-55,59.3,-39.5,65.6,-23.6C72,-7.7,78.4,7.9,76.4,23.3C74.4,38.7,64,53.8,50.2,61.5C36.3,69.1,18.2,69.3,3.7,62.7C-10.8,56.1,-21.6,42.7,-34.5,34.7C-47.5,26.7,-62.6,24.1,-69.3,14.3C-76,4.4,-74.3,-14.9,-66.8,-30.7C-59.4,-46.5,-46.3,-58.7,-32.1,-66.3C-17.9,-73.9,-8.9,-77.8,5.6,-84.2C20,-90.7,40.1,-99.5,40.2,-64.8Z"
-          transform="translate(100 100)"
-        />
-      </svg>
 
       {/* Center-Right Blob (MODIFIED AGAIN) */}
       <svg

@@ -49,11 +49,9 @@ const createReactRouterConfig = (routes) => {
                             case 'leaderboard':
                                 elementComponent = LeaderBoard;
                                 break;
-                            case 'main':
+                            default:
                                 elementComponent = Maintenance;
                                 break;
-                            default:
-                                elementComponent = null; // Or a 404 component
                         }
                     }
 

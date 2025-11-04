@@ -24,7 +24,7 @@ const CommunityWork = () => {
     <div className="communitywork-container">
       {/* Helmet for managing document head tags for the Community Work page */}
       <Helmet>
-        <title>TechQuanta Community Work - Events, Projects & Speakers</title>
+        <title>Community Work - Events, Projects & Speakers</title>
         <meta
           name="description"
           content="Explore TechQuanta's community initiatives: upcoming events, featured open-source projects, repositories, and opportunities to become a speaker."

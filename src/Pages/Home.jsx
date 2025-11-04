@@ -5,6 +5,8 @@ import Faq from "../components/LandingPage/Faq";
 import CoreTeam from "../components/LandingPage/CoreTeam";
 import Partners from "../components/LandingPage/Partners";
 import SOCIALS from "../components/LandingPage/Socials";
+import ShinyText from '../components/ui/ShinyText';
+
 // import DomainsSection from "../components/LandingPage/DomainsSection"; // Correctly defined
 import { HoverBorderGradient } from "./../components/ui/hover-border-gradient";
 
@@ -19,6 +21,7 @@ const words = [
   "Your Ideas",
   "New Perspectives",
 ];
+
 
 // Reusable Tailwind CSS classes for consistent styling
 const BASE_BUTTON_CLASSES =
@@ -37,8 +40,7 @@ const Home = () => {
   // Video player specific states and refs
   const videoRef = useRef(null);
   // Base URL is used statically now, without any autoplay logic
-  const baseVideoUrl = `https://www.youtube.com/embed/pQkaoaI9Ljc?si=xITc7-aGS_N6SoLT&wmode=transparent`;
-  const [videoSrc, setVideoSrc] = useState(baseVideoUrl);
+  const videoSrc = `https://www.youtube.com/embed/pQkaoaI9Ljc?si=xITc7-aGS_N6SoLT&wmode=transparent`;
   // Removed: const [transformStyle, setTransformStyle] = useState({});
 
   // Effect 1: Cycling through words (Hero Section) - RETAINED
@@ -96,13 +98,19 @@ const Home = () => {
         |----------------------------------------------------------------------
         */}
       <section className="home-hero-section min-h-screen w-full flex flex-col items-center justify-center bg-transparent">
-        <div className="w-full px-4 sm:px-8 lg:px-16 max-w-6xl mx-auto pb-24">
+        <div className="w-full lg:px-16 max-w-6xl mx-auto pb-24">
           <div className="flex flex-wrap gap-4 w-full">
             <div className="home-hero-wrapper flex flex-col items-start justify-between w-full text-left">
               <div className="w-full max-w-3xl">
                 <h1 className="home-hero-title text-left">
+                  <ShinyText
+                    text="Crafting Open Source Futures. With"
+                    disabled={false}
+                    speed={3}
+                    className="custom-class"
+                  />
                   <span className={GRADIENT_TEXT_CLASSES}>
-                    Crafting Open Source Futures. With{" "}
+                     {" "}
                   </span>
                   <div className="home-hero-animated-word-container inline-block">
                     <span
@@ -164,7 +172,7 @@ const Home = () => {
         | 2. VISION SECTION (Video) - Width: max-w-6xl
         |----------------------------------------------------------------------
         */}
-      <section className="pt-24 pb-16 px-4 sm:px-8 lg:px-16 bg-transparent">
+      <section className=" pb-16lg:px-16 bg-transparent">
         <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12 dark:text-blue dark:from-white text-purple-400 font-space-grotesk">
           Discover Our Vision
         </h2>

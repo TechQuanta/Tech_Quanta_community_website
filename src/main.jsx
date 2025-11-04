@@ -87,7 +87,6 @@ function Loader({ onFinish }) {
 
 function MainApp() {
   return (
-    <React.StrictMode>
       <ClerkProvider publishableKey={clerkPublishableKey} appearance={clerkAppearance}>
         <HelmetProvider>
           <RecoilRoot>
@@ -99,7 +98,6 @@ function MainApp() {
           </RecoilRoot>
         </HelmetProvider>
       </ClerkProvider>
-    </React.StrictMode>
   );
 }
 

@@ -17,7 +17,8 @@
 /* communitywork */
 .communitywork-container {
   @apply min-h-screen transition-colors duration-300 mt-[100px] 
-         bg-trasnparent text-black  dark:text-white pb-20;
+         bg-transparent text-black dark:text-white pb-20; 
+  /* The class 'bg-trasnparent' has been fixed to 'bg-transparent' */
 }
 
 .communitywork-loader {
@@ -1141,3 +1142,70 @@
     padding: 0.5rem 1rem;
   }
 }
+
+ .animated-button {
+   position: relative;
+   overflow: hidden;
+   width: 112px; /* w-28 */
+   height: 40px; /* h-10 */
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   /* Trapezoid shape */
+   clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
+   border-radius: 8px; /* Rounded corners for the outer container */
+   background-color: var(--card-bg-light);
+   transition: transform 0.3s ease-out, background-color 0.3s ease-out, clip-path 0.3s ease-out;
+   transform: scale(1); /* Default scale */
+   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* subtle shadow */
+ }
+ html.dark .animated-button {
+   background-color: var(--card-bg-dark); /* Now transparent from data */
+   box-shadow: none; /* Remove shadow in dark mode if transparent */
+ }
+
+ .animated-button:hover {
+   transform: scale(1.05); /* Scale up slightly on hover */
+   /* Slight change to clip-path on hover for more dynamism */
+   clip-path: polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%); /* More pronounced skew on hover */
+ }
+
+ .animated-button::before {
+   content: '';
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 35%;
+   height: 120%;
+   background-color: var(--hover-slice-color);
+   /* Triangular slice from top-left, pointing right */
+   clip-path: polygon(0 0, 100% 50%, 0 100%);
+   transform: translateX(-100%); /* Start off-screen to the left */
+   transition: transform 0.4s ease-out;
+   z-index: 0;
+ }
+
+ .animated-button:hover::before {
+   transform: translateX(0%); /* Slide in to reveal the slice */
+ }
+
+ .icon-content {
+   position: relative;
+   z-index: 1; /* Above the slice */
+   transition: transform 0.3s ease-out;
+   background-color: var(--icon-box-bg-light); /* Will be transparent from data */
+   border-radius: 6px; /* Match outer button's rounded corners, but slightly smaller */
+   padding: 6px; /* p-1.5 is approx 6px */
+ }
+ html.dark .icon-content {
+   background-color: var(--icon-box-bg-dark); /* Will be transparent from data */
+ }
+
+ .animated-button:hover .icon-content {
+   transform: scale(1.1); /* Scale icon on hover, no skew */
+ }
+
+ .group:hover .strip-hover-glow::before {
+   transform: translate(-50%, -50%) scale(1.5); /* Expand on hover */
+   opacity: 1;
+ }

@@ -72,7 +72,7 @@ const FAQItem = ({ faq, index, openIndex, toggleFAQ }) => {
         onClick={() => toggleFAQ(index)}
         aria-expanded={isOpen}
         aria-controls={`faq-panel-${index}`}
-        className="w-full flex items-center justify-between px-5 py-3 sm:px-6 sm:py-4 text-left text-purple-800 dark:text-purple-300 font-medium hover:bg-purple-50 dark:hover:bg-gray-700 focus:outline-none transition-colors duration-200 rounded-2xl"
+        className="w-full flex items-center justify-between px-5 py-3 sm:px-6 sm:py-4 text-left text-purple-800 dark:text-purple-300 font-medium border-none focus:outline-none transition-colors duration-200 rounded-2xl"
       >
         <span className="text-lg sm:text-xl font-semibold">{faq.question}</span>
         <div

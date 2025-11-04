@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
-import teamdetails from './teamdetails'; // Placeholder for team data array (assumed to exist)
+import React, { useState, useEffect, useRef } from 'react';
 import { FaLinkedin, FaCodeBranch, FaUserFriends } from 'react-icons/fa';
+import DomeGallery from '../ui/DomeGallery';
 
 // Constants for shared layout dimensions
 const PROFILE_WIDTH = 320;
@@ -105,19 +105,13 @@ const CoreTeam = () => {
     // State to track theme, initialized by checking system preference
     const [theme, setTheme] = useState(() => (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
     
-    // State for the currently selected/hovered member and loading state
-    const [hoveredMember, setHoveredMember] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
-    
     // State and Ref for the dynamic vertical line scroll effect
     const [isTributeVisible, setIsTributeVisible] = useState(false);
     const tributeRef = useRef(null);
 
-    // Ref to manage the loading timeout ID (for cleanup)
-    const loadingTimeoutRef = useRef(null); 
     
     // Memoize team data since it's static
-    const teamData = useMemo(() => teamdetails, []);
+    // const teamData = useMemo(() => teamdetails, []);
 
     // Theme-dependent classes
     const isDark = theme === 'dark';
@@ -128,29 +122,9 @@ const CoreTeam = () => {
     const accentIconColor = isDark ? 'text-teal-400' : 'text-teal-700';
     const accentPrimaryColor = isDark ? 'text-teal-400' : 'text-teal-600';
     const accentSecondaryColor = isDark ? 'text-indigo-400' : 'text-indigo-700';
-    const cardGlassClass = isDark ? 'bg-gray-900/20' : 'bg-white/50';
+    // const cardGlassClass = isDark ? 'bg-gray-900/20' : 'bg-white/50';
     const tributeGlassClass = isDark ? 'bg-gray-900/30' : 'bg-white/60';
     
-
-    // Handles member selection and simulates a brief loading state
-    const handleSelectMember = (member) => {
-        // Clear any existing timeout to prevent state conflicts
-        if (loadingTimeoutRef.current) {
-            clearTimeout(loadingTimeoutRef.current);
-            loadingTimeoutRef.current = null;
-        }
-
-        if (member?.id !== hoveredMember?.id) {
-            setIsLoading(true);
-            setHoveredMember(member);
-
-            // Simulate loading duration
-            loadingTimeoutRef.current = setTimeout(() => {
-                setIsLoading(false);
-                loadingTimeoutRef.current = null;
-            }, 500); 
-        }
-    };
 
 
     useEffect(() => {
@@ -194,7 +168,7 @@ const CoreTeam = () => {
 
     return (
         // Main container with transparent background
-        <div className={`py-20 px-4 sm:px-8 lg:px-16 bg-transparent ${primaryTextColor} min-h-screen transition-colors duration-500`}>
+        <div className={`py-20  bg-transparent ${primaryTextColor} min-h-screen transition-colors duration-500`}>
             {/* CSS for the subtle background pulse effect */}
             <style jsx>{`
                 @keyframes pulse-slow {
@@ -206,15 +180,8 @@ const CoreTeam = () => {
                 }
             `}</style>
 
-            <div className="max-w-7xl mx-auto">
-                
-                {/* Main Title */}
-                <h2 className="text-4xl sm:text-6xl font-extrabold text-center mb-16 font-space-grotesk tracking-tight"
-                    style={{ textShadow: isDark ? '0 0 10px rgba(20, 184, 166, 0.5)' : '0 0 5px rgba(20, 184, 166, 0.3)' }}>
-                    <span className={accentPrimaryColor}>Core</span> <span className={accentSecondaryColor}>Innovators</span>
-                </h2>
-
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
+            <div className="max-w-7xl">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                     
                     {/* COLUMN 1: TRIBUTE / INTRODUCTION BLOCK - SHADOW REMOVED */}
                     <div 
@@ -224,7 +191,7 @@ const CoreTeam = () => {
                         
                         {/* ANIMATED VERTICAL LINE ELEMENT */}
                         {/* This line will now reset (h-0) when scrolling out and run again (h-full) when scrolling in */}
-                        <div className={`absolute left-0 top-0 w-1 bg-teal-500 transition-all duration-[3000ms] ease-out 
+                        <div className={`absolute left-0 top-0 w-1 bg-teal-500  transition-all duration-[3000ms] ease-out 
                             ${isTributeVisible ? 'h-full' : 'h-0'}`}>
                         </div>
 
@@ -264,43 +231,18 @@ const CoreTeam = () => {
                     </div>
 
                     {/* COLUMN 2 & 3: PROFILES & INTERACTION AREA */}
-                    <div className="lg:col-span-2 flex flex-col xl:flex-row gap-10">
+                    <div className="lg:col-span-2 flex flex-col xl:flex-row">
                         
-                        {/* 1. Team Members Grid (Small Cards) */}
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-4 gap-4 w-full xl:w-3/5 order-1">
-                            {teamData.map((v) => (
-                                <div 
-                                    key={v.id} 
-                                    className={`${CARD_BASE_CLASSES} ${cardGlassClass}`} 
-                                    onClick={() => handleSelectMember(v)}
-                                >
-                                    <div className="flex flex-col items-center">
-                                        <img 
-                                            src={v.image} 
-                                            alt={v.name} 
-                                            className="w-16 h-16 object-cover rounded-full mb-2 ring-2 ring-indigo-500/50 group-hover:ring-teal-400 transition-colors" 
-                                            loading="lazy" 
-                                        />
-                                        
-                                        {/* Full Role/Title (Primary Focus) */}
-                                        <p className={`text-sm font-semibold text-center ${accentPrimaryColor} w-full truncate mb-0`}>
-                                            {v.role} 
-                                        </p>
-                                        
-                                        {/* Working Position / Name (Secondary Focus) */}
-                                        <p className={`text-xs text-center ${secondaryTextColor} truncate w-full mt-[-1px] font-light italic opacity-80`}>
-                                            {v.name || 'Contributor'}
-                                        </p>
-
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
                         
-                        {/* 2. Detail Block (Large Profile) */}
+                        {/* 2. Detail Block (Large Profile)
                         <div className="flex items-center justify-center w-full xl:w-2/5 order-2">
                             <ProfileDetailBlock member={hoveredMember} isLoading={isLoading} theme={theme} />
-                        </div>
+                        </div> */}
+                        <div style={{ width: '100%', height: '100vh' }}>
+
+      <DomeGallery />
+
+    </div>
                     </div>
                 </div>
             </div>
