@@ -12,7 +12,7 @@ const DEFAULTS = {
   maxVerticalRotationDeg: 0,
   dragSensitivity: 25,
   enlargeTransitionMs: 400,
-  segments: 28
+  segments: 20
 };
 
 const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
@@ -87,7 +87,7 @@ export default function DomeGallery({
   images = DEFAULT_IMAGES,
   fit = 0.5,
   fitBasis = 'auto',
-  minRadius = 600,
+  minRadius = 500,
   maxRadius = Infinity,
   padFactor = 0.25,
   overlayBlurColor = '#060010',
@@ -96,10 +96,10 @@ export default function DomeGallery({
   enlargeTransitionMs = DEFAULTS.enlargeTransitionMs,
   segments = DEFAULTS.segments,
   dragDampening = 2,
-  openedImageWidth = '250px',
-  openedImageHeight = '350px',
-  imageBorderRadius = '30px',
-  openedImageBorderRadius = '30px',
+  openedImageWidth = '350px',
+  openedImageHeight = '450px',
+  imageBorderRadius = '20px',
+  openedImageBorderRadius = '20px',
   grayscale = false
 }) {
   const rootRef = useRef(null);

@@ -40,7 +40,7 @@ function Header() {
 
   const navItems = useMemo(() => [
     { name: "Events", link: "community-work" },
-    { name: "▁ ▂ ▄ ▅ ▆ ▇ █ Projects", link: "open-source-contributions" },
+    { name: "  ▂ ▄ ▅ ▆ ▇ █ Projects", link: "open-source-contributions" },
     { name: "About", link: "about" },
   ], []);
 
@@ -61,13 +61,13 @@ function Header() {
         {/* Desktop Nav */}
         <NavBody>
           <div
-
             className="z-20 flex items-center space-x-2 px-2 py-1 text-lg font-semibold"
             aria-label="Homepage"
           >
+            {/* The NavbarLogo component handles the logo and NavLink automatically */}
             <NavbarLogo />
             <span className="text-sm text-black dark:text-white select-none">Tech<span className="text-[1rem]">Quanta</span></span>
-             
+              
           </div>
 
           <NavItems
@@ -81,7 +81,7 @@ function Header() {
           <div className="flex items-center gap-4">
             <NavbarButton
               variant="primary"
-              className="dark:bg-transparent hover:bg-[#00BFFF] border-2 border-white hover:text-white text-black font-['Exo 2'] px-4  rounded-md py-1 rounded-r-full transition-all bg-[#00BFFF30] dark:text-white " 
+              className="dark:bg-transparent hover:bg-[#00BFFF] border-2 border-white hover:text-white text-black font-['Exo 2'] px-4  rounded-md py-1 rounded-r-full transition-all bg-[#00BFFF30] dark:text-white " 
               onClick={() =>
                 window.open(
                   "https://docs.google.com/forms/d/e/1FAIpQLSddiwCoTtyjxuvKq6nPvgE6FXDjlMAz-35X2w8XFqscTDcYuw/viewform?usp=header",
@@ -90,17 +90,17 @@ function Header() {
               }
             >
               <SplitText
-                      text=" Add Me !"
-                      delay={100}
-                      duration={0.6}
-                      ease="power3.out"
-                      splitType="chars"
-                      from={{ opacity: 0, y: 40 }}
-                      to={{ opacity: 1, y: 0 }}
-                      threshold={0.1}
-                      rootMargin="-100px"
-                      onLetterAnimationComplete={handleAnimationComplete}
-                    />
+                  text=" Add Me !"
+                  delay={100}
+                  duration={0.6}
+                  ease="power3.out"
+                  splitType="chars"
+                  from={{ opacity: 0, y: 40 }}
+                  to={{ opacity: 1, y: 0 }}
+                  threshold={0.1}
+                  rootMargin="-100px"
+                  onLetterAnimationComplete={handleAnimationComplete}
+                />
             </NavbarButton>
           </div>
         </NavBody>
@@ -108,24 +108,13 @@ function Header() {
         {/* Mobile Nav */}
         <MobileNav>
           <MobileNavHeader>
-            <NavbarLogo>
-              <NavLink to="/" className="flex items-center space-x-2" aria-label="Homepage">
-                <img
-                  src={lightlogo}
-                  alt="TechQuanta Light Logo"
-                  width={40}
-                  height={40}
-                  className="inline-block rounded-full dark:block"
-                />
-                <img
-                  src={darklogo}
-                  alt="TechQuanta Dark Logo"
-                  width={40}
-                  height={40}
-                  className="inline-block rounded-full dark:hidden"
-                />
-              </NavLink>
-            </NavbarLogo>
+            {/* FIX: Simplified the Mobile Logo section. 
+                NavbarLogo already contains a NavLink to "/" and handles dark/light mode images. */}
+            <div className="flex items-center space-x-2">
+                <NavbarLogo />
+                <span className="text-lg font-semibold text-white dark:text-white select-none">Tech<span className="text-base">Quanta</span></span>
+            </div>
+            
             <MobileNavToggle
               isOpen={isMobileMenuOpen}
               onClick={() => setIsMobileMenuOpen((open) => !open)}

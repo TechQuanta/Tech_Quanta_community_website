@@ -58,8 +58,7 @@ export const NavBody = ({
                 boxShadow: visible
                     ? "0 0 24px rgba(34, 42, 53, 0.06), 0 1px 1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(34, 42, 53, 0.04), 0 0 4px rgba(34, 42, 53, 0.08), 0 16px 68px rgba(47, 48, 55, 0.05), 0 1px 0 rgba(255, 255, 255, 0.1) inset"
                     : "none",
-                // MODIFIED: Increased width from 40% to 60% when visible
-                // to reduce the "squeezing" effect while maintaining the animation.
+                // This animation remains active for large devices (lg:flex ensures this)
                 width: visible ? "60%" : "100%",
                 y: visible ? 10 : 0,
             }}
@@ -68,7 +67,6 @@ export const NavBody = ({
                 stiffness: 200,
                 damping: 50,
             }}
-            // REMOVED: The non-responsive minWidth inline style is removed here.
             className={cn(
                 "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start rounded-full border-gray-400 bg-transparent px-4 py-2 lg:flex dark:bg-transparent ",
                 visible && "bg-white dark:bg-neutral-800 backdrop-blur-3xl",
@@ -141,6 +139,7 @@ export const NavItems = ({
         </motion.div>
     );
 };
+// ... (rest of the file remains the same)
 
 export const MobileNav = ({
     children,
@@ -149,31 +148,23 @@ export const MobileNav = ({
 }) => {
     return (
         <motion.div
-            animate={{
-                backdropFilter: visible ? "blur(10px)" : "none",
-                boxShadow: visible
-                    ? "0 0 24px rgba(34, 42, 53, 0.06), 0 1px 1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(34, 42, 53, 0.04), 0 0 4px rgba(34, 42, 53, 0.08), 0 16px 68px rgba(47, 48, 55, 0.05), 0 1px 0 rgba(255, 255, 255, 0.1) inset"
-                    : "none",
-                width: visible ? "90%" : "100%",
-                paddingRight: visible ? "12px" : "0px",
-                paddingLeft: visible ? "12px" : "0px",
-                borderRadius: visible ? "4px" : "2rem",
-                y: visible ? 20 : 0,
-            }}
+
             transition={{
                 type: "spring",
                 stiffness: 200,
                 damping: 50,
             }}
             className={cn(
+                // Max-width constraints ensure it doesn't span beyond the viewport edges.
                 "relative z-50 mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-between bg-transparent px-0 py-2 lg:hidden",
-                visible && "!bg-[#474747] dark:bg-neutral-950/80",
                 className
             )}>
             {children}
         </motion.div>
     );
 };
+
+// ... (rest of the file remains the same)
 
 export const MobileNavHeader = ({
     children,
