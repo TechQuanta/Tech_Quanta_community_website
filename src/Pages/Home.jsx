@@ -178,7 +178,7 @@ const Home = () => {
         </h2>
         <div
           // Add pointer-events-none to the container itself
-          className="video-card-container w-full max-w-6xl mx-auto relative group pointer-events-none"
+          className="video-card-container w-full max-w-5xl mx-auto relative group pointer-events-none"
         >
           {/* Apply to the shadow element as well */}
           <div className="video-card-shadow-outer pointer-events-none"></div>

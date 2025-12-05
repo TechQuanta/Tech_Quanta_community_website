@@ -7,10 +7,14 @@
   overflow: hidden;
   position: relative;
   outline: none;
+  background:transparent;
+  border-radius: 70%;
+  box-shadow: 0 4px 8px rgba(3, 148, 156, 0.2);
 }
 
 #infinite-grid-menu-canvas:active {
   cursor: grabbing;
+    background:transparent;
 }
 
 .action-button {
@@ -21,20 +25,20 @@
   height: 60px;
   display: grid;
   place-items: center;
-  background: #5227ff;
+  background: #000000;
   border: none;
   border-radius: 50%;
   cursor: pointer;
-  border: 5px solid #000;
+  border: 5px solid #ff0044;
 }
 
 .face-title {
   user-select: none;
   position: absolute;
-  font-weight: 800;
-  font-size: 1rem;
-  left: 1.6em;
+  font-weight: 500;
+  font-size: 2rem;
   top: 50%;
+  text-shadow: 2px 1px 6px #f6fe03;
 }
 
 .action-button-icon {
@@ -49,6 +53,7 @@
   position: absolute;
   top: 50%;
   transform: translate(20%, -50%);
+  color:rgb(255, 106, 198);
 }
 
 .face-title.active {
@@ -113,5 +118,6 @@
   .face-title,
   .face-description {
     display: none;
+    
   }
 }

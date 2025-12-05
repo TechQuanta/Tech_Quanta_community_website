@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Users, Code, Globe, Mail, Send } from 'lucide-react';
 
 // PLACEHOLDER KEY: Replace this with your actual Web3Forms access key
-const EMAIL_ACCESS_KEY = process.env.VITE_APP_EMAIL_ACCESS_KEY;
+const EMAIL_ACCESS_KEY = "process.env.VITE_APP_EMAIL_ACCESS_KEY";
 
 // --- Placeholder Data & Assets ---
 

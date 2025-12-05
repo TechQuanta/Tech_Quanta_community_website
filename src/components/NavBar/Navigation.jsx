@@ -41,6 +41,7 @@ function Header() {
   const navItems = useMemo(() => [
     { name: "Events", link: "community-work" },
     { name: "  ▂ ▄ ▅ ▆ ▇ █ Projects", link: "open-source-contributions" },
+    { name: "Services", link: "comming-soon" },
     { name: "About", link: "about" },
   ], []);
 
@@ -61,7 +62,7 @@ function Header() {
         {/* Desktop Nav */}
         <NavBody>
           <div
-            className="z-20 flex items-center space-x-2 px-2 py-1 text-lg font-semibold"
+            className="z-20 flex items-center  py-1 text-lg font-semibold"
             aria-label="Homepage"
           >
             {/* The NavbarLogo component handles the logo and NavLink automatically */}

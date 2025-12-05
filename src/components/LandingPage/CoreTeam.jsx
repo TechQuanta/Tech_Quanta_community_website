@@ -285,13 +285,13 @@ const CoreTeam = () => {
           </div>
 
           {/* COLUMN 2 & 3: PROFILES & INTERACTION AREA */}
-          <div className="lg:col-span-2 flex flex-col xl:flex-row">
+          <div className="lg:col-span-2 flex flex-col xl:flex-row ">
             {/* 2. Detail Block (Large Profile)
                         <div className="flex items-center justify-center w-full xl:w-2/5 order-2">
                             <ProfileDetailBlock member={hoveredMember} isLoading={isLoading} theme={theme} />
                         </div> */}
-            <div style={{ height: "600px", position: "relative" }}>
-              <DomeGallery items={items} />
+            <div style={{ height: "600px", position: "relative" }} >
+              <DomeGallery items={items}  />
             </div>
           </div>
         </div>
