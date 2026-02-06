@@ -459,14 +459,14 @@
 // }
 
 
-
 import React, { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import Loading from "../components/ui/loader";
 import { useGitHubLeaderboardData } from "../hooks/GraphQlQuery";
 import { Helmet } from 'react-helmet';
 
-// Styles (Ensure these paths match your project)
+// Styles
 import "./leaderboard.css";
+import "./main.css";
 
 // Assets
 import CommunityChampion from "../assets/communitychampion.png";
@@ -489,13 +489,6 @@ const badges = [
   { src: Joining, name: "Member", threshold: 0 },
 ];
 
-const sortFunctions = {
-  scoreDesc: (a, b) => b.score - a.score,
-  scoreAsc: (a, b) => a.score - b.score,
-  alphaAZ: (a, b) => a.username.localeCompare(b.username),
-  alphaZA: (a, b) => b.username.localeCompare(a.username),
-};
-
 function getBadgeInfoByScore(score) {
   for (const badge of badges) {
     if (score >= badge.threshold) return badge;
@@ -503,130 +496,124 @@ function getBadgeInfoByScore(score) {
   return badges[badges.length - 1];
 }
 
-// Single Column User Card Component
-const UserCard = React.memo(({ user, index, filterActive }) => {
+const UserRow = React.memo(({ user, index, filterActive }) => {
   const badge = getBadgeInfoByScore(user.score);
   const rank = index + 1;
-  const isTopThree = rank <= 3;
   const githubUrl = `https://github.com/${user.username}`;
 
   return (
-    <a href={githubUrl} target="_blank" rel="noopener noreferrer" className="user-row-link">
-      <div className={`user-row-card ${isTopThree ? `top-rank-${rank}` : ''}`}>
-        <div className="user-rank-cell">
-          <span className="rank-number">{rank}</span>
-        </div>
-        
-        <div className="user-avatar-cell" dangerouslySetInnerHTML={{ __html: user.avatarSvg }} />
+    <a href={githubUrl} target="_blank" rel="noopener noreferrer" className="leaderboard-row-link">
+      <div className={`user-list-item ${rank <= 3 ? `top-three rank-${rank}` : ""}`}>
+        {/* Rank Number */}
+        <div className="item-rank">{rank}</div>
 
-        <div className="user-info-cell">
-          <h3 className="user-name">{user.username}</h3>
-          <div className="user-meta">
-            <span className="tq-score"><strong>{user.score}</strong> TQ Points</span>
-            {filterActive && user.techquantaCommits > 0 && (
-              <span className="commit-tag"> • {user.techquantaCommits} Commits</span>
-            )}
+        {/* Avatar */}
+        <div className="item-avatar" dangerouslySetInnerHTML={{ __html: user.avatarSvg }} />
+
+        {/* User Identity */}
+        <div className="item-identity">
+          <span className="item-username">{user.username}</span>
+          {rank === 1 && <span className="crown-icon">👑</span>}
+        </div>
+
+        {/* Stats Section - Hidden on mobile, visible on desktop */}
+        <div className="item-stats">
+          <div className="stat-pill">
+            <span className="stat-value">{user.score}</span>
+            <span className="stat-label">Points</span>
           </div>
+          {filterActive && user.techquantaCommits > 0 && (
+            <div className="stat-pill commits">
+              <span className="stat-value">{user.techquantaCommits}</span>
+              <span className="stat-label">Commits</span>
+            </div>
+          )}
         </div>
 
-        <div className="user-badge-cell">
-          <img src={badge.src} alt={badge.name} className="mini-badge" title={badge.name} />
-          <span className="badge-label">{badge.name}</span>
+        {/* Badge Section */}
+        <div className="item-badge">
+          <img src={badge.src} alt={badge.name} className="badge-img-tiny" />
+          <span className="badge-text-tiny">{badge.name}</span>
         </div>
       </div>
     </a>
   );
 });
 
-const Modal = ({ children, onClose, className = '' }) => (
-  <div className="modal-backdrop active-modal-backdrop" onClick={onClose}>
-    <div className={`modal-content ${className}`} onClick={(e) => e.stopPropagation()}>
-      <button className="modal-close" onClick={onClose}>&times;</button>
-      {children}
-    </div>
-  </div>
-);
-
 export default function App() {
-  const { userStats, loading, error, filterActive, loadingFilter, showActiveMembers, showAllMembers, allDataNull } = useGitHubLeaderboardData();
+  const { userStats, loading, error, filterActive, showActiveMembers, showAllMembers, loadingFilter } = useGitHubLeaderboardData();
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState("scoreDesc");
   const [imageIndex, setImageIndex] = useState(0);
-  const [showScoreModal, setShowScoreModal] = useState(false);
-  const [showComingSoonModal, setShowComingSoonModal] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => setImageIndex((i) => (i + 1) % rotatingImages.length), 4000);
     return () => clearInterval(interval);
   }, []);
 
-  const filteredSortedUsers = useMemo(() => {
+  const sortedUsers = useMemo(() => {
     if (!Array.isArray(userStats)) return [];
-    const searchLower = search.trim().toLowerCase();
-    const filtered = searchLower ? userStats.filter(u => u.username.toLowerCase().includes(searchLower)) : userStats;
-    return [...filtered].sort(sortFunctions[sortKey] || sortFunctions.scoreDesc);
+    const searchLower = search.toLowerCase().trim();
+    let filtered = searchLower ? userStats.filter(u => u.username.toLowerCase().includes(searchLower)) : userStats;
+    
+    return [...filtered].sort((a, b) => {
+      if (sortKey === "scoreDesc") return b.score - a.score;
+      if (sortKey === "scoreAsc") return a.score - b.score;
+      return a.username.localeCompare(b.username);
+    });
   }, [userStats, search, sortKey]);
 
-  if (loading) return <div className="loader-full"><Loading message="Igniting the Arkenlist..." /></div>;
+  if (loading) return <div className="loader-container"><Loading message="Loading the Arkenlist..." /></div>;
 
   return (
-    <div className="leaderboard-wrapper">
+    <div className="leaderboard-page">
       <Helmet>
-        <title>The Arkenlist | Tech Quanta Leaderboard</title>
-        <meta name="description" content="Top open source contributors ranking on Tech Quanta." />
+        <title>The Arkenlist | Contributors</title>
       </Helmet>
 
-      {/* Header Section */}
-      <header className="leaderboard-header-section">
-        <h1 className="main-title">The Arkenlist <span className="sparkle">✨</span></h1>
-        
-        <div className="controls-container">
-          <div className="search-box">
-            <img src={rotatingImages[imageIndex]} alt="search-icon" className="search-gif" />
-            <input 
-              type="text" 
-              placeholder="Search heroes..." 
-              value={search} 
-              onChange={(e) => setSearch(e.target.value)} 
-            />
+      <div className="leaderboard-container-v2">
+        <header className="v2-header">
+          <h1 className="v2-title">The Arkenlist <span className="sparkle-emoji">✨</span></h1>
+          
+          <div className="v2-toolbar">
+            <div className="v2-search-wrapper">
+              <img src={rotatingImages[imageIndex]} className="v2-search-gif" alt="search" />
+              <input 
+                placeholder="Search username..." 
+                value={search} 
+                onChange={(e) => setSearch(e.target.value)} 
+              />
+            </div>
+
+            <div className="v2-controls">
+              <select value={sortKey} onChange={(e) => setSortKey(e.target.value)}>
+                <option value="scoreDesc">Highest Points</option>
+                <option value="scoreAsc">Lowest Points</option>
+                <option value="alphaAZ">A-Z Name</option>
+              </select>
+              
+              <button className="v2-filter-btn" onClick={filterActive ? showAllMembers : showActiveMembers}>
+                {loadingFilter ? "..." : (filterActive ? "Show All" : "Active Only")}
+              </button>
+            </div>
           </div>
+        </header>
 
-          <div className="actions-group">
-            <select value={sortKey} onChange={(e) => setSortKey(e.target.value)} className="sort-select">
-              <option value="scoreDesc">Rank: High to Low</option>
-              <option value="scoreAsc">Rank: Low to High</option>
-              <option value="alphaAZ">Name: A-Z</option>
-            </select>
-
-            <button onClick={filterActive ? showAllMembers : showActiveMembers} className="action-btn">
-              {loadingFilter ? "..." : (filterActive ? "Show All" : "Show Active")}
-            </button>
-
-            <button className="info-circle" onClick={() => setShowScoreModal(true)}>i</button>
+        <main className="v2-list-wrapper">
+          <div className="v2-list-header">
+            <span className="col-rank">#</span>
+            <span className="col-user">Contributor</span>
+            <span className="col-stats">Performance</span>
+            <span className="col-badge">Rank</span>
           </div>
-        </div>
-      </header>
-
-      {/* List Section */}
-      <main className="leaderboard-content-body">
-        <div className="single-column-list">
-          {filteredSortedUsers.length > 0 ? (
-            filteredSortedUsers.map((user, index) => (
-              <UserCard key={user.username} user={user} index={index} filterActive={filterActive} />
-            ))
-          ) : (
-            <div className="empty-state">No contributors found matching your search.</div>
-          )}
-        </div>
-      </main>
-
-      {/* Modals */}
-      {showScoreModal && (
-        <Modal onClose={() => setShowScoreModal(false)} className="score-modal">
-          <h2>TQ Points System 💡</h2>
-          <img src="https://ikfezffnmwcdmfcvnygk.supabase.co/storage/v1/object/public/banners/ScoringCalculation.jpg" alt="Scores" className="modal-img" />
-        </Modal>
-      )}
+          
+          <div className="v2-rows-container">
+            {sortedUsers.map((user, index) => (
+              <UserRow key={user.username} user={user} index={index} filterActive={filterActive} />
+            ))}
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
