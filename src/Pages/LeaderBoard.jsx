@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Loading from "../components/ui/loader";
 import { useGitHubLeaderboardData } from "../hooks/GraphQlQuery";
 import { Helmet } from 'react-helmet';
@@ -6,7 +6,7 @@ import { Helmet } from 'react-helmet';
 import "./leaderboard.css";
 import "./main.css";
 
-// Assets
+// Assets (Imports remain the same)
 import CommunityChampion from "../assets/communitychampion.png";
 import Conversationalist from "../assets/conversationalist.png";
 import Initiator from "../assets/initiator.png";
@@ -40,41 +40,31 @@ const UserRow = React.memo(({ user, index, filterActive }) => {
   const githubUrl = `https://github.com/${user.username}`;
 
   return (
-    <a href={githubUrl} target="_blank" rel="noopener noreferrer" className="leaderboard-row-wrapper">
-      <div className={`leaderboard-row ${rank <= 3 ? `rank-bg-${rank}` : ""}`}>
+    <a href={githubUrl} target="_blank" rel="noopener noreferrer" className="glass-row-wrapper">
+      <div className={`glass-row ${rank <= 3 ? `glass-rank-${rank}` : ""}`}>
+        <div className="glass-rank-cell">#{rank}</div>
         
-        {/* 1. Rank Section */}
-        <div className="row-rank-cell">
-          <span className="rank-text">{rank}</span>
+        <div className="glass-user-cell">
+          <div className="glass-avatar" dangerouslySetInnerHTML={{ __html: user.avatarSvg }} />
+          <span className="glass-username">{user.username}</span>
         </div>
 
-        {/* 2. User Identity Section */}
-        <div className="row-user-cell">
-          <div className="row-avatar" dangerouslySetInnerHTML={{ __html: user.avatarSvg }} />
-          <div className="row-user-details">
-            <span className="row-username">{user.username}</span>
-            <span className="row-mobile-score">{user.score} pts</span>
-          </div>
-        </div>
-
-        {/* 3. Stats Section (Hidden on small mobile) */}
-        <div className="row-stats-cell">
-          <div className="stat-group">
-            <span className="stat-label">TQ Points</span>
-            <span className="stat-number">{user.score}</span>
+        <div className="glass-stats-cell">
+          <div className="glass-stat">
+            <span className="glass-stat-val">{user.score}</span>
+            <span className="glass-stat-lbl">TQ Points</span>
           </div>
           {filterActive && user.techquantaCommits > 0 && (
-            <div className="stat-group">
-              <span className="stat-label">Commits</span>
-              <span className="stat-number">{user.techquantaCommits}</span>
+            <div className="glass-stat">
+              <span className="glass-stat-val">{user.techquantaCommits}</span>
+              <span className="glass-stat-lbl">Commits</span>
             </div>
           )}
         </div>
 
-        {/* 4. Badge Section */}
-        <div className="row-badge-cell">
-          <img src={badge.src} alt={badge.name} className="row-badge-icon" />
-          <span className="row-badge-name">{badge.name}</span>
+        <div className="glass-badge-cell">
+          <img src={badge.src} alt={badge.name} className="glass-badge-img" />
+          <span className="glass-badge-name">{badge.name}</span>
         </div>
       </div>
     </a>
@@ -92,11 +82,10 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
-  const filteredSortedUsers = useMemo(() => {
+  const filteredUsers = useMemo(() => {
     if (!Array.isArray(userStats)) return [];
     const searchLower = search.trim().toLowerCase();
     const filtered = searchLower ? userStats.filter(u => u.username.toLowerCase().includes(searchLower)) : userStats;
-    
     return [...filtered].sort((a, b) => {
       if (sortKey === "scoreDesc") return b.score - a.score;
       if (sortKey === "scoreAsc") return a.score - b.score;
@@ -104,50 +93,42 @@ export default function App() {
     });
   }, [userStats, search, sortKey]);
 
-  if (loading) return <div className="full-page-loading"><Loading /></div>;
+  if (loading) return <div className="glass-loader"><Loading /></div>;
 
   return (
-    <div className="leaderboard-page-v3">
-      <Helmet><title>The Arkenlist | Contributors</title></Helmet>
+    <div className="glass-leaderboard-page">
+      <Helmet><title>The Arkenlist | Glass Edition</title></Helmet>
 
-      <div className="v3-content-container">
-        <div className="v3-header">
-          <h1 className="v3-title">The Arkenlist <span className="sparkle">✨</span></h1>
+      <div className="glass-container">
+        <header className="glass-header">
+          <h1 className="glass-title">The Arkenlist <span className="sparkle">✨</span></h1>
           
-          <div className="v3-controls-bar">
-            <div className="v3-search-input-group">
-              <img src={rotatingImages[imageIndex]} className="v3-search-img" alt="" />
+          <div className="glass-toolbar">
+            <div className="glass-search-box">
+              <img src={rotatingImages[imageIndex]} className="glass-search-gif" alt="" />
               <input 
                 type="text" 
-                placeholder="Search contributor..." 
+                placeholder="Find a contributor..." 
                 value={search} 
                 onChange={(e) => setSearch(e.target.value)} 
               />
             </div>
 
-            <div className="v3-buttons-group">
-              <select className="v3-select" value={sortKey} onChange={(e) => setSortKey(e.target.value)}>
-                <option value="scoreDesc">Highest TQ</option>
-                <option value="scoreAsc">Lowest TQ</option>
-                <option value="alphaAZ">Name A-Z</option>
+            <div className="glass-actions">
+              <select className="glass-select" value={sortKey} onChange={(e) => setSortKey(e.target.value)}>
+                <option value="scoreDesc">Highest Points</option>
+                <option value="scoreAsc">Lowest Points</option>
+                <option value="alphaAZ">A-Z Name</option>
               </select>
-              <button className="v3-btn" onClick={filterActive ? showAllMembers : showActiveMembers}>
+              <button className="glass-btn" onClick={filterActive ? showAllMembers : showActiveMembers}>
                 {loadingFilter ? "..." : (filterActive ? "All" : "Active")}
               </button>
             </div>
           </div>
-        </div>
+        </header>
 
-        {/* THE SINGLE COLUMN LIST */}
-        <div className="v3-list-header">
-          <div className="h-rank">Rank</div>
-          <div className="h-user">Contributor</div>
-          <div className="h-stats">Performance</div>
-          <div className="h-badge">Achievement</div>
-        </div>
-
-        <div className="v3-list-body">
-          {filteredSortedUsers.map((user, index) => (
+        <div className="glass-list">
+          {filteredUsers.map((user, index) => (
             <UserRow key={user.username} user={user} index={index} filterActive={filterActive} />
           ))}
         </div>
