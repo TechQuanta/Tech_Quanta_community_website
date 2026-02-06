@@ -1,114 +1,87 @@
-/* ===== ROOT GLASS THEME ===== */
-:root {
-  --glass-bg: rgba(255, 255, 255, 0.08);
-  --glass-border: rgba(255, 255, 255, 0.18);
-  --glass-blur: blur(14px);
-  --accent: #7cf6ff;
-  --gold: #ffd166;
-  --silver: #cfd9df;
-  --bronze: #f4a261;
+/* ===== ROW WRAPPER ===== */
+.glass-row-wrapper {
+  text-decoration: none;
+  color: inherit;
 }
 
-/* ===== PAGE BACKGROUND ===== */
-.glass-leaderboard-page {
-  min-height: 100vh;
-  padding: 2rem;
-  background: radial-gradient(circle at top, #0f2027, #000);
-  color: #eaeaea;
-  font-family: "Inter", system-ui, sans-serif;
-}
-
-/* ===== MAIN CONTAINER ===== */
-.glass-container {
-  max-width: 1200px;
-  margin: auto;
-  padding: 2rem;
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  border-radius: 24px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
-}
-
-/* ===== HEADER ===== */
-.glass-header {
-  margin-bottom: 2rem;
-}
-
-.glass-title {
-  font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  margin-bottom: 1.2rem;
-}
-
-.sparkle {
-  animation: sparkle 1.8s infinite alternate;
-}
-
-@keyframes sparkle {
-  from { opacity: 0.5; transform: scale(0.9); }
-  to   { opacity: 1; transform: scale(1.1); }
-}
-
-/* ===== TOOLBAR ===== */
-.glass-toolbar {
-  display: flex;
+/* ===== ROW ===== */
+.glass-row {
+  display: grid;
+  grid-template-columns: 60px 1.6fr 1.4fr 1fr;
+  align-items: center;
   gap: 1rem;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  padding: 1rem 1.2rem;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--glass-border);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-/* ===== SEARCH ===== */
-.glass-search-box {
+.glass-row:hover {
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.45);
+}
+
+/* ===== TOP 3 RANK GLOW ===== */
+.glass-rank-1 { box-shadow: 0 0 20px rgba(255, 209, 102, 0.5); }
+.glass-rank-2 { box-shadow: 0 0 18px rgba(207, 217, 223, 0.45); }
+.glass-rank-3 { box-shadow: 0 0 18px rgba(244, 162, 97, 0.45); }
+
+.glass-rank-cell {
+  font-weight: 700;
+  font-size: 1.1rem;
+  opacity: 0.85;
+}
+
+/* ===== USER ===== */
+.glass-user-cell {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background: rgba(0,0,0,0.35);
-  padding: 0.6rem 1rem;
-  border-radius: 14px;
-  border: 1px solid var(--glass-border);
 }
 
-.glass-search-box input {
-  background: transparent;
-  border: none;
-  outline: none;
-  color: #fff;
-  font-size: 0.95rem;
-  width: 200px;
+.glass-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #111;
 }
 
-.glass-search-gif {
-  width: 32px;
-  height: 32px;
+.glass-username {
+  font-weight: 600;
 }
 
-/* ===== ACTIONS ===== */
-.glass-actions {
+/* ===== STATS ===== */
+.glass-stats-cell {
   display: flex;
-  gap: 0.75rem;
+  gap: 1.4rem;
 }
 
-.glass-select,
-.glass-btn {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid var(--glass-border);
-  color: #fff;
-  padding: 0.55rem 1rem;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.25s ease;
+.glass-stat-val {
+  font-weight: 700;
+  font-size: 1.05rem;
 }
 
-.glass-select:hover,
-.glass-btn:hover {
-  background: rgba(255,255,255,0.18);
-  transform: translateY(-1px);
+.glass-stat-lbl {
+  font-size: 0.7rem;
+  opacity: 0.7;
 }
 
-/* ===== LIST ===== */
-.glass-list {
-  display: grid;
-  gap: 0.8rem;
+/* ===== BADGE ===== */
+.glass-badge-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.glass-badge-img {
+  width: 34px;
+  height: 34px;
+  filter: drop-shadow(0 0 8px rgba(124, 246, 255, 0.45));
+}
+
+.glass-badge-name {
+  font-size: 0.85rem;
+  opacity: 0.85;
 }
