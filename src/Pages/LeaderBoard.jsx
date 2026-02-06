@@ -10,7 +10,6 @@ import Loading from "../components/ui/loader";
 import { useGitHubLeaderboardData } from "../hooks/GraphQlQuery";
 
 import "./leaderboard.css";
-import "./main.css";
 
 /* ============================
    ASSETS
