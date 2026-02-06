@@ -40,8 +40,8 @@ function Header() {
 
   const navItems = useMemo(() => [
     { name: "Events", link: "community-work" },
-    { name: "  ▂ ▄ ▅ ▆ ▇ █ Projects", link: "open-source-contributions" },
-    { name: "Services", link: "comming-soon" },
+    { name: " Projects", link: "open-source-contributions" },
+    { name: " ▂ ▄ ▅ ▆ ▇ █ LeaaderBoard", link: "leaderboard" },
     { name: "About", link: "about" },
   ], []);
 
