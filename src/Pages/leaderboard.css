@@ -21,8 +21,6 @@
 .glass-leaderboard-page {
   min-height: 100vh;
   padding: 2rem;
-  background:
-    radial-gradient(circle at top, #0f2027, #000);
   color: var(--text-main);
   font-family: "Inter", system-ui, -apple-system, sans-serif;
 }
