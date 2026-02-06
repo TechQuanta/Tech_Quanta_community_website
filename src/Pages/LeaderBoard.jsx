@@ -467,7 +467,6 @@ import { Helmet } from 'react-helmet';
 
 // Styles (Ensure these paths match your project)
 import "./leaderboard.css";
-import "./main.css";
 
 // Assets
 import CommunityChampion from "../assets/communitychampion.png";
