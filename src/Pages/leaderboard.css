@@ -1,97 +1,114 @@
-/* Deep Background Gradient */
+/* ===== ROOT GLASS THEME ===== */
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --glass-blur: blur(14px);
+  --accent: #7cf6ff;
+  --gold: #ffd166;
+  --silver: #cfd9df;
+  --bronze: #f4a261;
+}
+
+/* ===== PAGE BACKGROUND ===== */
 .glass-leaderboard-page {
-  background: radial-gradient(circle at top left, #1e293b, #0f172a);
   min-height: 100vh;
-  padding: 60px 20px;
-  color: #f8fafc;
-  font-family: 'Inter', sans-serif;
+  padding: 2rem;
+  background: radial-gradient(circle at top, #0f2027, #000);
+  color: #eaeaea;
+  font-family: "Inter", system-ui, sans-serif;
 }
 
+/* ===== MAIN CONTAINER ===== */
 .glass-container {
-  max-width: 1000px;
-  margin: 0 auto;
+  max-width: 1200px;
+  margin: auto;
+  padding: 2rem;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
 }
 
-/* Header Glass UI */
-.glass-header { margin-bottom: 50px; text-align: center; }
-.glass-title { font-size: 3rem; font-weight: 900; color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
+/* ===== HEADER ===== */
+.glass-header {
+  margin-bottom: 2rem;
+}
 
+.glass-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin-bottom: 1.2rem;
+}
+
+.sparkle {
+  animation: sparkle 1.8s infinite alternate;
+}
+
+@keyframes sparkle {
+  from { opacity: 0.5; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1.1); }
+}
+
+/* ===== TOOLBAR ===== */
 .glass-toolbar {
   display: flex;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 15px 25px;
-  border-radius: 20px;
-  margin-top: 40px;
-  gap: 20px;
-  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
-.glass-search-box { flex: 1; display: flex; align-items: center; gap: 12px; }
-.glass-search-gif { width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); }
-.glass-search-box input { 
-  background: transparent; border: none; outline: none; color: white; width: 100%; font-size: 1.1rem;
-}
-.glass-search-box input::placeholder { color: rgba(255,255,255,0.4); }
-
-.glass-select, .glass-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: white;
-  padding: 10px 18px;
-  border-radius: 12px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-/* GLASS ROW (One Row for One User) */
-.glass-row-wrapper { text-decoration: none; color: inherit; display: block; margin-bottom: 15px; }
-
-.glass-row {
+/* ===== SEARCH ===== */
+.glass-search-box {
   display: flex;
   align-items: center;
-  padding: 20px 35px;
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  gap: 0.75rem;
+  background: rgba(0,0,0,0.35);
+  padding: 0.6rem 1rem;
+  border-radius: 14px;
+  border: 1px solid var(--glass-border);
 }
 
-.glass-row:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.2);
-  transform: translateY(-3px) scale(1.005);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+.glass-search-box input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 0.95rem;
+  width: 200px;
 }
 
-/* Row Content */
-.glass-rank-cell { width: 60px; font-size: 1.4rem; font-weight: 900; color: rgba(255,255,255,0.3); }
+.glass-search-gif {
+  width: 32px;
+  height: 32px;
+}
 
-.glass-user-cell { flex: 2; display: flex; align-items: center; gap: 20px; }
-.glass-avatar { width: 50px; height: 50px; border-radius: 50%; overflow: hidden; border: 2px solid rgba(255,255,255,0.1); }
-.glass-username { font-size: 1.2rem; font-weight: 700; color: #fff; }
+/* ===== ACTIONS ===== */
+.glass-actions {
+  display: flex;
+  gap: 0.75rem;
+}
 
-.glass-stats-cell { flex: 2; display: flex; justify-content: center; gap: 50px; }
-.glass-stat { display: flex; flex-direction: column; align-items: center; }
-.glass-stat-val { font-size: 1.3rem; font-weight: 800; color: #60a5fa; }
-.glass-stat-lbl { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.5); }
+.glass-select,
+.glass-btn {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--glass-border);
+  color: #fff;
+  padding: 0.55rem 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
 
-.glass-badge-cell { width: 140px; display: flex; flex-direction: column; align-items: flex-end; }
-.glass-badge-img { width: 35px; height: 35px; margin-bottom: 4px; filter: drop-shadow(0 0 8px rgba(255,255,255,0.2)); }
-.glass-badge-name { font-size: 0.7rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; }
+.glass-select:hover,
+.glass-btn:hover {
+  background: rgba(255,255,255,0.18);
+  transform: translateY(-1px);
+}
 
-/* Top 3 Champion Effects */
-.glass-rank-1 { border-left: 4px solid #fbbf24; background: rgba(251, 191, 36, 0.05); }
-.glass-rank-1 .glass-rank-cell { color: #fbbf24; }
-.glass-rank-2 { border-left: 4px solid #cbd5e1; }
-.glass-rank-3 { border-left: 4px solid #92400e; }
-
-/* Responsive */
-@media (max-width: 768px) {
-  .glass-stats-cell, .glass-badge-name { display: none; }
-  .glass-row { padding: 15px 20px; }
+/* ===== LIST ===== */
+.glass-list {
+  display: grid;
+  gap: 0.8rem;
 }
