@@ -214,9 +214,6 @@ const Home = () => {
         */}
       <section>
         <div>
-          <div className="home-core-team-wrapper">
-            <CoreTeam />
-          </div>
           <div className="home-partners-wrapper mt-16">
             <Partners />
           </div>
