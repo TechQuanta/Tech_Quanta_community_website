@@ -39,7 +39,7 @@ function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = useMemo(() => [
-    { name: "Events", link: "community-work" },
+    // { name: "Events", link: "community-work" },
     { name: " Projects", link: "open-source-contributions" },
     { name: " ▂ ▄ ▅ ▆ ▇ █ LeaaderBoard", link: "leaderboard" },
     { name: "About", link: "about" },
